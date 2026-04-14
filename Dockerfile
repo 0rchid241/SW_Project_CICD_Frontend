@@ -11,6 +11,8 @@ COPY . .
 RUN npm run build
 
 
+
+
 # 실행 환경
 # nginx에서 실행
 FROM nginx:stable-alpine
