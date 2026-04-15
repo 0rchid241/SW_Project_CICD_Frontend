@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Post from "./Post.jsx";
 import {Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
-import {useNavigate} from "react-router-dom";
+import {data, useNavigate} from "react-router-dom";
 
 const PostListPage = () => {
 
