@@ -1,4 +1,4 @@
 include:
   - project: 'sku-sw-academy-group/community-deploy'
-    ref: cd-test
+    ref: main
     file: '/frontend-ci.yml'
