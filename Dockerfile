@@ -7,9 +7,8 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 # 소스 복사 및 빌드
-COPY . .
+COPY . . 
 RUN npm run build
-
 
 
 

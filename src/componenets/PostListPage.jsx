@@ -28,6 +28,7 @@ const PostListPage = () => {
 
         <Box>
             <TableContainer>
+                <h1>Green으로 변경 성공했습니다.</h1>
                 <Table sx={{minWidth: 650}} aria-label="simple table">
                     <TableHead>
                         <TableRow>
