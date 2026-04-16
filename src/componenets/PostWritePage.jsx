@@ -29,7 +29,7 @@ const PostWritePage = () => {
             return;
         }
         try {
-            const response = await fetch("http://localhost:8080/community/write",{
+            const response = await fetch("/api/community/write",{
                 method:"POST",
                 headers:{
                     "Content-Type": "application/json"

@@ -10,9 +10,12 @@ const PostDetailPage = () => {
     const [showDelete, setShowDelete] = useState(false)
     const navigate = useNavigate();
 
+    /*
+       nginx를 사용해서 로드밸런싱을 했기 때문에 api/백엔드요청 이렇게 갈기면 됨
+    */
 
     const handleDelete = async () =>{
-        const response = await fetch(`http://localhost:8080/community/post/${id}/delete`,{
+        const response = await fetch(`/api/community/post/${id}/delete`,{
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({password:password})
@@ -32,7 +35,9 @@ const PostDetailPage = () => {
 
         const getPost = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/community/post/${id}`);
+                // const response = await fetch(`http://localhost:8080/community/post/${id}`);
+
+                const response = await fetch(`/api/community/post/${id}`)
                 const data = await response.json();
                 setPostData(data);
             } catch (error) {
