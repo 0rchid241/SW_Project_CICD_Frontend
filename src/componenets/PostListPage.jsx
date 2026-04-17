@@ -28,7 +28,7 @@ const PostListPage = () => {
 
         <Box>
             <TableContainer>
-                <h1>Green으로 변경 성공했습니다.</h1>
+                <h1>현재 호스팅하는 서버는 Blue 입니다.</h1>
                 <Table sx={{minWidth: 650}} aria-label="simple table">
                     <TableHead>
                         <TableRow>
