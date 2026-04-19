@@ -13,7 +13,7 @@ const PostListPage = () => {
         const getAllPost = async () => {
 
             try {
-                const response = await fetch("api/community/getAllPost");
+                const response = await fetch("/api/community/getAllPost");
                 const data = await response.json();
                 setPostDatas(data);
             } catch (e) {
