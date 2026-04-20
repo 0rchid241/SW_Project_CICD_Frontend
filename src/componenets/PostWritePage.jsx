@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Box, Button, Paper, Stack, TextField, Typography} from "@mui/material";
 
 const PostWritePage = () => {
 
     const navigate = useNavigate();
-
+    const {urlPath} = useParams();
     const [formData, setFormData] = useState({
         authorName : '',
         password : '',
@@ -29,7 +29,7 @@ const PostWritePage = () => {
             return;
         }
         try {
-            const response = await fetch("/api/community/write",{
+            const response = await fetch(`/api/community/${urlPath}/write`,{
                 method:"POST",
                 headers:{
                     "Content-Type": "application/json"
@@ -37,7 +37,7 @@ const PostWritePage = () => {
                 body:JSON.stringify(formData)
             });if (response.ok) {
                 alert("글이 성공적으로 등록되었습니다.");
-                navigate('/'); // 작성 완료 후 리스트로 이동
+                navigate(`/board/${urlPath}`); // 작성 완료 후 리스트로 이동
             } else {
                 alert("서버 오류가 발생했습니다.");
             }
@@ -93,7 +93,7 @@ const PostWritePage = () => {
                     />
 
                     <Stack direction="row" spacing={1} justifyContent="flex-end">
-                        <Button variant="outlined" onClick={() => navigate('/')}>취소</Button>
+                        <Button variant="outlined" onClick={() => navigate(`/board/${urlPath}`)}>취소</Button>
                         <Button variant="contained" onClick={handleSubmit}>등록</Button>
                     </Stack>
                 </Stack>

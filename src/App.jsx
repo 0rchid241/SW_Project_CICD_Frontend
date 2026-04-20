@@ -1,8 +1,10 @@
 import PostListPage from "./componenets/PostListPage.jsx";
-import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
+import {Container, createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 import {Routes,Route} from "react-router-dom";
 import PostWritePage from "./componenets/PostWritePage.jsx";
 import PostDetailPage from "./componenets/PostDetailPage.jsx";
+import BoardListPage from "./componenets/BoardListPage.jsx";
+import LayOut from "./componenets/LayOut.jsx";
 
 /* MUI의 기본 다크 테마*/
 const darkTheme = createTheme({
@@ -17,15 +19,24 @@ const App = () => {
         <div>
             <ThemeProvider theme={darkTheme}>
                 <CssBaseline />
-                <Routes>
-                    {/* 기본 경로는 post 리스트 */}
-                    <Route path="/" element={<PostListPage />} />
-                    {/* /write 글쓰기 페이지로 이동합니다.*/}
-                    <Route path="/write" element={<PostWritePage />} />
-                    {/* 상세 글 페이지로 이동합니다. */}
-                    <Route path={"/post/:id"} element={<PostDetailPage/>}/>
+                <Container maxWidth="lg" sx={{ mt: 5, mb: 5, minHeight: '80vh' }}>
+                    <Routes>
+                        {/* 전체적으로 레이아웃 적용 */}
+                        <Route element={<LayOut/>}>
+                            {/* 기본 경로는 Board 들의 리스트 */}
+                            <Route path={"/"} element={<BoardListPage />} />
 
-                </Routes>
+
+                            {/* 특정 커뮤니티의 게시글 리스트 출력 */}
+                            <Route path={"/board/:urlPath"} element={<PostListPage/>}/>
+                            {/* /write 글쓰기 페이지로 이동합니다.*/}
+                            <Route path={"/board/:urlPath/write"} element={<PostWritePage />} />
+                            {/* 상세 글 페이지로 이동합니다. */}
+                            <Route path={"/board/:urlPath/post/:id"} element={<PostDetailPage/>}/>
+                        </Route>
+                    </Routes>
+                </Container>
+
             </ThemeProvider>
         </div>
     );

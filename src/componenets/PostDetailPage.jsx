@@ -5,17 +5,18 @@ import {Box, Button, Divider, Paper, Stack, TextField, Typography} from "@mui/ma
 const PostDetailPage = () => {
 
     const {id} = useParams();
+    const {urlPath} = useParams();
+
     const [postData, setPostData] = useState(null)
     const [password, setPassword] = useState("")
     const [showDelete, setShowDelete] = useState(false)
+
     const navigate = useNavigate();
 
-    /*
-       nginx를 사용해서 로드밸런싱을 했기 때문에 api/백엔드요청 이렇게 갈기면 됨
-    */
 
+    /* delete api 갈기기 */
     const handleDelete = async () =>{
-        const response = await fetch(`/api/community/post/${id}/delete`,{
+        const response = await fetch(`/api/community/${urlPath}/post/${id}/delete`,{
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({password:password})
@@ -31,13 +32,11 @@ const PostDetailPage = () => {
     }
 
     useEffect(() => {
-        console.log("현재 상세페이지 ID:", id);
+        console.log("현재 상세페이지 게시글 ID:", id);
 
         const getPost = async () => {
             try {
-                // const response = await fetch(`http://localhost:8080/community/post/${id}`);
-
-                const response = await fetch(`/api/community/post/${id}`)
+                const response = await fetch(`/api/community/${urlPath}/post/${id}`)
                 const data = await response.json();
                 setPostData(data);
             } catch (error) {
@@ -67,7 +66,7 @@ const PostDetailPage = () => {
                 <Divider sx={{ my: 2 }} />
 
                 <Stack direction="row" spacing={2} justifyContent="flex-end">
-                    <Button variant="outlined" onClick={() => navigate('/')}>목록으로</Button>
+                    <Button variant="outlined" onClick={() => navigate(`/board/${urlPath}`)}>목록으로</Button>
                     <Button variant="contained" color="error" onClick={() => setShowDelete(!showDelete)}>
                         삭제하기
                     </Button>
