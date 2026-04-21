@@ -4,6 +4,7 @@ import {Routes,Route} from "react-router-dom";
 import PostWritePage from "./componenets/PostWritePage.jsx";
 import PostDetailPage from "./componenets/PostDetailPage.jsx";
 import BoardListPage from "./componenets/BoardListPage.jsx";
+import OpsPage from "./componenets/OpsPage.jsx";
 import LayOut from "./componenets/LayOut.jsx";
 
 /* MUI의 기본 다크 테마*/
@@ -33,6 +34,9 @@ const App = () => {
                             <Route path={"/board/:urlPath/write"} element={<PostWritePage />} />
                             {/* 상세 글 페이지로 이동합니다. */}
                             <Route path={"/board/:urlPath/post/:id"} element={<PostDetailPage/>}/>
+
+                            {/*운영 대시보드로 이동합니다.*/}
+                            <Route path={"/ops"} element={<OpsPage/>}/>
                         </Route>
                     </Routes>
                 </Container>
