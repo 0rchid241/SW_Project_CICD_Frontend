@@ -131,7 +131,8 @@ const OpsPage = () => {
                     value={summary.activeBackend}
                     highlight={true}
                 />
-                <StatusCard title="Frontend" value={summary.frontend} />
+                <StatusCard title="Frontend Blue" value={summary.frontendBlue} />
+                <StatusCard title="Frontend Green" value={summary.frontendGreen} />
                 <StatusCard title="Backend Blue" value={summary.backendBlue} />
                 <StatusCard title="Backend Green" value={summary.backendGreen} />
                 <StatusCard title="DB" value={summary.db} />
