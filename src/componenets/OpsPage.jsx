@@ -235,8 +235,8 @@ const OpsPage = () => {
 
             {deployMessage && (
                 <div style={messageBoxStyle}>
-                    <strong style={{ color: "111827" }}>배포 결과</strong>
-                    <div style={{ marginTop: "8px", color:"#111827" }}>{deployMessage}</div>
+                    <strong style={{ color: "1f1f1f" }}>배포 결과</strong>
+                    <div style={{ marginTop: "8px", color:"#f1f1f1" }}>{deployMessage}</div>
                 </div>
             )}
         </div>
