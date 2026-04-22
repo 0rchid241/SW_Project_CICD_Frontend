@@ -67,10 +67,13 @@ const buttonStyle = {
 const messageBoxStyle = {
     marginTop: "16px",
     padding: "14px 16px",
-    border: "1px solid #ddd",
+    border: "1px solid #d0d7de",
     borderRadius: "12px",
-    backgroundColor: "#fafafa",
+    backgroundColor: "#f6f8fa",
+    color: "#111827",
     whiteSpace: "pre-wrap",
+    fontSize: "14px",
+    lineHeight: "1.5",
 };
 
 const activeCardStyle = {
@@ -137,6 +140,8 @@ const OpsPage = () => {
             const maxAttempts = 20;
             const intervalMs = 3000;
 
+            const targetBackend = previousActive === "blue" ? "green" : previousActive === "green" ? "blue" : null;
+
             const poll = async () => {
                 try {
                     const summaryResponse = await fetch("/api/ops/summary");
@@ -147,8 +152,8 @@ const OpsPage = () => {
                     const newSummary = await summaryResponse.json();
                     setSummary(newSummary);
 
-                    // activeBackend가 바뀌었으면 배포 완료로 판단
-                    if (previousActive && newSummary.activeBackend && newSummary.activeBackend !== previousActive) {
+                    // 목표 슬롯으로 정확히 바뀐 경우 완료 판정
+                    if (targetBackend && newSummary.activeBackend === targetBackend) {
                         setDeployMessage(`배포가 완료되었습니다. 현재 활성 서버: ${newSummary.activeBackend}`);
                         setDeployLoading(false);
                         return;
@@ -229,8 +234,8 @@ const OpsPage = () => {
 
             {deployMessage && (
                 <div style={messageBoxStyle}>
-                    <strong>배포 결과</strong>
-                    <div style={{ marginTop: "8px" }}>{deployMessage}</div>
+                    <strong style={{ color: "111827" }}>배포 결과</strong>
+                    <div style={{ marginTop: "8px", color:"#111827" }}>{deployMessage}</div>
                 </div>
             )}
         </div>
