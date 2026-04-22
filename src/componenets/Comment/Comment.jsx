@@ -31,17 +31,17 @@ const Comment = ({comment,isChild,onAddReply}) => {
         }}>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
                 <Typography fontWeight="bold">{comment.authorName}</Typography>
+            </Stack>
 
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 1 }}>
                 {/* 인스타그램 방식의 멘션 타겟 표시 */}
                 {comment.mentionedName && (
                     <Typography variant="body2" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
                         @{comment.mentionedName}
                     </Typography>
                 )}
-            </Stack>
-
-            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 1 }}>
                 {comment.content}
+
             </Typography>
 
             {/* 답글 달기 버튼 (토글) */}
