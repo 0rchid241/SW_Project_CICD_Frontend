@@ -119,6 +119,8 @@ const OpsPage = () => {
             setDeployLoading(true);
             setDeployMessage("");
 
+            const previousActive = summary?.activeBackend;
+
             const response = await fetch("/api/ops/deploy", {
                 method: "POST",
             });
@@ -128,9 +130,47 @@ const OpsPage = () => {
             }
 
             const data = await response.json();
-            setDeployMessage(data.message);
 
-            await fetchSummary();
+            setDeployMessage("배포 요청이 등록되었습니다. 배포 진행 중입니다...");
+
+            let attempts = 0;
+            const maxAttempts = 20;
+            const intervalMs = 3000;
+
+            const poll = async () => {
+                try {
+                    const summaryResponse = await fetch("/api/ops/summary");
+                    if (!summaryResponse.ok) {
+                        throw new Error("상태 조회 실패");
+                    }
+
+                    const newSummary = await summaryResponse.json();
+                    setSummary(newSummary);
+
+                    // activeBackend가 바뀌었으면 배포 완료로 판단
+                    if (previousActive && newSummary.activeBackend && newSummary.activeBackend !== previousActive) {
+                        setDeployMessage(`배포가 완료되었습니다. 현재 활성 서버: ${newSummary.activeBackend}`);
+                        setDeployLoading(false);
+                        return;
+                    }
+
+                    attempts += 1;
+
+                    if (attempts >= maxAttempts) {
+                        setDeployMessage("배포 요청은 등록되었지만 완료 여부를 아직 확인하지 못했습니다. 상태를 다시 확인해주세요.");
+                        setDeployLoading(false);
+                        return;
+                    }
+
+                    setTimeout(poll, intervalMs);
+                } catch (err) {
+                    console.error(err);
+                    setDeployMessage("배포 진행 상태를 확인하는 중 오류가 발생했습니다.");
+                    setDeployLoading(false);
+                }
+            };
+
+            setTimeout(poll, intervalMs);
         } catch (err) {
             console.error(err);
             setDeployMessage("배포 요청 중 오류 발생");
