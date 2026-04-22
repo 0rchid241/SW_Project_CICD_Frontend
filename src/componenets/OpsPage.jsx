@@ -49,12 +49,28 @@ const topBoxStyle = {
     flexWrap: "wrap",
 };
 
+const buttonRowStyle = {
+    marginTop: "28px",
+    display: "flex",
+    gap: "12px",
+    flexWrap: "wrap",
+};
+
 const buttonStyle = {
     padding: "10px 16px",
     border: "none",
     borderRadius: "10px",
     cursor: "pointer",
     fontWeight: "bold",
+};
+
+const messageBoxStyle = {
+    marginTop: "16px",
+    padding: "14px 16px",
+    border: "1px solid #ddd",
+    borderRadius: "12px",
+    backgroundColor: "#fafafa",
+    whiteSpace: "pre-wrap",
 };
 
 const activeCardStyle = {
@@ -74,6 +90,8 @@ function StatusCard({ title, value, highlight = false }) {
 const OpsPage = () => {
     const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [deployLoading, setDeployLoading] = useState(false);
+    const [deployMessage, setDeployMessage] = useState("");
     const [error, setError] = useState("");
 
     const fetchSummary = async () => {
@@ -95,6 +113,31 @@ const OpsPage = () => {
             setLoading(false);
         }
     }
+
+    const runDeploy = async() => {
+        try {
+            setDeployLoading(true);
+            setDeployMessage("");
+
+            const response = await fetch("/api/ops/deploy", {
+                method: "POST",
+            });
+
+            if (!response.ok) {
+                throw new Error("배포 요청 실패");
+            }
+
+            const data = await response.json();
+            setDeployMessage(data.message);
+
+            await fetchSummary();
+        } catch (err) {
+            console.error(err);
+            setDeployMessage("배포 요청 중 오류 발생");
+        } finally {
+            setDeployLoading(false);
+        }
+    };
 
     useEffect(() => {
         fetchSummary();
@@ -122,7 +165,6 @@ const OpsPage = () => {
 
                     <p style={subTextStyle}>현재 서버 상태를 확인하는 내부 운영 대시보드</p>
                 </div>
-                <button style={buttonStyle} onClick={fetchSummary}>상태 새로고침</button>
             </div>
 
             <div style={gridStyle}>
@@ -138,6 +180,19 @@ const OpsPage = () => {
                 <StatusCard title="DB" value={summary.db} />
                 <StatusCard title="Nginx" value={summary.nginx} />
             </div>
+
+            <div style={buttonRowStyle}>
+                <button style={buttonStyle} onClick={fetchSummary}>상태 새로고침</button>
+
+                <button style={buttonStyle} onClick={runDeploy} disabled={deployLoading}>{deployLoading ? "배포 요청 중..." : "무중단 배포 실행"}</button>
+            </div>
+
+            {deployMessage && (
+                <div style={messageBoxStyle}>
+                    <strong>배포 결과</strong>
+                    <div style={{ marginTop: "8px" }}>{deployMessage}</div>
+                </div>
+            )}
         </div>
     );
 };
