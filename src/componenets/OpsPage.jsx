@@ -69,7 +69,7 @@ const messageBoxStyle = {
     padding: "14px 16px",
     border: "1px solid #d0d7de",
     borderRadius: "12px",
-    backgroundColor: "#f6f8fa",
+    backgroundColor: "#1f1f1f",
     color: "#111827",
     whiteSpace: "pre-wrap",
     fontSize: "14px",
@@ -120,9 +120,11 @@ const OpsPage = () => {
     const runDeploy = async() => {
         try {
             setDeployLoading(true);
-            setDeployMessage("");
+            setDeployMessage("배포 진행 중입니다...");
 
             const previousActive = summary?.activeBackend;
+
+            const targetBackend = previousActive === "blue" ? "green" : previousActive === "green" ? "blue" : null;
 
             const response = await fetch("/api/ops/deploy", {
                 method: "POST",
@@ -132,15 +134,9 @@ const OpsPage = () => {
                 throw new Error("배포 요청 실패");
             }
 
-            const data = await response.json();
-
-            setDeployMessage("배포 요청이 등록되었습니다. 배포 진행 중입니다...");
-
             let attempts = 0;
-            const maxAttempts = 20;
+            const maxAttempts = 40;
             const intervalMs = 3000;
-
-            const targetBackend = previousActive === "blue" ? "green" : previousActive === "green" ? "blue" : null;
 
             const poll = async () => {
                 try {
@@ -150,11 +146,16 @@ const OpsPage = () => {
                     }
 
                     const newSummary = await summaryResponse.json();
-                    setSummary(newSummary);
+                    const currentActive = newSummary.activeBackend;
+
+                    const isFinished = targetBackend &&
+                        (targetBackend === "blue" || targetBackend === "green") &&
+                        currentActive === targetBackend;
 
                     // 목표 슬롯으로 정확히 바뀐 경우 완료 판정
-                    if (targetBackend && newSummary.activeBackend === targetBackend) {
-                        setDeployMessage(`배포가 완료되었습니다. 현재 활성 서버: ${newSummary.activeBackend}`);
+                    if (isFinished) {
+                        setSummary(newSummary);
+                        setDeployMessage(`배포가 완료되었습니다. 현재 활성 서버: ${currentActive}`);
                         setDeployLoading(false);
                         return;
                     }
