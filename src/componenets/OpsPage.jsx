@@ -70,7 +70,7 @@ const messageBoxStyle = {
     border: "1px solid #d0d7de",
     borderRadius: "12px",
     backgroundColor: "#1f1f1f",
-    color: "#111827",
+    color: "#f1f1f1",
     whiteSpace: "pre-wrap",
     fontSize: "14px",
     lineHeight: "1.5",
