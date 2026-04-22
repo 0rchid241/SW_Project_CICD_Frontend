@@ -1,11 +1,12 @@
-import PostListPage from "./componenets/PostListPage.jsx";
+import PostListPage from "./componenets/Post/PostListPage.jsx";
 import {Container, createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 import {Routes,Route} from "react-router-dom";
-import PostWritePage from "./componenets/PostWritePage.jsx";
-import PostDetailPage from "./componenets/PostDetailPage.jsx";
-import BoardListPage from "./componenets/BoardListPage.jsx";
+
 import OpsPage from "./componenets/OpsPage.jsx";
-import LayOut from "./componenets/LayOut.jsx";
+import PostWritePage from "./componenets/Post/PostWritePage.jsx";
+import PostDetailPage from "./componenets/Post/PostDetailPage.jsx";
+import BoardListPage from "./componenets/Board/BoardListPage.jsx";
+import LayOut from "./componenets/util/LayOut.jsx";
 
 /* MUI의 기본 다크 테마*/
 const darkTheme = createTheme({

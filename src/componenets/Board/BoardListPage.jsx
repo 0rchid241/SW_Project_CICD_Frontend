@@ -11,7 +11,7 @@ const BoardListPage = () => {
     useEffect(() => {
         const fetchBoards = async () =>{
             try {
-                const response = await fetch("/api/community/getAllBoards");
+                const response = await fetch("/api/community/board/getAllBoards");
                 const data = await response.json();
                 setBoardsData(data);
             }catch (e){
