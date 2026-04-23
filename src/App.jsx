@@ -2,6 +2,7 @@ import PostListPage from "./componenets/Post/PostListPage.jsx";
 import {Container, createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 import {Routes,Route} from "react-router-dom";
 
+import SignupPage from "./componenets/Sign/SignupPage.jsx";
 import OpsPage from "./componenets/OpsPage.jsx";
 import PostWritePage from "./componenets/Post/PostWritePage.jsx";
 import PostDetailPage from "./componenets/Post/PostDetailPage.jsx";
@@ -38,6 +39,9 @@ const App = () => {
 
                             {/*운영 대시보드로 이동합니다.*/}
                             <Route path={"/ops"} element={<OpsPage/>}/>
+
+                            {/*회원가입 페이지로 이동합니다.*/}
+                            <Route path={"/signup"} element={<SignupPage/>}/>
                         </Route>
                     </Routes>
                 </Container>
