@@ -3,6 +3,7 @@ import {data, useNavigate, useParams} from "react-router-dom";
 import {Box, Button, Divider, Paper, Stack, TextField, Typography} from "@mui/material";
 import CommentList from "../Comment/CommentList.jsx";
 import CommentContainer from "../Comment/CommentContainer.jsx";
+import PostLikeButton from "./PostLikeButton.jsx";
 
 const PostDetailPage = () => {
 
@@ -56,6 +57,8 @@ const PostDetailPage = () => {
     return (
         <Box sx={{ maxWidth: 800, margin: 'auto', mt: 5 }}>
             <Paper sx={{ p: 4 }}>
+
+                {/* 본 글 내용 */}
                 <Typography variant="h4" gutterBottom>{postData.title}</Typography>
                 <Stack direction="row" spacing={2} sx={{ mb: 2, color: 'text.secondary' }}>
                     <Typography>작성자: {postData.authorName}</Typography>
@@ -65,13 +68,20 @@ const PostDetailPage = () => {
                 <Typography variant="body1" sx={{ minHeight: '300px', whiteSpace: 'pre-wrap' }}>
                     {postData.content}
                 </Typography>
+
+                {/* 추천수 버튼 */}
+                <PostLikeButton
+                    urlPath={urlPath}
+                    postId={id}
+                    initialLikeCount={postData.likeCount}
+                />
                 <Divider sx={{ my: 2 }} />
 
-
+                {/* 댓글 컴포넌트*/}
                 <CommentContainer urlPath = {urlPath} postId={id}></CommentContainer>
 
 
-
+                {/* 삭제 버튼*/}
                 <Stack direction="row" spacing={2} justifyContent="flex-end">
                     <Button variant="outlined" onClick={() => navigate(`/board/${urlPath}`)}>목록으로</Button>
                     <Button variant="contained" color="error" onClick={() => setShowDelete(!showDelete)}>

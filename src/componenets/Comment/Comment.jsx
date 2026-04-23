@@ -36,7 +36,7 @@ const Comment = ({comment,isChild,onAddReply}) => {
             <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 1 }}>
                 {/* 인스타그램 방식의 멘션 타겟 표시 */}
                 {comment.mentionedName && (
-                    <Typography variant="body2" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
+                    <Typography variant="body2" component={"span"} sx={{ color: '#1976d2', fontWeight: 'bold' }}>
                         @{comment.mentionedName}
                     </Typography>
                 )}
