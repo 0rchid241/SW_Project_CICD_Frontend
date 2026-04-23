@@ -40,7 +40,7 @@ const messageStyle = {
 };
 
 const LoginPage = () => {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
     const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ const LoginPage = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    email,
+                    username,
                     password,
                 }),
             });
@@ -71,7 +71,7 @@ const LoginPage = () => {
             localStorage.setItem("accessToken", data.accessToken);
             setMessage("로그인에 성공했습니다.");
 
-            setEmail("");
+            setUsername("");
             setPassword("");
         } catch (err) {
             console.error(err);
@@ -85,13 +85,13 @@ const LoginPage = () => {
         <div style={pageStyle}>
             <h1 style={{ marginBottom: "24px" }}>로그인</h1>
 
-            <label>이메일</label>
+            <label>아이디</label>
             <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 style={inputStyle}
-                placeholder="user@example.invalid"
+                placeholder="아이디 입력"
             />
 
             <label>비밀번호</label>

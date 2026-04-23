@@ -40,6 +40,7 @@ const messageStyle = {
 };
 
 const SignupPage = () => {
+    const [username, setUsername] = useState("")
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [nickname, setNickname] = useState("");
@@ -58,6 +59,7 @@ const SignupPage = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
+                    username,
                     email,
                     password,
                     nickname,
@@ -71,6 +73,7 @@ const SignupPage = () => {
             }
 
             setMessage("회원가입이 완료되었습니다.");
+            setUsername("");
             setEmail("");
             setPassword("");
             setNickname("");
@@ -85,6 +88,15 @@ const SignupPage = () => {
     return (
         <div style={pageStyle}>
             <h1 style={{ marginBottom: "24px" }}>회원가입</h1>
+
+            <label>아이디</label>
+            <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                style={inputStyle}
+                placeholder="로그인에 사용할 아이디"
+            />
 
             <label>이메일</label>
             <input
