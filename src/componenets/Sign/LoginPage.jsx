@@ -49,7 +49,9 @@ const LoginPage = () => {
 
     const navigate = useNavigate();
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
         try {
             setLoading(true);
             setMessage("");
@@ -72,14 +74,13 @@ const LoginPage = () => {
             }
 
             localStorage.setItem("accessToken", data.accessToken);
+            localStorage.setItem("username", data.username);
+            localStorage.setItem("nickname", data.nickname);
             // LayOut은 항상 화면에 떠있기 때문에 localStorage 변경됐다고 자동으로 다시 렌더링 되지 않음
             // 로그인 성공 후 직접 신호 보냄
             window.dispatchEvent(new Event("auth-change"));
             navigate("/");
             setMessage("로그인에 성공했습니다.");
-
-            setUsername("");
-            setPassword("");
         } catch (err) {
             console.error(err);
             setMessage(err.message || "로그인 중 오류가 발생했습니다.");
@@ -91,35 +92,36 @@ const LoginPage = () => {
     return (
         <div style={pageStyle}>
             <h1 style={{ marginBottom: "24px" }}>로그인</h1>
+                <form onSubmit={handleLogin}>
+                    <label>아이디</label>
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        style={inputStyle}
+                        placeholder="아이디 입력"
+                    />
 
-            <label>아이디</label>
-            <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                style={inputStyle}
-                placeholder="아이디 입력"
-            />
+                    <label>비밀번호</label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        style={inputStyle}
+                        placeholder="비밀번호 입력"
+                    />
 
-            <label>비밀번호</label>
-            <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={inputStyle}
-                placeholder="비밀번호 입력"
-            />
+                    <button
+                        type="button"
+                        style={buttonStyle}
+                        onClick={handleLogin}
+                        disabled={loading}
+                    >
+                        {loading ? "로그인 중..." : "로그인"}
+                    </button>
 
-            <button
-                type="button"
-                style={buttonStyle}
-                onClick={handleLogin}
-                disabled={loading}
-            >
-                {loading ? "로그인 중..." : "로그인"}
-            </button>
-
-            {/*{message && <div style={messageStyle}>{message}</div>}*/}
+                    {/*{message && <div style={messageStyle}>{message}</div>}*/}
+                </form>
         </div>
     );
 };

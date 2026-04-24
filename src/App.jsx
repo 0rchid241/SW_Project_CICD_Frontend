@@ -11,6 +11,7 @@ import LayOut from "./componenets/util/LayOut.jsx";
 import LoginPage from "./componenets/Sign/LoginPage.jsx";
 import PopularPostPreview from "./componenets/Board/PopularPostPreview.jsx";
 import PopularPostListPage from "./componenets/Post/PopularPostListPage.jsx";
+import Mypage from "./componenets/Sign/Mypage.jsx";
 
 /* MUI의 기본 다크 테마*/
 const darkTheme = createTheme({
@@ -47,6 +48,8 @@ const App = () => {
                             <Route path={"/signup"} element={<SignupPage/>}/>
                             {/*로그인 페이지로 이동합니다.*/}
                             <Route path={"/login"} element={<LoginPage/>}/>
+                            {/*개인 페이지로 이동합니다.*/}
+                            <Route path={"/me"} element={<Mypage/>}/>
 
                             {/* 인기 게시글 목록으로 이동*/}
                             <Route path={"/board/popular"} element={<PopularPostListPage/>}/>

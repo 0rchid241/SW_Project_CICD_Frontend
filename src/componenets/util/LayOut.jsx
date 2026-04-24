@@ -9,12 +9,18 @@ const LayOut = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(() => {
         return !!localStorage.getItem("accessToken");
     });
+    const [nickname, setNickname] = useState(() => {
+        return localStorage.getItem("nickname");
+    })
 
     // 로그인 상태가 바뀌었다는 신호가 오면 localStorage를 다시 확인해서 상단 버튼 변경
     useEffect(() => {
         const handleAuthChange = () => {
             const token = localStorage.getItem("accessToken");
+            const savedNickname = localStorage.getItem("nickname");
+
             setIsLoggedIn(!!token);
+            setNickname(savedNickname);
         };
 
         window.addEventListener("auth-change", handleAuthChange);
@@ -30,6 +36,9 @@ const LayOut = () => {
     // 로그아웃 시 저장된 jwt 삭제 -> 로그인 상태 변경 이벤트 발생 -> 메인 이동
     const handleLogout = () => {
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("username");
+        localStorage.removeItem("nickname");
+
         window.dispatchEvent(new Event("auth-change"));
         navigate("/");
     };
@@ -54,7 +63,9 @@ const LayOut = () => {
                         😎커뮤니티 이름 뭐로할까요~?😙
                     </Typography>
 
-                    <Stack direction="row" spacing={1}>
+                    <Box sx={{ flexGrow: 1 }} />
+
+                    <Stack direction="row" spacing={1} alignItems="center">
                         {!isLoggedIn ? (
                             <>
                                 <Button color="inherit" onClick={() => navigate('/signup')}>
@@ -66,6 +77,9 @@ const LayOut = () => {
                             </>
                             ) : (
                                 <>
+                                    <Button color="inherit" onClick={() => navigate('/me')}>
+                                        {nickname || "내 정보"}
+                                    </Button>
                                     <Button variant="outlined" color="error" onClick={handleLogout}>
                                         로그아웃
                                     </Button>
