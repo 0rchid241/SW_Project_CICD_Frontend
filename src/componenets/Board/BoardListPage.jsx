@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {Card, CardActionArea, CardContent, Container, Grid, Typography} from "@mui/material";
+import PopularPostPreview from "./PopularPostPreview.jsx";
 
 const BoardListPage = () => {
 
@@ -26,6 +27,9 @@ const BoardListPage = () => {
             <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
                 커뮤니티 목록
             </Typography>
+
+            <PopularPostPreview/>
+
             <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 4 }}>
                 관심 있는 갤러리를 선택하여 게시글을 확인해보세요.
             </Typography>

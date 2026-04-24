@@ -7,6 +7,8 @@ import PostWritePage from "./componenets/Post/PostWritePage.jsx";
 import PostDetailPage from "./componenets/Post/PostDetailPage.jsx";
 import BoardListPage from "./componenets/Board/BoardListPage.jsx";
 import LayOut from "./componenets/util/LayOut.jsx";
+import PopularPostPreview from "./componenets/Board/PopularPostPreview.jsx";
+import PopularPostListPage from "./componenets/Post/PopularPostListPage.jsx";
 
 /* MUI의 기본 다크 테마*/
 const darkTheme = createTheme({
@@ -38,6 +40,11 @@ const App = () => {
 
                             {/*운영 대시보드로 이동합니다.*/}
                             <Route path={"/ops"} element={<OpsPage/>}/>
+
+                            {/* 인기 게시글 목록으로 이동*/}
+                            <Route path={"/board/popular"} element={<PopularPostListPage/>}/>
+
+
                         </Route>
                     </Routes>
                 </Container>
