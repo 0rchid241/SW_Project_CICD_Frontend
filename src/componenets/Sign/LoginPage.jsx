@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {useNavigate} from "react-router-dom";
 
 const pageStyle = {
     maxWidth: "420px",
@@ -46,6 +47,8 @@ const LoginPage = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
 
+    const navigate = useNavigate();
+
     const handleLogin = async () => {
         try {
             setLoading(true);
@@ -69,6 +72,10 @@ const LoginPage = () => {
             }
 
             localStorage.setItem("accessToken", data.accessToken);
+            // LayOut은 항상 화면에 떠있기 때문에 localStorage 변경됐다고 자동으로 다시 렌더링 되지 않음
+            // 로그인 성공 후 직접 신호 보냄
+            window.dispatchEvent(new Event("auth-change"));
+            navigate("/");
             setMessage("로그인에 성공했습니다.");
 
             setUsername("");
@@ -112,7 +119,7 @@ const LoginPage = () => {
                 {loading ? "로그인 중..." : "로그인"}
             </button>
 
-            {message && <div style={messageStyle}>{message}</div>}
+            {/*{message && <div style={messageStyle}>{message}</div>}*/}
         </div>
     );
 };

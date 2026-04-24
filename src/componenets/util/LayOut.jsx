@@ -1,10 +1,38 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Outlet,useNavigate} from "react-router-dom";
-import { AppBar, Toolbar, Typography, Box, Container } from '@mui/material';
+import { AppBar, Toolbar, Typography, Box, Container, Button, Stack } from '@mui/material';
 
 const LayOut = () => {
 
     const navigate = useNavigate();
+    // 처음 로그인 상태 확인 / localStorage에 accessToken이 있다면 true
+    const [isLoggedIn, setIsLoggedIn] = useState(() => {
+        return !!localStorage.getItem("accessToken");
+    });
+
+    // 로그인 상태가 바뀌었다는 신호가 오면 localStorage를 다시 확인해서 상단 버튼 변경
+    useEffect(() => {
+        const handleAuthChange = () => {
+            const token = localStorage.getItem("accessToken");
+            setIsLoggedIn(!!token);
+        };
+
+        window.addEventListener("auth-change", handleAuthChange);
+        // storage 이벤트는 다른 탭에서 localStorage가 변경되었을 때 감지하는 이벤트
+        window.addEventListener("storage", handleAuthChange);
+
+        return () => {
+            window.removeEventListener("auth-change", handleAuthChange);
+            window.removeEventListener("storage", handleAuthChange);
+        };
+    }, []);
+
+    // 로그아웃 시 저장된 jwt 삭제 -> 로그인 상태 변경 이벤트 발생 -> 메인 이동
+    const handleLogout = () => {
+        localStorage.removeItem("accessToken");
+        window.dispatchEvent(new Event("auth-change"));
+        navigate("/");
+    };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -25,6 +53,25 @@ const LayOut = () => {
                     >
                         😎커뮤니티 이름 뭐로할까요~?😙
                     </Typography>
+
+                    <Stack direction="row" spacing={1}>
+                        {!isLoggedIn ? (
+                            <>
+                                <Button color="inherit" onClick={() => navigate('/signup')}>
+                                    회원가입
+                                </Button>
+                                <Button variant="contained" onClick={() => navigate('/login')}>
+                                    로그인
+                                </Button>
+                            </>
+                            ) : (
+                                <>
+                                    <Button variant="outlined" color="error" onClick={handleLogout}>
+                                        로그아웃
+                                    </Button>
+                                </>
+                        )}
+                    </Stack>
                 </Toolbar>
             </AppBar>
 
