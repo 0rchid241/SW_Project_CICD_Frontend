@@ -35,11 +35,16 @@ const PostWritePage = () => {
 
     const handleSubmit = async () =>{
 
-        if (!isLoggedIn &&
-            !formData.title || !formData.content || !formData.authorName || !formData.password) {
-            alert("모든 필드를 입력해주세요.");
-            return;
+        /* 공통 입력값 먼저 검증*/
+        if(!formData.title || !formData.content){
+            alert("제목과 내용을 입력해주세요 ")
         }
+
+        /* 비로그인 상태에만 이름, 비밀번호 추가로 인증*/
+        if(!isLoggedIn && ( !formData.authorName || !formData.password)){
+            alert("이름과 비밀번호를 입력해주세요.")
+        }
+
 
         const token = localStorage.getItem('accessToken');
         try {

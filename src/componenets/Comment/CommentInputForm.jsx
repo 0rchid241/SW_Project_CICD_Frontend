@@ -46,8 +46,6 @@ const CommentInputForm = ({onSubmit}) => {
     }
 
 
-
-
     return (
         <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
             {!isLoggedIn && (

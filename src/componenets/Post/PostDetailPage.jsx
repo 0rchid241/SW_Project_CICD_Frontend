@@ -4,6 +4,7 @@ import {Box, Button, Divider, Paper, Stack, TextField, Typography} from "@mui/ma
 import CommentList from "../Comment/CommentList.jsx";
 import CommentContainer from "../Comment/CommentContainer.jsx";
 import PostLikeButton from "./PostLikeButton.jsx";
+import DeleteAction from "./delete/DeleteAction.jsx";
 
 const PostDetailPage = () => {
 
@@ -13,29 +14,18 @@ const PostDetailPage = () => {
     const [postData, setPostData] = useState(null)
     const [password, setPassword] = useState("")
     const [showDelete, setShowDelete] = useState(false)
-
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
     const navigate = useNavigate();
 
 
-    /* delete api 갈기기 */
-    const handleDelete = async () =>{
-        const response = await fetch(`/api/community/board/${urlPath}/post/${id}/delete`,{
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({password:password})
-        });
-
-        if(response.ok){
-            alert("삭제완료")
-            navigate("/")
-        }else {
-            alert("비밀번호가 틀렸습니다.");
-        }
-
-    }
-
     useEffect(() => {
         console.log("현재 상세페이지 게시글 ID:", id);
+
+        /* 토큰을 찾아서 로그인 한지 안한지 체크 */
+        const token = localStorage.getItem('accessToken');
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setIsLoggedIn(!!token);
+
 
         const getPost = async () => {
             try {
@@ -50,6 +40,8 @@ const PostDetailPage = () => {
 
     }, [id]);
 
+
+    
     if (!postData) {
         return <div style={{ color: 'white' }}>데이터 로딩 중...</div>;
     }
@@ -81,33 +73,15 @@ const PostDetailPage = () => {
                 <CommentContainer urlPath = {urlPath} postId={id}></CommentContainer>
 
 
-                {/* 삭제 버튼*/}
-                <Stack direction="row" spacing={2} justifyContent="flex-end">
-                    <Button variant="outlined" onClick={() => navigate(`/board/${urlPath}`)}>목록으로</Button>
-                    <Button variant="contained" color="error" onClick={() => setShowDelete(!showDelete)}>
-                        삭제하기
-                    </Button>
-                </Stack>
+                {/* 삭제 컴포넌트 */}
+                <DeleteAction
+                    urlPath={urlPath}
+                    postId={id}
+                    isLoggedIn={isLoggedIn}
+                    token={localStorage.getItem('accessToken')}
+                />
 
 
-
-                {/* 삭제 버튼 클릭 시 나타나는 비밀번호 입력창 */}
-                {showDelete && (
-                    <Box sx={{ mt: 3, p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                            <TextField
-                                label="비밀번호"
-                                type="password"
-                                size="small"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                            <Button variant="contained" color="error" onClick={handleDelete}>
-                                확인
-                            </Button>
-                        </Stack>
-                    </Box>
-                )}
             </Paper>
         </Box>
     );
