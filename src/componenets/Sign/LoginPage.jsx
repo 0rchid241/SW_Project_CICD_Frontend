@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {useNavigate} from "react-router-dom";
+import {Button} from "@mui/material";
 
 const pageStyle = {
     maxWidth: "420px",
@@ -120,6 +121,13 @@ const LoginPage = () => {
                         {loading ? "로그인 중..." : "로그인"}
                     </button>
 
+                    <Button
+                        variant="outlined"
+                        fullWidth
+                        onClick={() => {window.location.href = "/api/oauth/google/login";}}
+                    >
+                        Google로 계속하기
+                    </Button>
                     {/*{message && <div style={messageStyle}>{message}</div>}*/}
                 </form>
         </div>
