@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Box, Button, Divider, Stack, TextField, Typography} from "@mui/material";
 
 const CommentInputForm = ({onSubmit}) => {
@@ -10,9 +10,22 @@ const CommentInputForm = ({onSubmit}) => {
         content: ""
     })
 
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if(token){
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setIsLoggedIn(true);
+        }
+    }, []);
+
+
     const handleCreateComment = async ()=>{
 
-        if(!commentData.authorName || !commentData.content || !commentData.password){
+        if(
+            !isLoggedIn &&
+            !commentData.authorName || !commentData.content || !commentData.password){
             alert("이름, 내용, 비밀번호를 모두 입력하세요");
             return;
         }
@@ -37,21 +50,24 @@ const CommentInputForm = ({onSubmit}) => {
 
     return (
         <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
-            <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
-                <TextField
-                    label="이름"
-                    size="small"
-                    value={commentData.authorName}
-                    onChange={(e) => setCommentData({ ...commentData, authorName: e.target.value })}
-                />
-                <TextField
-                    label="비밀번호"
-                    type="password"
-                    size="small"
-                    value={commentData.password}
-                    onChange={(e) => setCommentData({ ...commentData, password: e.target.value })}
-                />
-            </Stack>
+            {!isLoggedIn && (
+                <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
+                    <TextField
+                        label="이름"
+                        size="small"
+                        value={commentData.authorName}
+                        onChange={(e) => setCommentData({ ...commentData, authorName: e.target.value })}
+                    />
+                    <TextField
+                        label="비밀번호"
+                        type="password"
+                        size="small"
+                        value={commentData.password}
+                        onChange={(e) => setCommentData({ ...commentData, password: e.target.value })}
+                    />
+                </Stack>
+            )}
+
             <TextField
                 label="댓글을 남겨보세요"
                 multiline

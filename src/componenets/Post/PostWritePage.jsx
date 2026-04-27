@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {Box, Button, Paper, Stack, TextField, Typography} from "@mui/material";
 
@@ -6,12 +6,23 @@ const PostWritePage = () => {
 
     const navigate = useNavigate();
     const {urlPath} = useParams();
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    
     const [formData, setFormData] = useState({
         authorName : '',
         password : '',
         title : '',
         content : ''
     })
+
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if(token){
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setIsLoggedIn(true);
+        }
+    }, []);
+
 
     const handleChange = (e) =>{
         const {name,value} = e.target;
@@ -24,16 +35,22 @@ const PostWritePage = () => {
 
     const handleSubmit = async () =>{
 
-        if (!formData.title || !formData.content || !formData.authorName || !formData.password) {
+        if (!isLoggedIn &&
+            !formData.title || !formData.content || !formData.authorName || !formData.password) {
             alert("모든 필드를 입력해주세요.");
             return;
         }
+
+        const token = localStorage.getItem('accessToken');
         try {
             const response = await fetch(`/api/community/board/${urlPath}/write`,{
                 method:"POST",
                 headers:{
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    /* 로그인 상태라면 헤더에 token 추가 */
+                    ...(token && {"Authorization": `Bearer ${token}`})
                 },
+
                 body:JSON.stringify(formData)
             });if (response.ok) {
                 alert("글이 성공적으로 등록되었습니다.");
@@ -53,25 +70,30 @@ const PostWritePage = () => {
 
             <Paper sx={{ p: 3 }}>
                 <Stack spacing={2}>
-                    <Stack direction="row" spacing={2}>
-                        <TextField
-                            label="닉네임"
-                            name="authorName"
-                            size="small"
-                            fullWidth
-                            value={formData.authorName}
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            label="비밀번호"
-                            name="password"
-                            type="password"
-                            size="small"
-                            fullWidth
-                            value={formData.password}
-                            onChange={handleChange}
-                        />
-                    </Stack>
+
+                    {/* 로그인 상태가 아닐 때에만 닉네임, 비밀번호 입력. */}
+                    {!isLoggedIn && (
+                        <Stack direction="row" spacing={2}>
+                            <TextField
+                                label="닉네임"
+                                name="authorName"
+                                size="small"
+                                fullWidth
+                                value={formData.authorName}
+                                onChange={handleChange}
+                            />
+                            <TextField
+                                label="비밀번호"
+                                name="password"
+                                type="password"
+                                size="small"
+                                fullWidth
+                                value={formData.password}
+                                onChange={handleChange}
+                            />
+                        </Stack>
+                    )}
+
 
                     <TextField
                         label="제목"
