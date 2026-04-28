@@ -52,6 +52,9 @@ const LayOut = () => {
                                 <Button color="inherit" onClick={() => navigate('/me')}>
                                     {nickname || "내 정보"}
                                 </Button>
+                                <Button onClick={()=>navigate('/admin/superAdminPage')}>
+                                    관리자 페이지
+                                </Button>
                                 <Button variant="outlined" color="error" onClick={handleLogout}>
                                     로그아웃
                                 </Button>

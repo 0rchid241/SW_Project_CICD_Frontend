@@ -13,6 +13,7 @@ import PopularPostPreview from "./componenets/Board/PopularPostPreview.jsx";
 import PopularPostListPage from "./componenets/Post/PopularPostListPage.jsx";
 import Mypage from "./componenets/Sign/Mypage.jsx";
 import {AuthContext, AuthProvider} from "./context/AuthContext.jsx";
+import SuperAdminPage from "./componenets/admin/SuperAdminPage.jsx";
 
 /* MUI의 기본 다크 테마*/
 const darkTheme = createTheme({
@@ -56,6 +57,8 @@ const App = () => {
                                 {/* 인기 게시글 목록으로 이동*/}
                                 <Route path={"/board/popular"} element={<PopularPostListPage/>}/>
 
+                                {/* 전체 관리자 페이지로 이동.*/}
+                                <Route path={"/admin/superAdminPage"} element={<SuperAdminPage/>}/>
 
                             </Route>
                         </Routes>
