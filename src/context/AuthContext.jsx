@@ -28,7 +28,8 @@ export const AuthProvider = ({children}) => {
 
     }, []);
 
-    // 로그인 처리 함수
+    /* 로그인 처리 함수
+    * data는 tokenResponseDTO */
     const login = (data) => {
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("username", data.username);
