@@ -1,31 +1,22 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {data, useNavigate, useParams} from "react-router-dom";
 import {Box, Button, Divider, Paper, Stack, TextField, Typography} from "@mui/material";
 import CommentList from "../Comment/CommentList.jsx";
 import CommentContainer from "../Comment/CommentContainer.jsx";
 import PostLikeButton from "./PostLikeButton.jsx";
 import DeleteAction from "./delete/DeleteAction.jsx";
+import {AuthContext} from "../../context/AuthContext.jsx";
 
 const PostDetailPage = () => {
 
     const {id} = useParams();
     const {urlPath} = useParams();
-
     const [postData, setPostData] = useState(null)
-    const [password, setPassword] = useState("")
-    const [showDelete, setShowDelete] = useState(false)
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-    const navigate = useNavigate();
 
+    const {isLoggedIn, token} = useContext(AuthContext);
 
     useEffect(() => {
         console.log("현재 상세페이지 게시글 ID:", id);
-
-        /* 토큰을 찾아서 로그인 한지 안한지 체크 */
-        const token = localStorage.getItem('accessToken');
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setIsLoggedIn(!!token);
-
 
         const getPost = async () => {
             try {
@@ -78,7 +69,7 @@ const PostDetailPage = () => {
                     urlPath={urlPath}
                     postId={id}
                     isLoggedIn={isLoggedIn}
-                    token={localStorage.getItem('accessToken')}
+                    token={token}
                 />
 
 

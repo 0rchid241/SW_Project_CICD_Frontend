@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, {useContext, useState} from 'react';
 import {useNavigate} from "react-router-dom";
+import {AuthContext} from "../../context/AuthContext.jsx";
 
 const pageStyle = {
     maxWidth: "420px",
@@ -47,6 +48,8 @@ const LoginPage = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
 
+    const {login} = useContext(AuthContext);
+
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -73,9 +76,9 @@ const LoginPage = () => {
                 throw new Error(data.message || "로그인에 실패했습니다.");
             }
 
-            localStorage.setItem("accessToken", data.accessToken);
-            localStorage.setItem("username", data.username);
-            localStorage.setItem("nickname", data.nickname);
+            /* 전역Context의 로그인 함수 사용 */
+            login(data);
+
             // LayOut은 항상 화면에 떠있기 때문에 localStorage 변경됐다고 자동으로 다시 렌더링 되지 않음
             // 로그인 성공 후 직접 신호 보냄
             window.dispatchEvent(new Event("auth-change"));

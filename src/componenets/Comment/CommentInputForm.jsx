@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Box, Button, Divider, Stack, TextField, Typography} from "@mui/material";
+import {AuthContext} from "../../context/AuthContext.jsx";
 
-const CommentInputForm = ({onSubmit}) => {
+const CommentInputForm = ({onSubmit,isLoggedIn}) => {
 
 
     const [commentData, setCommentData] = useState({
@@ -10,23 +11,15 @@ const CommentInputForm = ({onSubmit}) => {
         content: ""
     })
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-
-    useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if(token){
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setIsLoggedIn(true);
-        }
-    }, []);
-
-
     const handleCreateComment = async ()=>{
 
-        if(
-            !isLoggedIn &&
-            !commentData.authorName || !commentData.content || !commentData.password){
-            alert("이름, 내용, 비밀번호를 모두 입력하세요");
+        if(!commentData.content){
+            alert("내용을 입력해주세요.");
+            return;
+        }
+
+        if(!isLoggedIn && (!commentData.authorName || !commentData.password)){
+            alert("이름, 비밀번호를 입력해주세요");
             return;
         }
 

@@ -1,27 +1,21 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {Box, Button, Paper, Stack, TextField, Typography} from "@mui/material";
+import {AuthContext} from "../../context/AuthContext.jsx";
 
 const PostWritePage = () => {
 
     const navigate = useNavigate();
     const {urlPath} = useParams();
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-    
+
+    const {isLoggedIn,token} = useContext(AuthContext);
+
     const [formData, setFormData] = useState({
         authorName : '',
         password : '',
         title : '',
         content : ''
     })
-
-    useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if(token){
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setIsLoggedIn(true);
-        }
-    }, []);
 
 
     const handleChange = (e) =>{
@@ -45,8 +39,6 @@ const PostWritePage = () => {
             alert("이름과 비밀번호를 입력해주세요.")
         }
 
-
-        const token = localStorage.getItem('accessToken');
         try {
             const response = await fetch(`/api/community/board/${urlPath}/write`,{
                 method:"POST",
