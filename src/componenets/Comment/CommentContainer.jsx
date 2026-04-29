@@ -15,7 +15,6 @@ const CommentContainer = ({urlPath,postId}) => {
     const {isLoggedIn,token} = useContext(AuthContext);
 
 
-
     /* 댓글 작성 핸들러
     * 댓글, 댓글 리스트 컴포넌트에서 얘를 가져다가 쓸것 */
     const handleCreateComment = async (commentData) =>{
@@ -35,6 +34,7 @@ const CommentContainer = ({urlPath,postId}) => {
             })
 
             if(response.ok){
+                alert("댓글이 성공적으로 등록됐습니다.")
                 setRefreshTrigger(prev => prev + 1);
             }
             return response;
