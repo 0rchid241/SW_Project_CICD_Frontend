@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Box, Divider, Typography} from "@mui/material";
 import CommentList from "./CommentList.jsx";
 import CommentInputForm from "./CommentInputForm.jsx";
+import {AuthContext} from "../../context/AuthContext.jsx";
 
 const CommentContainer = ({urlPath,postId}) => {
 
@@ -10,6 +11,10 @@ const CommentContainer = ({urlPath,postId}) => {
     /* 댓글이 추가될 때 댓글리스트 다시 렌더링*/
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+    /* 로그인상태, 로그인토큰 전역변수 */
+    const {isLoggedIn,token} = useContext(AuthContext);
+
+
     /* 댓글 작성 핸들러
     * 댓글, 댓글 리스트 컴포넌트에서 얘를 가져다가 쓸것 */
     const handleCreateComment = async (commentData) =>{
@@ -17,7 +22,9 @@ const CommentContainer = ({urlPath,postId}) => {
         try {
             const response = await fetch(`/api/community/board/${urlPath}/post/${postId}/comment/write`,{
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: {"Content-Type": "application/json",
+                    /* 로그인 상태라면 헤더에 token 추가 */
+                    ...(token && {"Authorization": `Bearer ${token}`})},
                 body: JSON.stringify({
                     authorName: commentData.authorName,
                     password:commentData.password,
@@ -27,6 +34,7 @@ const CommentContainer = ({urlPath,postId}) => {
             })
 
             if(response.ok){
+                alert("댓글이 성공적으로 등록됐습니다.")
                 setRefreshTrigger(prev => prev + 1);
             }
             return response;
@@ -67,6 +75,7 @@ const CommentContainer = ({urlPath,postId}) => {
             <Box sx={{ mb: 4 }}>
                  <CommentInputForm
                     onSubmit={(data) => handleCreateComment({ ...data, parentId: null })}
+                    isLoggedIn={isLoggedIn}
                 />
             </Box>
 

@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, {useContext, useState} from 'react';
 import {useNavigate} from "react-router-dom";
+import {AuthContext} from "../../context/AuthContext.jsx";
+import ErrorMessage from "../util/ErrorMessage.jsx";
 import {Button} from "@mui/material";
 
 const pageStyle = {
@@ -33,58 +35,56 @@ const buttonStyle = {
     cursor: "pointer",
 };
 
-const messageStyle = {
-    marginTop: "16px",
-    padding: "12px",
-    borderRadius: "10px",
-    backgroundColor: "#f1f1f1",
-    color: "#111827",
-};
 
 const LoginPage = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+
+    const [formData, setFormData] = useState({
+        username:'',
+        password:''
+    });
 
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
-
+    const [errorMessage, setErrorMessage] = useState("");
+    const {login} = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
+
+    const handleChange = (e) =>{
+        const {name,value} = e.target;
+        setFormData({
+            ...formData,
+            [name]:value
+        });
+    };
+
+
+
+    const handleLogin = async () => {
+        setLoading(true);
 
         try {
-            setLoading(true);
-            setMessage("");
-
             const response = await fetch("/api/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    username,
-                    password,
-                }),
+                body: JSON.stringify(formData)
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || "로그인에 실패했습니다.");
+            if(response.ok){
+                /* 응답된 jwtTokenResponseDTO 로 login 진행*/
+                const jwtTokenData = await response.json();
+                /* 전역 Context의 로그인 함수 사용해서 로그인 */
+                login(jwtTokenData);
+                setErrorMessage("로그인에 성공했습니다.");
+                // window.dispatchEvent(new Event("auth-change"));
+                navigate("/");
+            }else {
+                const errorResponse = await response.json();
+                setErrorMessage(errorResponse.message);
             }
-
-            localStorage.setItem("accessToken", data.accessToken);
-            localStorage.setItem("username", data.username);
-            localStorage.setItem("nickname", data.nickname);
-            // LayOut은 항상 화면에 떠있기 때문에 localStorage 변경됐다고 자동으로 다시 렌더링 되지 않음
-            // 로그인 성공 후 직접 신호 보냄
-            window.dispatchEvent(new Event("auth-change"));
-            navigate("/");
-            setMessage("로그인에 성공했습니다.");
-        } catch (err) {
-            console.error(err);
-            setMessage(err.message || "로그인 중 오류가 발생했습니다.");
+        } catch{
+            setErrorMessage("서버와 통신할 수 없습니다.");
         } finally {
             setLoading(false);
         }
@@ -92,13 +92,17 @@ const LoginPage = () => {
 
     return (
         <div style={pageStyle}>
+
+            <ErrorMessage errorMessage={errorMessage}/>
+
             <h1 style={{ marginBottom: "24px" }}>로그인</h1>
                 <form onSubmit={handleLogin}>
                     <label>아이디</label>
                     <input
                         type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        name={"username"}
+                        value={formData.username}
+                        onChange={handleChange}
                         style={inputStyle}
                         placeholder="아이디 입력"
                     />
@@ -106,8 +110,9 @@ const LoginPage = () => {
                     <label>비밀번호</label>
                     <input
                         type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        name={"password"}
+                        value={formData.password}
+                        onChange={handleChange}
                         style={inputStyle}
                         placeholder="비밀번호 입력"
                     />
@@ -128,7 +133,6 @@ const LoginPage = () => {
                     >
                         Google로 계속하기
                     </Button>
-                    {/*{message && <div style={messageStyle}>{message}</div>}*/}
                 </form>
         </div>
     );

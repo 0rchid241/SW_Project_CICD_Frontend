@@ -1,12 +1,13 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Box, Button, Divider, Stack, Typography} from "@mui/material";
 import CommentInputForm from "./CommentInputForm.jsx";
+import {AuthContext} from "../../context/AuthContext.jsx";
 
 const Comment = ({comment,isChild,onAddReply}) => {
 
     /* 대댓글이 달려있는지 상태 확인 */
     const [isReplying, setIsReplying] = useState(false);
-
+    const {isLoggedIn} = useContext(AuthContext);
 
     // 답글 등록 시 실행될 핸들러
     const handleReplySubmit = async (data) => {
@@ -59,7 +60,9 @@ const Comment = ({comment,isChild,onAddReply}) => {
             {/* 답글 창이 열렸을 때만 재사용 폼 렌더링 */}
             {isReplying && (
                 <Box sx={{ mt: 2 }}>
-                    <CommentInputForm onSubmit={handleReplySubmit} />
+                    <CommentInputForm
+                        onSubmit={handleReplySubmit}
+                        isLoggedIn={isLoggedIn}/>
                 </Box>
             )}
 

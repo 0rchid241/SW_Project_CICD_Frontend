@@ -1,28 +1,23 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {Box, Button, Paper, Stack, TextField, Typography} from "@mui/material";
+import {AuthContext} from "../../context/AuthContext.jsx";
+import ErrorMessage from "../util/ErrorMessage.jsx";
 
 const PostWritePage = () => {
 
     const navigate = useNavigate();
     const {urlPath} = useParams();
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
     
+    const {isLoggedIn,token} = useContext(AuthContext);
+
     const [formData, setFormData] = useState({
         authorName : '',
         password : '',
         title : '',
         content : ''
     })
-
-    useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if(token){
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setIsLoggedIn(true);
-        }
-    }, []);
-
 
     const handleChange = (e) =>{
         const {name,value} = e.target;
@@ -32,16 +27,19 @@ const PostWritePage = () => {
         });
     };
 
-
     const handleSubmit = async () =>{
 
-        if (!isLoggedIn &&
-            !formData.title || !formData.content || !formData.authorName || !formData.password) {
-            alert("모든 필드를 입력해주세요.");
+        /* 공통 입력값 먼저 검증*/
+        if(!formData.title || !formData.content){
+            setErrorMessage("제목과 내용을 입력해주세요 ")
+            return;
+        }
+        /* 비로그인 상태에만 이름, 비밀번호 추가로 인증*/
+        if(!isLoggedIn && ( !formData.authorName || !formData.password)){
+            setErrorMessage("이름과 비밀번호를 입력해주세요.")
             return;
         }
 
-        const token = localStorage.getItem('accessToken');
         try {
             const response = await fetch(`/api/community/board/${urlPath}/write`,{
                 method:"POST",
@@ -50,16 +48,17 @@ const PostWritePage = () => {
                     /* 로그인 상태라면 헤더에 token 추가 */
                     ...(token && {"Authorization": `Bearer ${token}`})
                 },
-
                 body:JSON.stringify(formData)
-            });if (response.ok) {
+            });
+            if (response.ok) {
                 alert("글이 성공적으로 등록되었습니다.");
                 navigate(`/board/${urlPath}`); // 작성 완료 후 리스트로 이동
             } else {
-                alert("서버 오류가 발생했습니다.");
+                const errorResponse = await response.json();
+                setErrorMessage(errorResponse.message);
             }
-        } catch (error) {
-            console.error("글 작성하다가 오류남.:", error);
+        } catch {
+            setErrorMessage("서버와 통신할 수 없습니다.");
         }
     }
 
@@ -69,6 +68,7 @@ const PostWritePage = () => {
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>새 글 작성</Typography>
 
             <Paper sx={{ p: 3 }}>
+                <ErrorMessage errorMessage={errorMessage}/>
                 <Stack spacing={2}>
 
                     {/* 로그인 상태가 아닐 때에만 닉네임, 비밀번호 입력. */}

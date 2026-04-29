@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ErrorMessage from "../util/ErrorMessage.jsx";
 
 const pageStyle = {
     maxWidth: "420px",
@@ -31,69 +32,68 @@ const buttonStyle = {
     cursor: "pointer",
 };
 
-const messageStyle = {
-    marginTop: "16px",
-    padding: "12px",
-    borderRadius: "10px",
-    backgroundColor: "#f1f1f1",
-    color: "#111827",
-};
 
 const SignupPage = () => {
-    const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [nickname, setNickname] = useState("");
-
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("")
+    
+    const [formData, setFormData] = useState({
+        username:'',
+        email:'',
+        password:'',
+        nickname:''
+    });
+
+    const handleChange = (e) =>{
+        const {name,value} = e.target
+        setFormData({
+            ...formData,
+            [name]: value
+        })
+    };
+
 
     const handleSignup = async () => {
-        try {
-            setLoading(true);
-            setMessage("");
+        setLoading(true);
 
+        try {
             const response = await fetch("/api/auth/signup", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    username,
-                    email,
-                    password,
-                    nickname,
-                }),
+                body:JSON.stringify(formData)
             });
 
-            const text = await response.text();
 
-            if (!response.ok) {
-                throw new Error(text || "회원가입에 실패했습니다.");
+            if(response.ok){
+                alert("회원가입 성공");
+            }else {
+                /* 회원가입시 예외처리되어 반환된 ErrorResponse를 받아서 출력 */
+                const errorResponse = await response.json();
+                setErrorMessage(errorResponse.message)
             }
-
-            setMessage("회원가입이 완료되었습니다.");
-            setUsername("");
-            setEmail("");
-            setPassword("");
-            setNickname("");
-        } catch (err) {
-            console.error(err);
-            setMessage(err.message || "회원가입 중 오류가 발생했습니다.");
-        } finally {
+        }catch {
+            setErrorMessage("서버와 통신할 수 없습니다.");
+        }finally {
             setLoading(false);
         }
+
     };
 
     return (
         <div style={pageStyle}>
+
+            <ErrorMessage errorMessage={errorMessage}/>
+
             <h1 style={{ marginBottom: "24px" }}>회원가입</h1>
 
             <label>아이디</label>
             <input
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                name={"username"}
+                value={formData.username}
+                onChange={handleChange}
                 style={inputStyle}
                 placeholder="로그인에 사용할 아이디"
             />
@@ -101,8 +101,9 @@ const SignupPage = () => {
             <label>이메일</label>
             <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name={"email"}
+                value={formData.email}
+                onChange={handleChange}
                 style={inputStyle}
                 placeholder="user@example.invalid"
             />
@@ -110,8 +111,9 @@ const SignupPage = () => {
             <label>비밀번호</label>
             <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name={"password"}
+                value={formData.password}
+                onChange={handleChange}
                 style={inputStyle}
                 placeholder="8자 이상 입력"
             />
@@ -119,8 +121,9 @@ const SignupPage = () => {
             <label>닉네임</label>
             <input
                 type="text"
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
+                name={"nickname"}
+                value={formData.nickname}
+                onChange={handleChange}
                 style={inputStyle}
                 placeholder="닉네임 입력"
             />
@@ -134,7 +137,7 @@ const SignupPage = () => {
                 {loading ? "가입 중..." : "회원가입"}
             </button>
 
-            {message && <div style={messageStyle}>{message}</div>}
+
         </div>
     );
 };

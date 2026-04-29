@@ -1,7 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Box, Button, Divider, Stack, TextField, Typography} from "@mui/material";
+import {AuthContext} from "../../context/AuthContext.jsx";
+import ErrorMessage from "../util/ErrorMessage.jsx";
 
-const CommentInputForm = ({onSubmit}) => {
+const CommentInputForm = ({onSubmit,isLoggedIn}) => {
 
 
     const [commentData, setCommentData] = useState({
@@ -10,23 +12,26 @@ const CommentInputForm = ({onSubmit}) => {
         content: ""
     })
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const handleChange = (e)=>{
+        const {name,value} = e.target
+        setCommentData({
+            ...commentData,
+            [name]:value
+        });
+    }
 
-    useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if(token){
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setIsLoggedIn(true);
-        }
-    }, []);
-
+    const [errorMessage, setErrorMessage] = useState("")
+    
 
     const handleCreateComment = async ()=>{
 
-        if(
-            !isLoggedIn &&
-            !commentData.authorName || !commentData.content || !commentData.password){
-            alert("이름, 내용, 비밀번호를 모두 입력하세요");
+        if(!commentData.content){
+            setErrorMessage("내용을 입력해주세요.");
+            return;
+        }
+
+        if(!isLoggedIn && (!commentData.authorName || !commentData.password)){
+            setErrorMessage("이름, 비밀번호를 입력해주세요");
             return;
         }
 
@@ -40,30 +45,35 @@ const CommentInputForm = ({onSubmit}) => {
                 password: "",
                 content: ""
             });
-        }else {
-            alert("댓글 작성에 실패했습니다.");
+            setErrorMessage("")
+        }else if(response){
+            const errorResponse = await response.json();
+            setErrorMessage(errorResponse.message);
         }
     }
 
 
-
-
     return (
         <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
+
+            <ErrorMessage errorMessage={errorMessage}/>
+
             {!isLoggedIn && (
                 <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
                     <TextField
                         label="이름"
                         size="small"
+                        name={"authorName"}
                         value={commentData.authorName}
-                        onChange={(e) => setCommentData({ ...commentData, authorName: e.target.value })}
+                        onChange={handleChange}
                     />
                     <TextField
                         label="비밀번호"
                         type="password"
                         size="small"
+                        name={"password"}
                         value={commentData.password}
-                        onChange={(e) => setCommentData({ ...commentData, password: e.target.value })}
+                        onChange={handleChange}
                     />
                 </Stack>
             )}
@@ -73,8 +83,9 @@ const CommentInputForm = ({onSubmit}) => {
                 multiline
                 rows={3}
                 fullWidth
+                name={"content"}
                 value={commentData.content}
-                onChange={(e) => setCommentData({ ...commentData, content: e.target.value })}
+                onChange={handleChange}
             />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
                 <Button variant="contained" onClick={handleCreateComment}>
