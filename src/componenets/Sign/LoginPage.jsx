@@ -133,6 +133,14 @@ const LoginPage = () => {
                     >
                         Google로 계속하기
                     </Button>
+
+                    <Button
+                        variant="outlined"
+                        fullWidth
+                        onClick={() => {window.location.href = "/api/oauth/naver/login";}}
+                    >
+                        Naver로 계속하기
+                    </Button>
                 </form>
         </div>
     );
