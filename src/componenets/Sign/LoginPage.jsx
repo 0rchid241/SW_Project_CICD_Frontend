@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {AuthContext} from "../../context/AuthContext.jsx";
 import ErrorMessage from "../util/ErrorMessage.jsx";
 import {Button} from "@mui/material";
+import {apiFetch} from "../util/apiFetch.js";
 
 const pageStyle = {
     maxWidth: "420px",
@@ -63,28 +64,19 @@ const LoginPage = () => {
         setLoading(true);
 
         try {
-            const response = await fetch("/api/auth/login", {
+            const response = await apiFetch("/api/auth/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
                 body: JSON.stringify(formData)
             });
-
-            if(response.ok){
-                /* 응답된 jwtTokenResponseDTO 로 login 진행*/
-                const jwtTokenData = await response.json();
-                /* 전역 Context의 로그인 함수 사용해서 로그인 */
-                login(jwtTokenData);
-                setErrorMessage("로그인에 성공했습니다.");
-                // window.dispatchEvent(new Event("auth-change"));
-                navigate("/");
-            }else {
-                const errorResponse = await response.json();
-                setErrorMessage(errorResponse.message);
-            }
-        } catch{
-            setErrorMessage("서버와 통신할 수 없습니다.");
+            /* 응답된 jwtTokenResponseDTO 로 login 진행*/
+            const jwtTokenData = await response.json();
+            /* 전역 Context의 로그인 함수 사용해서 로그인 */
+            login(jwtTokenData);
+            alert("로그인에 성공했습니다.");
+            // window.dispatchEvent(new Event("auth-change"));
+            navigate("/");
+        } catch (e){
+            setErrorMessage(e.message);
         } finally {
             setLoading(false);
         }

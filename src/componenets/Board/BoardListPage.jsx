@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {Card, CardActionArea, CardContent, Container, Grid, Typography} from "@mui/material";
 import PopularPostPreview from "./PopularPostPreview.jsx";
+import {apiFetch} from "../util/apiFetch.js";
 
 const BoardListPage = () => {
 
@@ -12,7 +13,7 @@ const BoardListPage = () => {
     useEffect(() => {
         const fetchBoards = async () =>{
             try {
-                const response = await fetch("/api/community/board/getAllBoards");
+                const response = await apiFetch("/api/community/board/getAllBoards");
                 const data = await response.json();
                 setBoardsData(data);
             }catch (e){
@@ -27,7 +28,6 @@ const BoardListPage = () => {
             <Typography variant="h4" component="h1" gutterBottom fontWeight="bold">
                 커뮤니티 목록
             </Typography>
-
             <PopularPostPreview/>
 
             <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 4 }}>

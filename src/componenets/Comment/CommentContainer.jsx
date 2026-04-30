@@ -3,6 +3,7 @@ import {Box, Divider, Typography} from "@mui/material";
 import CommentList from "./CommentList.jsx";
 import CommentInputForm from "./CommentInputForm.jsx";
 import {AuthContext} from "../../context/AuthContext.jsx";
+import {apiFetch} from "../util/apiFetch.js";
 
 const CommentContainer = ({urlPath,postId}) => {
 
@@ -12,19 +13,15 @@ const CommentContainer = ({urlPath,postId}) => {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     /* 로그인상태, 로그인토큰 전역변수 */
-    const {isLoggedIn,token} = useContext(AuthContext);
+    const {isLoggedIn} = useContext(AuthContext);
 
 
     /* 댓글 작성 핸들러
     * 댓글, 댓글 리스트 컴포넌트에서 얘를 가져다가 쓸것 */
     const handleCreateComment = async (commentData) =>{
-
         try {
-            const response = await fetch(`/api/community/board/${urlPath}/post/${postId}/comment/write`,{
+            await apiFetch(`/api/community/board/${urlPath}/post/${postId}/comment/write`,{
                 method: "POST",
-                headers: {"Content-Type": "application/json",
-                    /* 로그인 상태라면 헤더에 token 추가 */
-                    ...(token && {"Authorization": `Bearer ${token}`})},
                 body: JSON.stringify({
                     authorName: commentData.authorName,
                     password:commentData.password,
@@ -32,13 +29,8 @@ const CommentContainer = ({urlPath,postId}) => {
                     parentId:commentData.parentId
                 })
             })
-
-            if(response.ok){
-                alert("댓글이 성공적으로 등록됐습니다.")
-                setRefreshTrigger(prev => prev + 1);
-            }
-            return response;
-
+            alert("댓글이 성공적으로 등록됐습니다.")
+            setRefreshTrigger(prev => prev + 1);
         }catch (e) {
             console.log(`댓글 작성 요청중 오류발생 ${e}`);
         }
@@ -48,16 +40,13 @@ const CommentContainer = ({urlPath,postId}) => {
         /* 댓글 데이터들 fetch */
         const fetchComments = async () =>{
             try {
-                const response = await fetch(`/api/community/board/${urlPath}/post/${postId}/comment/getComments`)
-                if(response.ok){
-                    const data = await response.json();
-                    setCommentDataList(data);
-                }
+                const response = await apiFetch(`/api/community/board/${urlPath}/post/${postId}/comment/getComments`)
+                const data = await response.json();
+                setCommentDataList(data);
             }catch (e) {
-                console.error("댓글 로딩 중 에러 발생:", e);
+                console.log(`댓글목록 가져오던 중 오류발생  ${e.message}`);
             }
         }
-
         if(postId) {
             fetchComments();
         }

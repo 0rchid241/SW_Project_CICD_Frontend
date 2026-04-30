@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {Button} from "@mui/material";
+import {apiFetch} from "../util/apiFetch.js";
 
 const PostLikeButton = ({urlPath,postId,initialLikeCount}) => {
 
@@ -22,15 +23,12 @@ const PostLikeButton = ({urlPath,postId,initialLikeCount}) => {
         setIsLiked(true);
 
         try {
-            const response = await fetch(`/api/community/board/${urlPath}/post/${postId}/likes/addLike`, {
+            const response = await apiFetch(`/api/community/board/${urlPath}/post/${postId}/likes/addLike`, {
                 method:"POST"
             });
-            if(!response.ok){
-                const errorMessage = await response.text();
-                throw new Error(errorMessage);
-            }
+
         }catch (error) {
-            // 💡 [Step 4] 롤백(Rollback): 서버 통신 실패 시 UI를 원상 복구
+            //  롤백(Rollback): 서버 통신 실패 시 UI를 원상 복구
             console.error("추천 실패:", error);
             alert(error.message || "추천 처리 중 네트워크 오류가 발생했습니다.");
 
