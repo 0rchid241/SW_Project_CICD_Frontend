@@ -141,6 +141,14 @@ const LoginPage = () => {
                     >
                         Naver로 계속하기
                     </Button>
+
+                    <Button
+                        variant="outlined"
+                        fullWidth
+                        onClick={() => {window.location.href = "/api/oauth/kakao/login";}}
+                    >
+                        Kakao로 계속하기
+                    </Button>
                 </form>
         </div>
     );

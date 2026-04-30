@@ -17,6 +17,7 @@ import OAuthSuccessPage from "./componenets/Sign/OAuthSuccessPage.jsx";
 import {AuthContext, AuthProvider} from "./context/AuthContext.jsx";
 import SuperAdminPage from "./componenets/admin/SuperAdminPage.jsx";
 import NaverOAuthSignupPage from "./componenets/Sign/NaverOAuthSignupPage.jsx";
+import KakaoOAuthSignupPage from "./componenets/Sign/KakaoOAuthSignupPage.jsx";
 
 /* MUI의 기본 다크 테마*/
 const darkTheme = createTheme({
@@ -64,6 +65,8 @@ const App = () => {
                                 <Route path={"/oauth/google/signup"} element={<GoogleOAuthSignupPage/>}/>
                                 {/*네이버 계정 회원가입 페이지로 이동합니다.*/}
                                 <Route path={"/oauth/naver/signup"} element={<NaverOAuthSignupPage/>}/>
+                                {/*카카오 계정 회원가입 페이지로 이동합니다.*/}
+                                <Route path={"/oauth/kakao/signup"} element={<KakaoOAuthSignupPage/>}/>
                                 {/*소셜 계정 회원가입 성공 페이지로 이동합니다.*/}
                                 <Route path={"/oauth/success"} element={<OAuthSuccessPage/>}/>
 
