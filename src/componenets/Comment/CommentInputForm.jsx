@@ -29,27 +29,25 @@ const CommentInputForm = ({onSubmit,isLoggedIn}) => {
             setErrorMessage("내용을 입력해주세요.");
             return;
         }
-
         if(!isLoggedIn && (!commentData.authorName || !commentData.password)){
             setErrorMessage("이름, 비밀번호를 입력해주세요");
             return;
         }
 
         /* 인자로 받은 댓글작성핸들러 실행 */
-        const response = await onSubmit(commentData);
-
-        /* 댓글 입력 초기화 */
-        if (response && response.ok) {
+        try {
+            await onSubmit(commentData);
+            /* 댓글 입력 초기화 */
             setCommentData({
                 authorName: "",
                 password: "",
                 content: ""
             });
             setErrorMessage("")
-        }else if(response){
-            const errorResponse = await response.json();
-            setErrorMessage(errorResponse.message);
+        }catch (e) {
+            setErrorMessage(e.message);
         }
+
     }
 
 

@@ -1,6 +1,7 @@
 import React, {useContext, useState} from 'react';
 import {AuthContext} from "../../context/AuthContext.jsx";
 import {Alert, Box, Button, Paper, Stack, TextField, Typography} from "@mui/material";
+import {apiFetch} from "../util/apiFetch.js";
 
 const SuperAdminPage = () => {
 
@@ -34,31 +35,18 @@ const SuperAdminPage = () => {
             return;
         }
         try {
-            const response = await fetch('/api/admin/super/create/board', {
+            await apiFetch('/api/admin/super/create/board', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // AuthContext에서 가져온 토큰을 헤더에 삽입!
-                    ...(token && { 'Authorization': `Bearer ${token}` })
-                },
                 body: JSON.stringify(formData)
             });
+            setStatus({ type: 'success', message: `[${formData.name}] 커뮤니티가 성공적으로 생성되었습니다!` });
+            // 폼 초기화
+            setFormData({ name: '', urlPath: '', description: '' });
 
-            if (response.ok) {
-                setStatus({ type: 'success', message: `[${formData.name}] 커뮤니티가 성공적으로 생성되었습니다!` });
-                // 폼 초기화
-                setFormData({ name: '', urlPath: '', description: '' });
-            } else {
-                // 🚨 지금은 백엔드에서 에러가 길게 오거나 String으로 오겠지만,
-                // 나중에 전역 예외 처리기를 만들면 이 부분을 아주 예쁜 JSON으로 받을 수 있습니다!
-                const errorData = await response.text();
-                setStatus({ type: 'error', message: errorData || "생성에 실패했습니다." });
-            }
         } catch (error) {
-            console.error(error);
-            setStatus({ type: 'error', message: '서버와 통신 중 오류가 발생했습니다.' });
+            console.error(error.message);
+            setStatus({ type: 'error', message: error.message });
         }
-    
     }
 
     return (

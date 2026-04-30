@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import Post from "./Post.jsx";
 import {useNavigate} from "react-router-dom";
+import {apiFetch} from "../util/apiFetch.js";
 
 const PopularPostListPage = () => {
 
@@ -24,12 +25,11 @@ const PopularPostListPage = () => {
 
         const fetchPopularPostData = async ()=>{
             try {
-                const response = await fetch('/api/community/board/popular/');
-                if(response.ok){
-                    const data = await response.json();
-                    setPostDataList(data);
-                    setLoading(false)
-                }
+                const response = await apiFetch('/api/community/board/popular/');
+                const data = await response.json();
+                setPostDataList(data);
+                setLoading(false)
+
             }catch (e) {
                 console.log(`인기글 불러오다가 오류 발생. ${e} `);
             }

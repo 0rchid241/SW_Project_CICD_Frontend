@@ -11,13 +11,10 @@ const Comment = ({comment,isChild,onAddReply}) => {
 
     // 답글 등록 시 실행될 핸들러
     const handleReplySubmit = async (data) => {
-        const isSuccess = await onAddReply({ ...data, parentId: comment.id });
+        await onAddReply({ ...data, parentId: comment.id });
 
         // 통신에 성공했다면 답글 입력창을 닫아줍니다.
-        if (isSuccess) {
-            setIsReplying(false);
-        }
-        return isSuccess; // InputForm이 입력창을 비울지 말지 결정하도록 결과 반환
+        setIsReplying(false);
     };
 
 

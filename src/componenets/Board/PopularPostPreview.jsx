@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {Box, CircularProgress, List, ListItem, ListItemButton, ListItemText, Typography} from "@mui/material";
 import {grey} from "@mui/material/colors";
+import {apiFetch} from "../util/apiFetch.js";
 
 
 const PopularPostPreview = () => {
@@ -12,9 +13,8 @@ const PopularPostPreview = () => {
 
     useEffect(() => {
         const fetchTop5 = async ()=>{
-            
             try {
-                const response = await fetch("/api/community/board/popular/top5");
+                const response = await apiFetch("/api/community/board/popular/top5");
                 const data = await response.json();
                 setPreviewPostData(data);
             }catch (e) {

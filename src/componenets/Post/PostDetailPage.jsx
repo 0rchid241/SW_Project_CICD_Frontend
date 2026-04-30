@@ -6,6 +6,7 @@ import CommentContainer from "../Comment/CommentContainer.jsx";
 import PostLikeButton from "./PostLikeButton.jsx";
 import DeleteAction from "./delete/DeleteAction.jsx";
 import {AuthContext} from "../../context/AuthContext.jsx";
+import {apiFetch} from "../util/apiFetch.js";
 
 const PostDetailPage = () => {
 
@@ -20,11 +21,11 @@ const PostDetailPage = () => {
 
         const getPost = async () => {
             try {
-                const response = await fetch(`/api/community/board/${urlPath}/post/${id}`)
+                const response = await apiFetch(`/api/community/board/${urlPath}/post/${id}`)
                 const data = await response.json();
                 setPostData(data);
             } catch (error) {
-                console.error("API 호출 중 에러 발생:", error);
+                console.error("API 호출 중 에러 발생:", error.message);
             }
         };
         getPost();

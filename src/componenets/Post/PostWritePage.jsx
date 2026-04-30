@@ -3,6 +3,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Box, Button, Paper, Stack, TextField, Typography} from "@mui/material";
 import {AuthContext} from "../../context/AuthContext.jsx";
 import ErrorMessage from "../util/ErrorMessage.jsx";
+import {apiFetch} from "../util/apiFetch.js";
 
 const PostWritePage = () => {
 
@@ -41,24 +42,19 @@ const PostWritePage = () => {
         }
 
         try {
-            const response = await fetch(`/api/community/board/${urlPath}/write`,{
-                method:"POST",
-                headers:{
-                    "Content-Type": "application/json",
-                    /* 로그인 상태라면 헤더에 token 추가 */
-                    ...(token && {"Authorization": `Bearer ${token}`})
-                },
-                body:JSON.stringify(formData)
+            await apiFetch(`/api/community/board/${urlPath}/write`, {
+                method: "POST",
+                body: JSON.stringify(formData)
             });
-            if (response.ok) {
-                alert("글이 성공적으로 등록되었습니다.");
-                navigate(`/board/${urlPath}`); // 작성 완료 후 리스트로 이동
-            } else {
-                const errorResponse = await response.json();
-                setErrorMessage(errorResponse.message);
-            }
-        } catch {
-            setErrorMessage("서버와 통신할 수 없습니다.");
+
+            /* 아무이상없으면 여기도달 */
+            alert("글이 성공적으로 등록되었습니다.");
+            navigate(`/board/${urlPath}`); // 작성 완료 후 리스트로 이동
+        }
+        /* 커스텀 fetch요청에서 던지는 error 메세지 출력
+        *  ErrorResponse의 message필드 */
+        catch (error){
+            setErrorMessage(error.message)
         }
     }
 

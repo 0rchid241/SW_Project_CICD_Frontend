@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ErrorMessage from "../util/ErrorMessage.jsx";
+import {apiFetch} from "../util/apiFetch.js";
 
 const pageStyle = {
     maxWidth: "420px",
@@ -57,24 +58,13 @@ const SignupPage = () => {
         setLoading(true);
 
         try {
-            const response = await fetch("/api/auth/signup", {
+            await apiFetch("/api/auth/signup", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
                 body:JSON.stringify(formData)
             });
-
-
-            if(response.ok){
-                alert("회원가입 성공");
-            }else {
-                /* 회원가입시 예외처리되어 반환된 ErrorResponse를 받아서 출력 */
-                const errorResponse = await response.json();
-                setErrorMessage(errorResponse.message)
-            }
-        }catch {
-            setErrorMessage("서버와 통신할 수 없습니다.");
+            alert("회원가입 성공");
+        }catch (e){
+            setErrorMessage(e.message);
         }finally {
             setLoading(false);
         }
