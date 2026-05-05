@@ -12,6 +12,7 @@ import {
     TableRow
 } from "@mui/material";
 import {data, useNavigate, useParams} from "react-router-dom";
+import {apiFetch} from "../util/apiFetch.js";
 
 const PostListPage = () => {
 
@@ -29,8 +30,8 @@ const PostListPage = () => {
 
             try {
                 const [boardResponse,postResponse] = await Promise.all([
-                    fetch(`/api/community/board/${urlPath}`),
-                    fetch(`/api/community/board/${urlPath}/allPost`)
+                    apiFetch(`/api/community/board/${urlPath}`),
+                    apiFetch(`/api/community/board/${urlPath}/allPost`)
                 ])
                 const boardData = await boardResponse.json();
                 const postData = await postResponse.json();
@@ -39,7 +40,7 @@ const PostListPage = () => {
                 setPostDatas(postData);
                 setLoading(false);
             } catch (e) {
-                console.log(`getALlPost api받다가 오류남: ${e}`);
+                console.log(e.message);
             }
         }
         getAllPost();
