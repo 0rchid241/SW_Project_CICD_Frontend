@@ -27,10 +27,6 @@ const DeleteAction = ({urlPath,postId,isLoggedIn}) => {
         }
     }
 
-    useEffect(() => {
-
-    }, []);
-
     return (
         <Box sx={{ mt: 2 }}>
             <ErrorMessage errorMessage={errorMessage}/>

@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {data, useNavigate, useParams} from "react-router-dom";
 import {Box, Button, Divider, Paper, Stack, TextField, Typography} from "@mui/material";
 import CommentList from "../Comment/CommentList.jsx";
-import CommentContainer from "../Comment/CommentContainer.jsx";
+import CommentSection from "../Comment/CommentSection.jsx";
 import PostLikeButton from "./PostLikeButton.jsx";
 import DeleteAction from "./delete/DeleteAction.jsx";
 import {AuthContext} from "../../context/AuthContext.jsx";
@@ -62,7 +62,7 @@ const PostDetailPage = () => {
                 <Divider sx={{ my: 2 }} />
 
                 {/* 댓글 컴포넌트*/}
-                <CommentContainer urlPath = {urlPath} postId={id}></CommentContainer>
+                <CommentSection urlPath = {urlPath} postId={id}></CommentSection>
 
 
                 {/* 삭제 컴포넌트 */}

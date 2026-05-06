@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {Box, Typography} from "@mui/material";
-import Comment from './Comment.jsx';
+import CommentItem from './CommentItem.jsx';
 
 
-const CommentList = ({commentDataList,onAddReply}) => {
+const CommentList = ({commentDataList,onAddReply,onDelete}) => {
 
     /* 댓글 없을 떄 */
     if (!commentDataList || commentDataList.length === 0) {
@@ -22,19 +22,21 @@ const CommentList = ({commentDataList,onAddReply}) => {
                 <Box key={rootComment.id}>
 
                     {/* 루트 댓글 렌더링 */}
-                    <Comment
+                    <CommentItem
                         comment={rootComment}
                         isChild={false}
                         onAddReply={onAddReply}
+                        onDelete={onDelete}
                     />
 
                     {/*  루트 댓글 하위에 대댓글(children)이 있다면 순회하여 렌더링 */}
                     {rootComment.children && rootComment.children.map((childComment) => (
-                        <Comment
+                        <CommentItem
                             key={childComment.id}
                             comment={childComment}
                             isChild={true} // 들여쓰기를 위해 true 전달
                             onAddReply={onAddReply}
+                            onDelete={onDelete}
                         />
                     ))}
                 </Box>
