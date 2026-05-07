@@ -10,7 +10,7 @@ import {
     TableHead,
     TableRow
 } from "@mui/material";
-import Post from "./Post.jsx";
+import PostItem from "./PostItem.jsx";
 import {useNavigate} from "react-router-dom";
 import {apiFetch} from "../util/apiFetch.js";
 
@@ -65,7 +65,7 @@ const PopularPostListPage = () => {
 
                     <TableBody>
                         {postDataList.map((post) => (
-                            <Post key={post.id} data={post} urlPath={post.boardUrlPath}></Post>
+                            <PostItem key={post.id} data={post} urlPath={post.boardUrlPath}></PostItem>
                         ))}
                     </TableBody>
                 </Table>

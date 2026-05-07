@@ -3,10 +3,9 @@ import {Button, Dialog, Table, TableCell, TableRow} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import UserItem from "../user/UserItem.jsx";
 
-const Post = ({data,urlPath}) => {
+const PostItem = ({data,urlPath}) => {
 
     const navigate = useNavigate();
-
 
     return (
         <TableRow hover sx={{cursor: 'pointer'}}>
@@ -23,4 +22,4 @@ const Post = ({data,urlPath}) => {
     );
 };
 
-export default Post;
+export default PostItem;

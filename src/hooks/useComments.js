@@ -2,24 +2,26 @@ import React, {useContext, useEffect, useState} from 'react';
 import {AuthContext} from "../context/AuthContext.jsx";
 import {apiFetch} from "../componenets/util/apiFetch.js";
 
-const useComments = (urlPath,postId) => {
+export const useComments = (urlPath,postId) => {
 
     const [commentDataList, setCommentDataList] = useState([])
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
 
-    /* 댓글 데이터들 fetch */
-    const fetchComments = async () =>{
-        try {
-            const response = await apiFetch(`/api/community/board/${urlPath}/post/${postId}/comment/getComments`)
-            const data = await response.json();
-            setCommentDataList(data);
-        }catch (e) {
-            console.log(`댓글목록 가져오던 중 오류발생  ${e.message}`);
-        }
-    }
+
 
     useEffect(() => {
+        /* 댓글 데이터들 fetch */
+        const fetchComments = async () =>{
+            try {
+                const response = await apiFetch(`/api/community/board/${urlPath}/post/${postId}/comment/getComments`)
+                const data = await response.json();
+                setCommentDataList(data);
+            }catch (e) {
+                console.log(`댓글목록 가져오던 중 오류발생  ${e.message}`);
+            }
+        }
+
         if(postId){
             fetchComments();
         }

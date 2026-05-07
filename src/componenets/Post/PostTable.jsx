@@ -1,0 +1,45 @@
+import React from 'react';
+import PostItem from "./PostItem.jsx";
+import {Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import ErrorMessage from "../util/ErrorMessage.jsx";
+
+const PostTable = ({defaultUrlPath,
+                       postDataList,
+                       boardInfo,
+                       errorMessage}) => {
+
+    return (
+        <Box>
+            <ErrorMessage errorMessage={errorMessage}/>
+
+            <TableContainer>
+                <h1>{boardInfo?.name|| `내가 쓴 글`}</h1>
+                <Table sx={{minWidth: 650}} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align={"center"}>번호</TableCell>
+                            <TableCell align={"center"}>제목</TableCell>
+                            <TableCell align={"center"}>글쓴이</TableCell>
+                            <TableCell align={"center"}>작성일</TableCell>
+                        </TableRow>
+                    </TableHead>
+
+
+                    <TableBody>
+                        {postDataList.map((post) => (
+                            <PostItem
+                                key={post.id}
+                                data={post}
+                                urlPath={defaultUrlPath || post.urlPath}>
+                            </PostItem>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+
+        </Box>
+    );
+};
+
+export default PostTable;
