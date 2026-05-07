@@ -9,7 +9,10 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow,
+    TextField,
+    MenuItem,
+    Typography
 } from "@mui/material";
 import {data, useNavigate, useParams} from "react-router-dom";
 
@@ -21,8 +24,48 @@ const PostListPage = () => {
 
     const [loading, setLoading] = useState(true)
     
-    
     const {urlPath} = useParams()
+
+    const [searchType, setSearchType] = useState("all");
+    const [keyword, setKeyword] = useState("");
+    const [searchResultList, setSearchResultList] = useState(null);
+    const [message, setMessage] = useState("");
+
+    const handleSearch = async (e) => {
+        e.preventDefault();
+
+        if (!keyword.trim()) {
+            setMessage("검색어를 입력해주세요.");
+            return;
+        }
+
+        try {
+            setMessage("");
+
+            const response = await fetch(`/api/community/board/${urlPath}/posts/search?type=${searchType}&keyword=${encodeURIComponent(keyword)}`);
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || "검색에 실패했습니다.");
+            }
+
+            const data = await response.json();
+            setSearchResultList(data);
+
+            if (data.length === 0) {
+                setMessage("검색 결과가 없습니다.");
+            }
+        } catch (err) {
+            console.error(err);
+            setMessage(err.message || "검색 중 오류가발생했습니다.");
+        }
+    };
+
+    const handleResetSearch = () => {
+        setKeyword("");
+        setSearchResultList(null);
+        setMessage("");
+    };
 
     useEffect(() => {
         const getAllPost = async () => {
@@ -55,6 +98,8 @@ const PostListPage = () => {
         );
     }
 
+    const displayPostList = searchResultList === null ? postDataList : searchResultList;
+
     return (
 
         <Box>
@@ -71,7 +116,7 @@ const PostListPage = () => {
                     </TableHead>
 
                     <TableBody>
-                        {postDataList.map((post) => (
+                        {displayPostList.map((post) => (
                             <Post key={post.id} data={post} urlPath={urlPath}></Post>
                         ))}
                     </TableBody>
@@ -87,9 +132,37 @@ const PostListPage = () => {
                 >글쓰기
                 </Button>
             </Box>
+
+            <Box component="form" onSubmit={handleSearch} sx={{ display: "flex", gap: 1, mb: 2 }}>
+                <TextField
+                    select
+                    size="small"
+                    value={searchType}
+                    onChange={(e) => setSearchType(e.target.value)}
+                    sx={{ width: 130 }}>
+                    <MenuItem value="all">전체</MenuItem>
+                    <MenuItem value="title">제목</MenuItem>
+                    <MenuItem value="content">내용</MenuItem>
+                    <MenuItem value="author">작성자</MenuItem>
+                </TextField>
+
+                <TextField
+                    size="small"
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    placeholder="검색어를 입력하세요"
+                    fullWidth/>
+
+                <Button type="submit" variant="contained">검색</Button>
+                <Button type="button" variant="outlined" onClick={handleResetSearch}>초기화</Button>
+            </Box>
+
+            {message && (
+                <Typography sx={{ mb: 2 }} color="text.secondary">
+                    {message}
+                </Typography>
+            )}
         </Box>
-
-
     );
 };
 
