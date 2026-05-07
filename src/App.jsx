@@ -9,9 +9,8 @@ import PostDetailPage from "./componenets/Post/PostDetailPage.jsx";
 import BoardListPage from "./componenets/Board/BoardListPage.jsx";
 import LayOut from "./componenets/util/LayOut.jsx";
 import LoginPage from "./componenets/Sign/LoginPage.jsx";
-import PopularPostPreview from "./componenets/Board/PopularPostPreview.jsx";
 import PopularPostListPage from "./componenets/Post/PopularPostListPage.jsx";
-import Mypage from "./componenets/Sign/Mypage.jsx";
+import MyPage from "./componenets/user/mypage/MyPage.jsx";
 import GoogleOAuthSignupPage from "./componenets/Sign/GoogleOAuthSignupPage.jsx";
 import OAuthSuccessPage from "./componenets/Sign/OAuthSuccessPage.jsx";
 import {AuthContext, AuthProvider} from "./context/AuthContext.jsx";
@@ -55,8 +54,6 @@ const App = () => {
                                 <Route path={"/signup"} element={<SignupPage/>}/>
                                 {/*로그인 페이지로 이동합니다.*/}
                                 <Route path={"/login"} element={<LoginPage/>}/>
-                                {/*개인 페이지로 이동합니다.*/}
-                                <Route path={"/me"} element={<Mypage/>}/>
                                 {/*회원가입 페이지로 이동합니다.*/}
                                 <Route path={"/signup"} element={<SignupPage/>}/>
                                 {/*로그인 페이지로 이동합니다.*/}
@@ -71,7 +68,7 @@ const App = () => {
                                 <Route path={"/oauth/success"} element={<OAuthSuccessPage/>}/>
 
                                 {/*개인 페이지로 이동합니다.*/}
-                                <Route path={"/me"} element={<Mypage/>}/>
+                                <Route path={"/me"} element={<MyPage/>}/>
 
                                 {/* 인기 게시글 목록으로 이동*/}
                                 <Route path={"/board/popular"} element={<PopularPostListPage/>}/>

@@ -1,13 +1,7 @@
 import React from 'react';
-import { Box, Paper, Typography, Button, Stack } from '@mui/material';
-import { useNavigate } from "react-router-dom";
+import {Box, Paper, Stack, Typography} from "@mui/material";
 
-const Mypage = () => {
-    const navigate = useNavigate();
-
-    const username = localStorage.getItem("username");
-    const nickname = localStorage.getItem("nickname");
-
+const UserInfo = () => {
     return (
         <Box>
             <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>
@@ -21,11 +15,11 @@ const Mypage = () => {
 
                 <Stack spacing={1.5}>
                     <Typography>
-                        <strong>아이디:</strong> {username || "정보 없음"}
+                        <strong>아이디:</strong> { "정보 없음"}
                     </Typography>
 
                     <Typography>
-                        <strong>닉네임:</strong> {nickname || "정보 없음"}
+                        <strong>닉네임:</strong> { "정보 없음"}
                     </Typography>
 
                     <Typography color="text.secondary">
@@ -38,4 +32,4 @@ const Mypage = () => {
     );
 };
 
-export default Mypage;
+export default UserInfo;
