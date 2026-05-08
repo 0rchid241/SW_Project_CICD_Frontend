@@ -8,8 +8,6 @@ export const useComments = (urlPath,postId) => {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
 
-
-
     useEffect(() => {
         /* 댓글 데이터들 fetch */
         const fetchComments = async () =>{

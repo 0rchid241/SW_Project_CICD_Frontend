@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {Box, CircularProgress, List, ListItem, ListItemButton, ListItemText, Typography} from "@mui/material";
 import {grey} from "@mui/material/colors";
 import {apiFetch} from "../util/apiFetch.js";
+import LoadingCircle from "../util/LoadingCircle.jsx";
 
 
 const PopularPostPreview = () => {
@@ -27,7 +28,7 @@ const PopularPostPreview = () => {
     }, []);
 
 
-    if (loading) return <CircularProgress size={24} sx={{ display: 'block', margin: '20px auto' }} />;
+    if (loading) return <LoadingCircle/>;
     
     return (
         <Box sx={{ mb: 5, p: 2,bgcolor: "grey", borderRadius: 2 }}>

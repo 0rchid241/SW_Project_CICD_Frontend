@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import LoadingCircle from "./util/LoadingCircle.jsx";
 
 const pageStyle = {
     padding: "24px",
@@ -190,7 +191,10 @@ const OpsPage = () => {
     }, []);
 
     if (loading) {
-        return <div style={pageStyle}>운영 상태 불러오는 중...</div>;
+        return <div style={pageStyle}>
+            운영 상태 불러오는 중...
+            <LoadingCircle/>
+        </div>;
     }
 
     if (error) {
