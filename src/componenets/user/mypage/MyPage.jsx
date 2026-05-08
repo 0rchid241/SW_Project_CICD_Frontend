@@ -11,6 +11,7 @@ import {
 
 import UserInfo from "./UserInfo.jsx";
 import MyPosts from "./MyPosts.jsx";
+import MyCommentsContainer from "./MyCommentsContainer.jsx";
 
 const MyPage = () => {
 
@@ -27,7 +28,7 @@ const MyPage = () => {
         switch (activeMenu) {
             case 'INFO': return <UserInfo/>;
             case 'POSTS': return <MyPosts/>;
-            case 'COMMENTS': return <MyComments/>;
+            case 'COMMENTS': return <MyCommentsContainer/>;
             case 'SETTINGS': return <Box>환경설정 (준비 중)</Box>;
             default : return <UserInfo/>
         }

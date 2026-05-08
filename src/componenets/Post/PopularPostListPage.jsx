@@ -13,6 +13,7 @@ import {
 import PostItem from "./PostItem.jsx";
 import {useNavigate} from "react-router-dom";
 import {apiFetch} from "../util/apiFetch.js";
+import LoadingCircle from "../util/LoadingCircle.jsx";
 
 const PopularPostListPage = () => {
 
@@ -42,9 +43,7 @@ const PopularPostListPage = () => {
     /* 비동기 처리 중 null값 렌더링을 피하기 위해 로딩중 띄울 화면 */
     if (loading || postDataList.length===0) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
-                <CircularProgress /> {/* MUI 로딩 스피너 */}
-            </Box>
+            <LoadingCircle/>
         );
     }
 

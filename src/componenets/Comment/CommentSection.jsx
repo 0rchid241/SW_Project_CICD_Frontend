@@ -9,7 +9,6 @@ import useComments from "../../hooks/useComments.js";
 const CommentSection = ({urlPath,postId}) => {
 
     const {isLoggedIn} = useContext(AuthContext);
-
     const {commentDataList,createComment, deleteComment}=useComments(urlPath,postId);
 
 
@@ -31,6 +30,7 @@ const CommentSection = ({urlPath,postId}) => {
                 commentDataList={commentDataList}
                 onAddReply={createComment}
                 onDelete={deleteComment}
+                isFlatList={false}
             />
         </Box>
     );

@@ -14,7 +14,6 @@ const CommentList = ({commentDataList,onAddReply,onDelete}) => {
         );
     }
 
-
     return (
         <Box>
             {/*  루트 댓글 리스트 순회 */}
