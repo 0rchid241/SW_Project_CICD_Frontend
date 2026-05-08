@@ -80,7 +80,9 @@ const PostListPage = () => {
 
     return (
         <>
-            <PostTable defaultUrlPath={urlPath} postDataList={postDataList} boardInfo={boardInfo} errorMessage={errorMessage}/>
+            {/* 글 목록 띄우는 컴포넌트 */}
+            <PostTable defaultUrlPath={urlPath} postDataList={displayPostList} boardInfo={boardInfo} errorMessage={errorMessage}/>
+
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
                 <Button
                     variant="contained"
@@ -90,6 +92,7 @@ const PostListPage = () => {
                 >글쓰기
                 </Button>
             </Box>
+
             <Box component="form" onSubmit={handleSearch} sx={{ display: "flex", gap: 1, mb: 2 }}>
                 <TextField
                     select
