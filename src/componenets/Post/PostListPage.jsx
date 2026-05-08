@@ -1,28 +1,20 @@
-import React, {useEffect, useState} from 'react';
-import PostItem from "./PostItem.jsx";
+import React from 'react';
 import {
     Box,
     Button,
     CircularProgress,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow
+
 } from "@mui/material";
-import {data, useNavigate, useParams} from "react-router-dom";
-import {apiFetch} from "../util/apiFetch.js";
+import { useNavigate, useParams} from "react-router-dom";
 import {useBoardPosts} from "../../hooks/useBoardPosts.js";
-import ErrorMessage from "../util/ErrorMessage.jsx";
 import PostTable from "./PostTable.jsx";
 
 const PostListPage = () => {
 
     const {urlPath} = useParams()
     const navigate = useNavigate();
-
     const {boardInfo,postDataList,loading,errorMessage} =useBoardPosts(urlPath)
+
 
     /* 비동기 처리 중 null값 렌더링을 피하기 위해 로딩중 띄울 화면 */
     if (loading || !boardInfo) {
