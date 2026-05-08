@@ -16,8 +16,9 @@ import {
 import { useNavigate, useParams} from "react-router-dom";
 import {useBoardPosts} from "../../hooks/useBoardPosts.js";
 import PostTable from "./PostTable.jsx";
+import {apiFetch} from "../util/apiFetch.js";
 
-const PostListPage = () => {
+const BoardPage = () => {
 
     const {urlPath} = useParams()
     const navigate = useNavigate();
@@ -39,13 +40,7 @@ const PostListPage = () => {
         try {
             setMessage("");
 
-            const response = await fetch(`/api/community/board/${urlPath}/posts/search?type=${searchType}&keyword=${encodeURIComponent(keyword)}`);
-
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text || "검색에 실패했습니다.");
-            }
-
+            const response = await apiFetch(`/api/community/board/${urlPath}/posts/search?type=${searchType}&keyword=${encodeURIComponent(keyword)}`);
             const data = await response.json();
             setSearchResultList(data);
 
@@ -63,8 +58,6 @@ const PostListPage = () => {
         setSearchResultList(null);
         setMessage("");
     };
-
-
 
 
     /* 비동기 처리 중 null값 렌더링을 피하기 위해 로딩중 띄울 화면 */
@@ -128,4 +121,4 @@ const PostListPage = () => {
     );
 };
 
-export default PostListPage;
+export default BoardPage;

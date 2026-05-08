@@ -1,4 +1,4 @@
-import PostListPage from "./componenets/Post/PostListPage.jsx";
+import BoardPage from "./componenets/Post/BoardPage.jsx";
 import {Container, createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 import {Routes,Route} from "react-router-dom";
 
@@ -41,7 +41,7 @@ const App = () => {
 
 
                                 {/* 특정 커뮤니티의 게시글 리스트 출력 */}
-                                <Route path={"/board/:urlPath"} element={<PostListPage/>}/>
+                                <Route path={"/board/:urlPath"} element={<BoardPage/>}/>
                                 {/* /write 글쓰기 페이지로 이동합니다.*/}
                                 <Route path={"/board/:urlPath/write"} element={<PostWritePage />} />
                                 {/* 상세 글 페이지로 이동합니다. */}
