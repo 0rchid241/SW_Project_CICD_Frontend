@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Box, Paper, Typography, TextField, Button, Stack, Avatar } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import {AuthContext} from "../../context/AuthContext.jsx";
 
 const KakaoOAuthSignupPage = () => {
     const navigate = useNavigate();
@@ -14,6 +15,8 @@ const KakaoOAuthSignupPage = () => {
     const [nickname, setNickname] = useState("");
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const {login} = useContext(AuthContext);
 
     useEffect(() => {
         const fetchKakaoInfo = async () => {
@@ -71,11 +74,14 @@ const KakaoOAuthSignupPage = () => {
                 throw new Error(data.message || "카카오 회원가입에 실패했습니다.");
             }
 
-            localStorage.setItem("accessToken", data.accessToken);
-            localStorage.setItem("username", data.username);
-            localStorage.setItem("nickname", data.nickname);
+            // localStorage.setItem("accessToken", data.accessToken);
+            // localStorage.setItem("username", data.username);
+            // localStorage.setItem("nickname", data.nickname);
+            //
+            // window.dispatchEvent(new Event("auth-change"));
 
-            window.dispatchEvent(new Event("auth-change"));
+            login(data);
+            alert("로그인에 성공했습니다.");
 
             navigate("/");
         } catch (err) {

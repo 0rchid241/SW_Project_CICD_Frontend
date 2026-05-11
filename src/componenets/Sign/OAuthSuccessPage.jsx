@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Box, Paper, Typography, CircularProgress } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import {AuthContext} from "../../context/AuthContext.jsx";
 
 const OAuthSuccessPage = () => {
     const navigate = useNavigate();
@@ -8,6 +9,8 @@ const OAuthSuccessPage = () => {
 
     const ticket = searchParams.get("ticket");
     const [message, setMessage] = useState("로그인 처리 중입니다...");
+
+    const {login} = useContext(AuthContext);
 
     useEffect(() => {
         const exchangeTicket = async () => {
@@ -26,11 +29,14 @@ const OAuthSuccessPage = () => {
 
                 const data = await response.json();
 
-                localStorage.setItem("accessToken", data.accessToken);
-                localStorage.setItem("username", data.username);
-                localStorage.setItem("nickname", data.nickname);
+                // localStorage.setItem("accessToken", data.accessToken);
+                // localStorage.setItem("username", data.username);
+                // localStorage.setItem("nickname", data.nickname);
+                //
+                // window.dispatchEvent(new Event("auth-change"));
 
-                window.dispatchEvent(new Event("auth-change"));
+                login(data);
+                alert("로그인에 성공했습니다.");
 
                 navigate("/");
             } catch (err) {
@@ -40,7 +46,7 @@ const OAuthSuccessPage = () => {
         };
 
         exchangeTicket();
-    }, [ticket, navigate]);
+    }, [ticket, navigate, login]);
 
     return (
         <Box sx={{ maxWidth: 480, mx: 'auto' }}>
