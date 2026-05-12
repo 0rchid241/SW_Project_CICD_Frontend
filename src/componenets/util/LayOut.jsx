@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import {Outlet,useNavigate} from "react-router-dom";
 import { AppBar, Toolbar, Typography, Box, Container, Button, Stack } from '@mui/material';
+import NotificationBadge from "../NotificationBadge.jsx";
 import {AuthContext, useAuth} from "../../context/AuthContext.jsx";
 import {isSuperAdmin} from "./roleUtils.js";
 
@@ -62,6 +63,8 @@ const LayOut = () => {
                                 <Button variant="outlined" color="error" onClick={handleLogout}>
                                     로그아웃
                                 </Button>
+
+                                <NotificationBadge/>
                             </>
                         )}
                     </Stack>
