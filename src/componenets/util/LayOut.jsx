@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {Outlet,useNavigate} from "react-router-dom";
 import { AppBar, Toolbar, Typography, Box, Container, Button, Stack } from '@mui/material';
 import {AuthContext} from "../../context/AuthContext.jsx";
+import NotificationBadge from "../NotificationBadge.jsx";
 
 const LayOut = () => {
 
@@ -58,6 +59,8 @@ const LayOut = () => {
                                 <Button variant="outlined" color="error" onClick={handleLogout}>
                                     로그아웃
                                 </Button>
+
+                                <NotificationBadge/>
                             </>
                         )}
                     </Stack>
