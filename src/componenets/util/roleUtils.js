@@ -4,16 +4,16 @@ export const normalizeRole = (role) => {
     return role.replace(/^ROLE_/, "");
 };
 
-export const isSuperAdmin = (user) => {
-    return normalizeRole(user?.role) === "SUPER_ADMIN";
+export const isSuperAdmin = (role) => {
+    return normalizeRole(role) === "SUPER_ADMIN";
 };
 
-export const isCommunityAdmin = (user) => {
-    return normalizeRole(user?.role) === "COMMUNITY_ADMIN";
+export const isCommunityAdmin = (role) => {
+    return normalizeRole(role) === "COMMUNITY_ADMIN";
 };
 
-export const isAdmin = (user) => {
-    const role = normalizeRole(user?.role);
+export const isAdmin = (role) => {
+    const normalizedRole = normalizeRole(role);
 
-    return ["SUPER_ADMIN", "COMMUNITY_ADMIN"].includes(role);
+    return ["SUPER_ADMIN", "COMMUNITY_ADMIN"].includes(normalizedRole);
 };

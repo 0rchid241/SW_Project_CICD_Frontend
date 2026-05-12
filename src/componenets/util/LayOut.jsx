@@ -9,7 +9,7 @@ const LayOut = () => {
 
     const navigate = useNavigate();
 
-    const { user } = useAuth();
+    const { role } = useAuth();
 
     /* 일일이 컴포넌트에서 상태를 뽑아내지 말고 전역 Context에서 뽑아오기 */
     const { isLoggedIn, nickname, logout } = useContext(AuthContext);
@@ -55,7 +55,7 @@ const LayOut = () => {
                                 <Button color="inherit" onClick={() => navigate('/me')}>
                                     {nickname || "내 정보"}
                                 </Button>
-                                {isSuperAdmin(user) && (
+                                {isSuperAdmin(role) && (
                                     <Button onClick={()=>navigate('/admin/superAdminPage')}>
                                         관리자 페이지
                                     </Button>

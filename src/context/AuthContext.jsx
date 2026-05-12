@@ -1,4 +1,4 @@
-import {createContext, useEffect, useState} from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 
 
 /* 전역 보관함 */
@@ -8,8 +8,9 @@ export const AuthContext = createContext(null);
 export const AuthProvider = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [token, setToken] = useState(null);
-    const [username, setUsername] = useState(null)
-    const [nickname, setNickname] = useState(null)
+    const [username, setUsername] = useState(null);
+    const [nickname, setNickname] = useState(null);
+    const [role, setRole] = useState(null);
 
     useEffect(() => {
         const savedToken = localStorage.getItem('accessToken');
@@ -17,11 +18,13 @@ export const AuthProvider = ({children}) => {
         const savedUsername = localStorage.getItem('username');
 
         if(savedToken){
+            const savedRole = getRoleFromToken(savedToken);
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setToken(savedToken);
             setIsLoggedIn(true);
             setNickname(savedNickname);
             setUsername(savedUsername);
+            setRole(savedRole);
 
             /* 여기에 공용 네트워크 API 호출 불러오면 된다네. */
         }
@@ -31,6 +34,8 @@ export const AuthProvider = ({children}) => {
     /* 로그인 처리 함수
     * data는 tokenResponseDTO */
     const login = (data) => {
+        const parsedRole = getRoleFromToken(data.accessToken);
+
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("username", data.username);
         localStorage.setItem("nickname", data.nickname);
@@ -38,7 +43,8 @@ export const AuthProvider = ({children}) => {
         /* 전역 로그인 상태 및 토큰 업데이트 */
         setToken(data.accessToken);
         setUsername(data.username);
-        setNickname(data.nickname)
+        setNickname(data.nickname);
+        setRole(parsedRole);
         setIsLoggedIn(true);
     };
 
@@ -47,16 +53,48 @@ export const AuthProvider = ({children}) => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem("username");
         localStorage.removeItem("nickname");
+
         setToken(null);
         setUsername(null);
+        setNickname(null);
+        setRole(null);
         setIsLoggedIn(false);
+    };
+
+    const getRoleFromToken = (token) => {
+        if (!token) return null;
+
+        try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            return payload.role || null;
+        } catch (error) {
+            console.error("JWT role 파싱 실패:", error);
+            return null;
+        }
     };
 
     //
     return (
-        <AuthContext.Provider value={{isLoggedIn,token, username,nickname,login,logout}}>
+        <AuthContext.Provider value={{
+            isLoggedIn,
+            token,
+            username,
+            nickname,
+            role,
+            login,
+            logout}}
+        >
             {children}
         </AuthContext.Provider>
     );
+};
 
-}
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+
+    if (!context) {
+        throw new Error("useAuth는 AuthProvider 내부에서만 사용할 수 있습니다.");
+    }
+
+    return context;
+};
