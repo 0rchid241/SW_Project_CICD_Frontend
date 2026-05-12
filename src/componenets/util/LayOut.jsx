@@ -1,12 +1,14 @@
 import React, {useContext} from 'react';
 import {Outlet,useNavigate} from "react-router-dom";
 import { AppBar, Toolbar, Typography, Box, Container, Button, Stack } from '@mui/material';
-import {AuthContext} from "../../context/AuthContext.jsx";
+import {AuthContext, useAuth} from "../../context/AuthContext.jsx";
+import {isSuperAdmin} from "./roleUtils.js";
 
 const LayOut = () => {
 
     const navigate = useNavigate();
 
+    const { user } = useAuth();
 
     /* 일일이 컴포넌트에서 상태를 뽑아내지 말고 전역 Context에서 뽑아오기 */
     const { isLoggedIn, nickname, logout } = useContext(AuthContext);
@@ -52,9 +54,11 @@ const LayOut = () => {
                                 <Button color="inherit" onClick={() => navigate('/me')}>
                                     {nickname || "내 정보"}
                                 </Button>
-                                <Button onClick={()=>navigate('/admin/superAdminPage')}>
-                                    관리자 페이지
-                                </Button>
+                                {isSuperAdmin(user) && (
+                                    <Button onClick={()=>navigate('/admin/superAdminPage')}>
+                                        관리자 페이지
+                                    </Button>
+                                )}
                                 <Button variant="outlined" color="error" onClick={handleLogout}>
                                     로그아웃
                                 </Button>
