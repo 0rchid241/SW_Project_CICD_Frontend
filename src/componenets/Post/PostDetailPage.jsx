@@ -5,6 +5,7 @@ import CommentList from "../Comment/CommentList.jsx";
 import CommentSection from "../Comment/CommentSection.jsx";
 import PostLikeButton from "./PostLikeButton.jsx";
 import DeleteAction from "./delete/DeleteAction.jsx";
+import PostMenuActionContainer from "./PostMenuActionContainer.jsx";
 import {AuthContext} from "../../context/AuthContext.jsx";
 import {apiFetch} from "../util/apiFetch.js";
 
@@ -47,6 +48,7 @@ const PostDetailPage = () => {
                 <Stack direction="row" spacing={2} sx={{ mb: 2, color: 'text.secondary' }}>
                     <Typography>작성자: {postData.authorName}</Typography>
                     <Typography>작성일: {postData.createAt}</Typography>
+                    <PostMenuActionContainer postData={postData} />
                 </Stack>
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="body1" sx={{ minHeight: '300px', whiteSpace: 'pre-wrap' }}>
