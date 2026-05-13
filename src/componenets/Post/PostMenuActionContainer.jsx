@@ -4,7 +4,7 @@ import PostMenuActionPresenter from "./PostMenuActionPresenter.jsx";
 import {apiFetch} from "../util/apiFetch.js";
 import ErrorMessage from "../util/ErrorMessage.jsx";
 
-const PostMenuActionContainer = ({postData}) => {
+const PostMenuActionContainer = ({postID}) => {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const {urlPath} = useParams();
@@ -20,16 +20,13 @@ const PostMenuActionContainer = ({postData}) => {
 
     const handlePinPost = async () => {
         try {
-            await apiFetch(`/api/community/board/${urlPath}/posts/${postData.postId}/pin`,{
+            await apiFetch(`/api/community/board/${urlPath}/posts/${postID}/pin`,{
                 method:"PATCH",
                 body: JSON.stringify({
-                    postId:postData.postId
+                    postId:postID
                 })
             })
-            if (postData.isPinned)
-                alert(`글이 성공적으로 고정되었습니다.`);
-            else
-                alert(`글이 성공적으로 고정 해제되었습니다.`);
+            alert(`글 고정이 성공적으로 수정되었습니다.`);
         }catch (e) {
             setErrorMessage(e.message)
         }
