@@ -14,8 +14,10 @@ export const usePinnedPosts = (urlPath) => {
             setLoading(true);
             setPinnedMessage("");
 
-            const data = await apiFetch(`/api/community/board/${urlPath}/posts/pinned`);
-            setPinnedPosts(data);
+            const response = await apiFetch(`/api/community/board/${urlPath}/posts/pinned`);
+            const data = await response.json();
+
+            setPinnedPosts(Array.isArray(data) ? data : []);
         } catch (err) {
             setPinnedMessage(err.message);
         } finally {
