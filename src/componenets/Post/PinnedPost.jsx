@@ -4,10 +4,14 @@ import {useNavigate} from "react-router-dom";
 import ErrorMessage from "../util/ErrorMessage.jsx";
 
 const PinnedPost = ({defaultUrlPath,
-                        pinnedPosts,
+                        pinnedPosts = [],
                         errorMessage}) => {
 
     const navigate = useNavigate();
+
+    if (pinnedPosts.length === 0 && !errorMessage) {
+        return null;
+    }
 
     return (
         <Box

@@ -32,11 +32,7 @@ const BoardPage = () => {
         <>
             {/* 고정 글 목록을 띄우는 컴포넌트 */}
             {pinnedPosts.length > 0 && (
-                <Box sx={{ mb: 3 }}>
-                    <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>공지</Typography>
-
-                    <PinnedPost defaultUrlPath={urlPath} pinnedPosts={pinnedPosts} errorMessage={pinnedMessage} onPinnedChange={fetchPinnedPosts()} />
-                </Box>
+                <PinnedPost defaultUrlPath={urlPath} pinnedPosts={pinnedPosts} errorMessage={pinnedMessage} />
             )}
 
             {/* 글 목록 띄우는 컴포넌트 */}
