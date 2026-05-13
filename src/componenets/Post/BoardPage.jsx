@@ -10,7 +10,9 @@ import {useBoardPosts} from "../../hooks/useBoardPosts.js";
 import PostTable from "./PostTable.jsx";
 import LoadingCircle from "../util/LoadingCircle.jsx";
 import PostSearch from "./PostSearch.jsx";
+import PinnedPost from "./PinnedPost.jsx";
 import {usePostsSearch} from "../../hooks/usePostsSearch.js";
+import {usePinnedPosts} from "../../hooks/usePinnedPosts.js";
 
 const BoardPage = () => {
 
@@ -18,6 +20,7 @@ const BoardPage = () => {
     const navigate = useNavigate();
     const {boardInfo,postDataList,loading,errorMessage} = useBoardPosts(urlPath);
     const {searchResultList, searchMessage, searchLoading, searchPosts, resetSearch} = usePostsSearch(urlPath);
+    const {pinnedPosts, fetchPinnedPosts, pinnedMessage} = usePinnedPosts(urlPath);
 
     /* 비동기 처리 중 null값 렌더링을 피하기 위해 로딩중 띄울 화면 */
     if (loading || !boardInfo) return <LoadingCircle/>
@@ -27,6 +30,15 @@ const BoardPage = () => {
 
     return (
         <>
+            {/* 고정 글 목록을 띄우는 컴포넌트 */}
+            {pinnedPosts.length > 0 && (
+                <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>공지</Typography>
+
+                    <PinnedPost defaultUrlPath={urlPath} pinnedPosts={pinnedPosts} errorMessage={pinnedMessage} onPinnedChange={fetchPinnedPosts()} />
+                </Box>
+            )}
+
             {/* 글 목록 띄우는 컴포넌트 */}
             <PostTable defaultUrlPath={urlPath} postDataList={displayPostList} boardInfo={boardInfo} errorMessage={errorMessage}/>
 
