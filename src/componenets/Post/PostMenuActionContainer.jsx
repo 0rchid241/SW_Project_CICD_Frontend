@@ -21,7 +21,7 @@ const PostMenuActionContainer = ({postData}) => {
     const handlePinPost = async () => {
         try {
             await apiFetch(`/api/community/board/${urlPath}/posts/${postData.postId}/pin`,{
-                method:"POST",
+                method:"PATCH",
                 body: JSON.stringify({
                     postId:postData.postId
                 })
