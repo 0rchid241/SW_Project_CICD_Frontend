@@ -30,25 +30,22 @@ export const useComments = (urlPath,postId) => {
     }, [urlPath,postId,refreshTrigger]);
 
 
-
     /* 댓글 작성 핸들러
         * 댓글, 댓글 리스트 컴포넌트에서 얘를 가져다가 쓸것 */
-    const createComment = async (commentData) =>{
-        try {
-            await apiFetch(`/api/community/board/${urlPath}/post/${postId}/comment/write`,{
-                method: "POST",
-                body: JSON.stringify({
-                    authorName: commentData.authorName,
-                    password:commentData.password,
-                    content:commentData.content,
-                    parentId:commentData.parentId
-                })
+    const createComment = async (commentData) => {
+
+        await apiFetch(`/api/community/board/${urlPath}/post/${postId}/comment/write`, {
+            method: "POST",
+            body: JSON.stringify({
+                authorName: commentData.authorName,
+                password: commentData.password,
+                content: commentData.content,
+                parentId: commentData.parentId
             })
-            alert("댓글이 성공적으로 등록됐습니다.")
-            setRefreshTrigger(prev => prev + 1);
-        }catch (e) {
-            console.log(`댓글 작성 요청중 오류발생 ${e}`);
-        }
+        })
+        alert("댓글이 성공적으로 등록됐습니다.")
+        setRefreshTrigger(prev => prev + 1);
+
     }
 
     /* 댓글 삭제 APi 호출 */
