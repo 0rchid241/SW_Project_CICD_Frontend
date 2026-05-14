@@ -29,14 +29,12 @@ export const useBoardPosts = (urlPath, selectedCategoryId) => {
         }finally {
             setLoading(false);
         }
-    }, [urlPath]);
+    }, [urlPath, selectedCategoryId]);
 
 
     useEffect(() => {
-        if(urlPath){
-            fetchBoardData();
-        }
-    }, [fetchBoardData, urlPath, selectedCategoryId]);
+        fetchBoardData();
+    }, [fetchBoardData]);
 
     return {boardInfo,postDataList,loading,errorMessage}
 }
