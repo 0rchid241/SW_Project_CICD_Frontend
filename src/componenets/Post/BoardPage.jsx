@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     Box,
     Button,
@@ -13,12 +13,16 @@ import PostSearch from "./PostSearch.jsx";
 import PinnedPost from "./PinnedPost.jsx";
 import {usePostsSearch} from "../../hooks/usePostsSearch.js";
 import {usePinnedPosts} from "../../hooks/usePinnedPosts.js";
+import {useCategories} from "../../hooks/useCategories.js";
+import CategoryTabs from "./CategoryTabs.jsx";
 
 const BoardPage = () => {
 
     const {urlPath} = useParams()
     const navigate = useNavigate();
-    const {boardInfo,postDataList,loading,errorMessage} = useBoardPosts(urlPath);
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const {categories, categoryMessage} = useCategories(urlPath);
+    const {boardInfo,postDataList,loading,errorMessage} = useBoardPosts(urlPath, selectedCategoryId);
     const {searchResultList, searchMessage, searchLoading, searchPosts, resetSearch} = usePostsSearch(urlPath);
     const {pinnedPosts, fetchPinnedPosts, pinnedMessage} = usePinnedPosts(urlPath);
 
@@ -35,8 +39,16 @@ const BoardPage = () => {
                 <PinnedPost defaultUrlPath={urlPath} pinnedPosts={pinnedPosts} errorMessage={pinnedMessage} />
             )}
 
+            {/* 제목 */}
+            <Typography variant="h1">
+                {boardInfo?.name|| `내가 쓴 글`}
+            </Typography>
+
+            {/* 카테고리 목록 띄우는 컴포넌트 */}
+            <CategoryTabs categories={categories} selectedCategoryId={selectedCategoryId} onSelectCategory={setSelectedCategoryId}/>
+
             {/* 글 목록 띄우는 컴포넌트 */}
-            <PostTable defaultUrlPath={urlPath} postDataList={displayPostList} boardInfo={boardInfo} errorMessage={errorMessage}/>
+            <PostTable defaultUrlPath={urlPath} postDataList={displayPostList} errorMessage={errorMessage}/>
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
                 <Button

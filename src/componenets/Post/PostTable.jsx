@@ -5,7 +5,6 @@ import ErrorMessage from "../util/ErrorMessage.jsx";
 
 const PostTable = ({defaultUrlPath,
                        postDataList,
-                       boardInfo,
                        errorMessage}) => {
 
     return (
@@ -13,7 +12,6 @@ const PostTable = ({defaultUrlPath,
             <ErrorMessage errorMessage={errorMessage}/>
 
             <TableContainer>
-                <h1>{boardInfo?.name|| `내가 쓴 글`}</h1>
                 <Table sx={{minWidth: 650}} aria-label="simple table">
                     <TableHead>
                         <TableRow>
