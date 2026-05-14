@@ -19,7 +19,6 @@ export const AuthProvider = ({children}) => {
 
         if(savedToken){
             const savedRole = getRoleFromToken(savedToken);
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setToken(savedToken);
             setIsLoggedIn(true);
             setNickname(savedNickname);
