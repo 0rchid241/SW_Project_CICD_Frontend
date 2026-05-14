@@ -37,7 +37,7 @@ const PinnedPost = ({defaultUrlPath,
                         borderBottom: 1,
                         borderColor: "divider",
                     }}
-                    onClick={() => navigate(`/board/${defaultUrlPath}/posts/${post.id}`)}
+                    onClick={() => navigate(`/board/${defaultUrlPath}/post/${post.id}`)}
                 >
                     <Typography sx={{ fontWeight: "bold" }}>[공지] {post.title}</Typography>
                     <Typography variant="body2" color="text.secondary">{post.authorName} • {post.createAt}</Typography>
