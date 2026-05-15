@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {
     Box,
     Button,
-    CircularProgress,
+    CircularProgress, Stack,
     Typography
 } from "@mui/material";
 import { useNavigate, useParams} from "react-router-dom";
@@ -21,8 +21,9 @@ const BoardPage = () => {
     const {urlPath} = useParams()
     const navigate = useNavigate();
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const [sortMode, setSortMode] = useState("latest");
     const {categories, categoryMessage} = useCategories(urlPath);
-    const {boardInfo,postDataList,loading,errorMessage} = useBoardPosts(urlPath, selectedCategoryId);
+    const {boardInfo,postDataList,loading,errorMessage} = useBoardPosts(urlPath, selectedCategoryId, sortMode);
     const {searchResultList, searchMessage, searchLoading, searchPosts, resetSearch} = usePostsSearch(urlPath);
     const {pinnedPosts, fetchPinnedPosts, pinnedMessage} = usePinnedPosts(urlPath);
 
@@ -46,6 +47,23 @@ const BoardPage = () => {
 
             {/* 카테고리 목록 띄우는 컴포넌트 */}
             <CategoryTabs categories={categories} selectedCategoryId={selectedCategoryId} onSelectCategory={setSelectedCategoryId}/>
+
+            <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mb: 2 }}>
+                <Button
+                    size="small"
+                    variant={sortMode === "latest" ? "contained" : "outlined"}
+                    onClick={() => setSortMode("latest")}
+                >
+                    최신순
+                </Button>
+                <Button
+                    size="small"
+                    variant={sortMode === "view" ? "contained" : "outlined"}
+                    onClick={() => setSortMode("view")}
+                >
+                    조회수순
+                </Button>
+            </Stack>
 
             {/* 글 목록 띄우는 컴포넌트 */}
             <PostTable defaultUrlPath={urlPath} postDataList={displayPostList} errorMessage={errorMessage}/>

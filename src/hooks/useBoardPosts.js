@@ -4,7 +4,7 @@ import {apiFetch} from "../componenets/util/apiFetch.js";
 
 
 /* 게시판의 게시글들을 불러오는 함수 */
-export const useBoardPosts = (urlPath, selectedCategoryId) => {
+export const useBoardPosts = (urlPath, selectedCategoryId, sortMode) => {
 
     const [postDataList, setPostDatas] = useState([]);
     const [boardInfo, setBoardInfo] = useState(null)
@@ -12,7 +12,16 @@ export const useBoardPosts = (urlPath, selectedCategoryId) => {
     const [errorMessage, setErrorMessage] = useState("")
 
     const fetchBoardData = useCallback(async () => {
-        const query = selectedCategoryId ? `?categoryId=${selectedCategoryId}` : "";
+        const params = new URLSearchParams();
+
+        if (selectedCategoryId) {
+            params.append("categoryId", selectedCategoryId);
+        }
+
+        params.append("sort", sortMode || "latest");
+
+        const query = `?${params.toString()}`;
+
         try {
             setLoading(true);
             const [boardResponse, postResponse] = await Promise.all([
@@ -29,7 +38,7 @@ export const useBoardPosts = (urlPath, selectedCategoryId) => {
         }finally {
             setLoading(false);
         }
-    }, [urlPath, selectedCategoryId]);
+    }, [urlPath, selectedCategoryId, sortMode]);
 
 
     useEffect(() => {
