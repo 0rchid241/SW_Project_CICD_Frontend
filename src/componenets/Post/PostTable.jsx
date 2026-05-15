@@ -18,6 +18,7 @@ const PostTable = ({defaultUrlPath,
                             <TableCell align={"center"}>번호</TableCell>
                             <TableCell align={"center"}>제목</TableCell>
                             <TableCell align={"center"}>글쓴이</TableCell>
+                            <TableCell align={"center"}>조회수</TableCell>
                             <TableCell align={"center"}>작성일</TableCell>
                         </TableRow>
                     </TableHead>

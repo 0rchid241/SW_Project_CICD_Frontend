@@ -15,6 +15,7 @@ const PostItem = ({data,urlPath}) => {
             <TableCell align="center">
                 <UserItem authorId={data.userId} authorName={data.authorName}/>
             </TableCell>
+            <TableCell align="center">{data.viewCount ?? 0}</TableCell>
             <TableCell align="center">{data.createAt}</TableCell>
             <TableCell align="center">
             </TableCell>
