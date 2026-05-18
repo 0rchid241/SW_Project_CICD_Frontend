@@ -1,17 +1,25 @@
 import {useCallback, useEffect, useState} from "react";
 import {apiFetch} from "../componenets/util/apiFetch.js";
 
-
-
 /* 게시판의 게시글들을 불러오는 함수 */
-export const useBoardPosts = (urlPath, selectedCategoryId, sortMode) => {
+export const useBoardPosts = (urlPath, selectedCategoryId, sortMode, page, size = 10) => {
 
     const [postDataList, setPostDatas] = useState([]);
-    const [boardInfo, setBoardInfo] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [errorMessage, setErrorMessage] = useState("")
+    const [boardInfo, setBoardInfo] = useState(null);
+    const [pageInfo, setPageInfo] = useState({
+        page: 0,
+        size,
+        totalPages: 0,
+        totalElements: 0,
+        first: true,
+        last: true,
+    });
+    const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const fetchBoardData = useCallback(async () => {
+        if (!urlPath) return;
+
         const params = new URLSearchParams();
 
         if (selectedCategoryId) {
@@ -19,6 +27,8 @@ export const useBoardPosts = (urlPath, selectedCategoryId, sortMode) => {
         }
 
         params.append("sort", sortMode || "latest");
+        params.append("page", page ?? 0);
+        params.append("size", size);
 
         const query = `?${params.toString()}`;
 
@@ -32,18 +42,26 @@ export const useBoardPosts = (urlPath, selectedCategoryId, sortMode) => {
             const postData = await postResponse.json();
 
             setBoardInfo(boardData);
-            setPostDatas(postData);
+            setPostDatas(postData.context || []);
+            setPageInfo({
+                page: postData.page,
+                size: postData.size,
+                totalPages: postData.totalPages,
+                totalElements: postData.totalElements,
+                first: postData.first,
+                last: postData.last,
+            });
         }catch (e){
             setErrorMessage(e.message);
         }finally {
             setLoading(false);
         }
-    }, [urlPath, selectedCategoryId, sortMode]);
+    }, [urlPath, selectedCategoryId, sortMode, page, size]);
 
 
     useEffect(() => {
         fetchBoardData();
     }, [fetchBoardData]);
 
-    return {boardInfo,postDataList,loading,errorMessage}
+    return {boardInfo,postDataList,pageInfo,loading,errorMessage}
 }
