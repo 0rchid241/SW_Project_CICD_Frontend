@@ -42,7 +42,7 @@ export const useBoardPosts = (urlPath, selectedCategoryId, sortMode, page, size 
             const postData = await postResponse.json();
 
             setBoardInfo(boardData);
-            setPostDatas(postData.context || []);
+            setPostDatas(postData);
             setPageInfo({
                 page: postData.page,
                 size: postData.size,

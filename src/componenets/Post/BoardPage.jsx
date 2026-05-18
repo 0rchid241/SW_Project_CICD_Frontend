@@ -82,6 +82,7 @@ const BoardPage = () => {
             {/* 글 목록 띄우는 컴포넌트 */}
             <PostTable defaultUrlPath={urlPath} postDataList={displayPostList} errorMessage={errorMessage}/>
 
+            {/* 게시글 페이지 선택 */}
             {pageInfo.totalPages > 1 && (
                 <Stack alignItems="center" sx={{ mt: 3 }}>
                     <Pagination
