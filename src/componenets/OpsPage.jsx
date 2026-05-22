@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import LoadingCircle from "./util/LoadingCircle.jsx";
+import {apiFetch} from "./util/apiFetch.js";
 
 const pageStyle = {
     padding: "24px",
@@ -103,10 +104,7 @@ const OpsPage = () => {
             setLoading(true);
             setError("");
 
-            const response = await fetch("/api/ops/summary");
-            if (!response.ok) {
-                throw new Error("운영 상태 조회 실패");
-            }
+            const response = await apiFetch("/api/ops/summary");
 
             const data = await response.json();
             setSummary(data);
@@ -127,13 +125,9 @@ const OpsPage = () => {
 
             const targetBackend = previousActive === "blue" ? "green" : previousActive === "green" ? "blue" : null;
 
-            const response = await fetch("/api/ops/deploy", {
+            const response = await apiFetch("/api/ops/deploy", {
                 method: "POST",
             });
-
-            if (!response.ok) {
-                throw new Error("배포 요청 실패");
-            }
 
             let attempts = 0;
             const maxAttempts = 40;
@@ -141,10 +135,7 @@ const OpsPage = () => {
 
             const poll = async () => {
                 try {
-                    const summaryResponse = await fetch("/api/ops/summary");
-                    if (!summaryResponse.ok) {
-                        throw new Error("상태 조회 실패");
-                    }
+                    const summaryResponse = await apiFetch("/api/ops/summary");
 
                     const newSummary = await summaryResponse.json();
                     const currentActive = newSummary.activeBackend;

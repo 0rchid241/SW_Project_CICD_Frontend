@@ -48,7 +48,8 @@ const PostDetailPage = () => {
                 <Stack direction="row" spacing={2} sx={{ mb: 2, color: 'text.secondary' }}>
                     <Typography>작성자: {postData.authorName}</Typography>
                     <Typography>작성일: {postData.createAt}</Typography>
-                    <PostMenuActionContainer postId={id} />
+                    <Typography color="text.secondary">조회 {postData.viewCount ?? 0}</Typography>
+                    <PostMenuActionContainer postID={id} />
                 </Stack>
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="body1" sx={{ minHeight: '300px', whiteSpace: 'pre-wrap' }}>

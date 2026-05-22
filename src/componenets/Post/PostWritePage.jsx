@@ -1,14 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
-import {Box, Button, Paper, Stack, TextField, Typography} from "@mui/material";
+import {Box, Button, MenuItem, Paper, Stack, TextField, Typography} from "@mui/material";
 import {AuthContext} from "../../context/AuthContext.jsx";
 import ErrorMessage from "../util/ErrorMessage.jsx";
 import {apiFetch} from "../util/apiFetch.js";
+import {useCategories} from "../../hooks/useCategories.js";
 
 const PostWritePage = () => {
 
     const navigate = useNavigate();
     const {urlPath} = useParams();
+    const { categories, categoryMessage } = useCategories(urlPath);
     const [errorMessage, setErrorMessage] = useState("")
     
     const {isLoggedIn,token} = useContext(AuthContext);
@@ -17,6 +19,7 @@ const PostWritePage = () => {
         authorName : '',
         password : '',
         title : '',
+        categoryId: '',
         content : ''
     })
 
@@ -35,6 +38,11 @@ const PostWritePage = () => {
             setErrorMessage("제목과 내용을 입력해주세요 ")
             return;
         }
+        /* 카테고리 선택 검증 */
+        if (!formData.categoryId) {
+            setErrorMessage("카테고리를 선택해주세요.");
+            return;
+        }
         /* 비로그인 상태에만 이름, 비밀번호 추가로 인증*/
         if(!isLoggedIn && ( !formData.authorName || !formData.password)){
             setErrorMessage("이름과 비밀번호를 입력해주세요.")
@@ -42,9 +50,14 @@ const PostWritePage = () => {
         }
 
         try {
+            const requestBody = {
+                ...formData,
+                categoryId: Number(formData.categoryId)
+            };
+
             await apiFetch(`/api/community/board/${urlPath}/write`, {
                 method: "POST",
-                body: JSON.stringify(formData)
+                body: JSON.stringify(requestBody)
             });
 
             /* 아무이상없으면 여기도달 */
@@ -64,7 +77,7 @@ const PostWritePage = () => {
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>새 글 작성</Typography>
 
             <Paper sx={{ p: 3 }}>
-                <ErrorMessage errorMessage={errorMessage}/>
+                <ErrorMessage errorMessage={errorMessage || categoryMessage} />
                 <Stack spacing={2}>
 
                     {/* 로그인 상태가 아닐 때에만 닉네임, 비밀번호 입력. */}
@@ -99,6 +112,22 @@ const PostWritePage = () => {
                         value={formData.title}
                         onChange={handleChange}
                     />
+
+                    <TextField
+                        select
+                        label="카테고리"
+                        name="categoryId"
+                        size="small"
+                        fullWidth
+                        value={formData.categoryId}
+                        onChange={handleChange}
+                    >
+                        {categories.map((category) => (
+                            <MenuItem key={category.id} value={category.id}>
+                                {category.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
 
                     <TextField
                         label="본문 내용"

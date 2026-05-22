@@ -1,33 +1,85 @@
-import React, {useContext, useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {AuthContext, useAuth} from "../context/AuthContext.jsx";
 import {apiFetch} from "../componenets/util/apiFetch.js";
 
-export const useComments = (urlPath,postId) => {
+const normalizeRole = (role) => {
+    if (!role) return null;
+    return role.replace(/^ROLE_/, "");
+};
+
+const hasAdminPermission = (role) => {
+    const normalizedRole = normalizeRole(role);
+    return ["SUPER_ADMIN", "COMMUNITY_ADMIN"].includes(normalizedRole);
+};
+
+export const useComments = (urlPath, postId, page, size=10) => {
 
     const [commentDataList, setCommentDataList] = useState([])
+    const [commentPageInfo, setCommentPageInfo] = useState({
+        page: 0,
+        size,
+        totalPages: 0,
+        totalElements: 0,
+        first: true,
+        last: true,
+    });
+    const [commentLoading, setCommentLoading] = useState(false);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const {role} = useAuth();
 
-    const isAdmin = role === `ROLE_SUPER_ADMIN` || role === `ROLE_COMMUNITY_ADMIN`;
+    const isAdmin = hasAdminPermission(role);
 
+
+    const fetchComments = useCallback(async () => {
+        if (!urlPath || !postId) return;
+
+        const params = new URLSearchParams();
+        params.append("page", page ?? 0);
+        params.append("size", size ?? 10);
+
+        try {
+            setCommentLoading(true);
+
+            const response = await apiFetch(
+                `/api/community/board/${urlPath}/post/${postId}/comment/getComments?${params.toString()}`
+            );
+
+            const data = await response.json();
+
+            if (Array.isArray(data)) {
+                setCommentDataList(data);
+                setCommentPageInfo({
+                    page: 0,
+                    size: data.length,
+                    totalPages: 1,
+                    totalElements: data.length,
+                    first: true,
+                    last: true,
+                });
+                return;
+            }
+
+            setCommentDataList(Array.isArray(data.content) ? data.content : []);
+
+            setCommentPageInfo({
+                page: data.page ?? 0,
+                size: data.size ?? size,
+                totalPages: data.totalPages ?? 0,
+                totalElements: data.totalElements ?? 0,
+                first: data.first ?? true,
+                last: data.last ?? true,
+            });
+        } catch (e) {
+            console.error(`댓글목록 가져오던 중 오류발생 ${e.message}`);
+        } finally {
+            setCommentLoading(false);
+        }
+    }, [urlPath, postId, page, size, refreshTrigger]);
 
     useEffect(() => {
-        /* 댓글 데이터들 fetch */
-        const fetchComments = async () =>{
-            try {
-                const response = await apiFetch(`/api/community/board/${urlPath}/post/${postId}/comment/getComments`)
-                const data = await response.json();
-                setCommentDataList(data);
-            }catch (e) {
-                console.log(`댓글목록 가져오던 중 오류발생  ${e.message}`);
-            }
-        }
-
-        if(postId){
-            fetchComments();
-        }
-    }, [urlPath,postId,refreshTrigger]);
+        fetchComments();
+    }, [fetchComments]);
 
 
     /* 댓글 작성 핸들러
@@ -83,8 +135,11 @@ export const useComments = (urlPath,postId) => {
 
     return {
         commentDataList,
+        commentPageInfo,
+        commentLoading,
+        fetchComments,
         createComment,
-        deleteComment
+        deleteComment,
     };
 };
 
