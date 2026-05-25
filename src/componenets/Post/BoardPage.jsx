@@ -94,7 +94,7 @@ const BoardPage = () => {
                 </Stack>
             )}
 
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, mb:3}}>
                 <Button
                     variant="contained"
                     size="small"
