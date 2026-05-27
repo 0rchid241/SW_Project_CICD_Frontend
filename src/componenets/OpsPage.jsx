@@ -1,179 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import LoadingCircle from "./util/LoadingCircle.jsx";
+import {
+    Alert,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    CircularProgress,
+    Divider,
+    Grid,
+    Stack,
+    Typography,
+} from "@mui/material";
 import {apiFetch} from "./util/apiFetch.js";
 
-const pageStyle = {
-    padding: "24px",
-    maxWidth: "1100px",
-    margin: "0 auto",
-};
-
-const titleStyle = {
-    marginBottom: "8px",
-};
-
-const subTextStyle = {
-    color: "$666",
-    marginBottom: "24px",
-};
-
-const cardStyle = {
-    border: "1px solid #ccc",
-    borderRadius: "12px",
-    padding: "16px",
-    minWidth: "180px",
-    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
-};
-
-const gridStyle = {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-    gap: "16px",
-    marginTop: "20px",
-};
-
-const labelStyle = {
-    fontSize: "14px",
-    color: "#666",
-    marginBottom: "8px",
-};
-
-const valueStyle = {
-    fontSize: "24px",
-    fontWeight: "bold",
-};
-
-const topBoxStyle = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "12px",
-    flexWrap: "wrap",
-};
-
-const buttonRowStyle = {
-    marginTop: "28px",
-    display: "flex",
-    gap: "12px",
-    flexWrap: "wrap",
-};
-
-const buttonStyle = {
-    padding: "10px 16px",
-    border: "none",
-    borderRadius: "10px",
-    cursor: "pointer",
-    fontWeight: "bold",
-};
-
-const messageBoxStyle = {
-    marginTop: "16px",
-    padding: "14px 16px",
-    border: "1px solid #d0d7de",
-    borderRadius: "12px",
-    backgroundColor: "#1f1f1f",
-    color: "#f1f1f1",
-    whiteSpace: "pre-wrap",
-    fontSize: "14px",
-    lineHeight: "1.5",
-};
-
-const activeCardStyle = {
-    ...cardStyle,
-    border: "2px solid #222",
-};
-
-function StatusCard({ title, value, highlight = false }) {
-    return (
-        <div style={highlight ? activeCardStyle : cardStyle}>
-            <div style={labelStyle}>{title}</div>
-            <div style={valueStyle}>{value}</div>
-        </div>
-    );
-}
 
 const OpsPage = () => {
     const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [deployLoading, setDeployLoading] = useState(false);
+    const [deploying, setDeploying] = useState(false);
     const [deployMessage, setDeployMessage] = useState("");
-    const [error, setError] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     const fetchSummary = async () => {
-        try{
+        try {
             setLoading(true);
-            setError("");
+            setErrorMessage("");
 
             const response = await apiFetch("/api/ops/summary");
-
             const data = await response.json();
+
             setSummary(data);
-        } catch (err) {
-            setError("운영 상태를 불러오지 못했습니다.");
-            console.error(err);
+        } catch (error) {
+            console.error(error);
+            setErrorMessage(error.message || "운영 상태 조회 실패");
         } finally {
             setLoading(false);
-        }
-    }
-
-    const runDeploy = async() => {
-        try {
-            setDeployLoading(true);
-            setDeployMessage("배포 진행 중입니다...");
-
-            const previousActive = summary?.activeBackend;
-
-            const targetBackend = previousActive === "blue" ? "green" : previousActive === "green" ? "blue" : null;
-
-            const response = await apiFetch("/api/ops/deploy", {
-                method: "POST",
-            });
-
-            let attempts = 0;
-            const maxAttempts = 40;
-            const intervalMs = 3000;
-
-            const poll = async () => {
-                try {
-                    const summaryResponse = await apiFetch("/api/ops/summary");
-
-                    const newSummary = await summaryResponse.json();
-                    const currentActive = newSummary.activeBackend;
-
-                    const isFinished = targetBackend &&
-                        (targetBackend === "blue" || targetBackend === "green") &&
-                        currentActive === targetBackend;
-
-                    // 목표 슬롯으로 정확히 바뀐 경우 완료 판정
-                    if (isFinished) {
-                        setSummary(newSummary);
-                        setDeployMessage(`배포가 완료되었습니다. 현재 활성 서버: ${currentActive}`);
-                        setDeployLoading(false);
-                        return;
-                    }
-
-                    attempts += 1;
-
-                    if (attempts >= maxAttempts) {
-                        setDeployMessage("배포 요청은 등록되었지만 완료 여부를 아직 확인하지 못했습니다. 상태를 다시 확인해주세요.");
-                        setDeployLoading(false);
-                        return;
-                    }
-
-                    setTimeout(poll, intervalMs);
-                } catch (err) {
-                    console.error(err);
-                    setDeployMessage("배포 진행 상태를 확인하는 중 오류가 발생했습니다.");
-                    setDeployLoading(false);
-                }
-            };
-
-            setTimeout(poll, intervalMs);
-        } catch (err) {
-            console.error(err);
-            setDeployMessage("배포 요청 중 오류 발생");
-        } finally {
-            setDeployLoading(false);
         }
     };
 
@@ -181,60 +43,323 @@ const OpsPage = () => {
         fetchSummary();
     }, []);
 
-    if (loading) {
-        return <div style={pageStyle}>
-            운영 상태 불러오는 중...
-            <LoadingCircle/>
-        </div>;
-    }
+    // 배포 요청 함수
+    const handleDeploy = async () => {
+        const confirmed = window.confirm("서비스 서버에 무중단 배포를 요청할까요?");
+        if (!confirmed) return;
 
-    if (error) {
+        try {
+            setDeploying(true);
+            setDeployMessage("");
+            setErrorMessage("");
+
+            const response = await apiFetch("/api/ops/deploy", {
+                method: "POST",
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setDeployMessage(data.message || "배포 요청이 등록되었습니다.");
+            } else {
+                setErrorMessage(data.message || "배포 요청에 실패했습니다.");
+            }
+
+            await fetchSummary();
+        } catch (error) {
+            console.error(error);
+            setErrorMessage(error.message || "배포 요청 중 오류가 발생했습니다.");
+        } finally {
+            setDeploying(false);
+        }
+    };
+
+    // 상태 UP/DOWN 쓰기
+    const renderStatusChip = (status) => {
+        const value = status || "-";
+
+        if (value === "UP") {
+            return <Chip label="UP" color="success" size="small" />;
+        }
+
+        if (value === "DOWN") {
+            return <Chip label="DOWN" color="error" size="small" />;
+        }
+
+        return <Chip label={value} color="default" size="small" />;
+    };
+
+    // 상태 카드
+    const StatusCard = ({ title, status, description }) => {
         return (
-            <div style={pageStyle}>
-                <h1 style={titleStyle}>운영 페이지</h1>
-                <p>{error}</p>
-                <button style={buttonStyle} onClick={fetchSummary}>다시 시도</button>
-            </div>
+            <Card variant="outlined" sx={{ height: "100%" }}>
+                <CardContent>
+                    <Stack spacing={1}>
+                        <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            alignItems="center"
+                        >
+                            <Typography fontWeight="bold">
+                                {title}
+                            </Typography>
+
+                            {renderStatusChip(status)}
+                        </Stack>
+
+                        {description && (
+                            <Typography variant="body2" color="text.secondary">
+                                {description}
+                            </Typography>
+                        )}
+                    </Stack>
+                </CardContent>
+            </Card>
         );
-    }
+    };
+
+    const serverMode = summary?.serverMode;
+    const isTestServer = serverMode === "TEST";
+    const isServiceServer = serverMode === "SERVICE";
+
 
     return (
-        <div style={pageStyle}>
-            <div style={topBoxStyle}>
-                <div>
-                    <h1 style={titleStyle}>운영 페이지</h1>
+        <Box sx={{ maxWidth: 1100, mx: "auto", mt: 4 }}>
+            <Stack spacing={3}>
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                >
+                    <Box>
+                        <Typography variant="h5" fontWeight="bold">
+                            운영 대시보드
+                        </Typography>
 
-                    <p style={subTextStyle}>현재 서버 상태를 확인하는 내부 운영 대시보드</p>
-                </div>
-            </div>
+                        <Typography variant="body2" color="text.secondary">
+                            서버 상태와 배포 상태를 확인합니다.
+                        </Typography>
+                    </Box>
 
-            <div style={gridStyle}>
-                <StatusCard
-                    title="현재 활성 백엔드"
-                    value={summary.activeBackend}
-                    highlight={true}
-                />
-                <StatusCard title="Frontend Blue" value={summary.frontendBlue} />
-                <StatusCard title="Frontend Green" value={summary.frontendGreen} />
-                <StatusCard title="Backend Blue" value={summary.backendBlue} />
-                <StatusCard title="Backend Green" value={summary.backendGreen} />
-                <StatusCard title="DB" value={summary.db} />
-                <StatusCard title="Nginx" value={summary.nginx} />
-            </div>
+                    <Button
+                        variant="outlined"
+                        onClick={fetchSummary}
+                        disabled={loading}
+                    >
+                        새로고침
+                    </Button>
+                </Stack>
 
-            <div style={buttonRowStyle}>
-                <button style={buttonStyle} onClick={fetchSummary}>상태 새로고침</button>
+                {loading && (
+                    <Stack direction="row" spacing={1} alignItems="center">
+                        <CircularProgress size={20} />
+                        <Typography color="text.secondary">
+                            운영 상태를 불러오는 중...
+                        </Typography>
+                    </Stack>
+                )}
 
-                <button style={buttonStyle} onClick={runDeploy} disabled={deployLoading}>{deployLoading ? "배포 요청 중..." : "무중단 배포 실행"}</button>
-            </div>
+                {errorMessage && (
+                    <Alert severity="error">
+                        {errorMessage}
+                    </Alert>
+                )}
 
-            {deployMessage && (
-                <div style={messageBoxStyle}>
-                    <strong style={{ color: "1f1f1f" }}>배포 결과</strong>
-                    <div style={{ marginTop: "8px", color:"#f1f1f1" }}>{deployMessage}</div>
-                </div>
-            )}
-        </div>
+                {deployMessage && (
+                    <Alert severity="success">
+                        {deployMessage}
+                    </Alert>
+                )}
+
+                {summary && (
+                    <>
+                        <Card variant="outlined">
+                            <CardContent>
+                                <Stack spacing={2}>
+                                    <Stack
+                                        direction="row"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                    >
+                                        <Box>
+                                            <Typography variant="h6" fontWeight="bold">
+                                                서버 모드
+                                            </Typography>
+
+                                            <Typography variant="body2" color="text.secondary">
+                                                현재 서버가 테스트 서버인지 서비스 서버인지 구분합니다.
+                                            </Typography>
+                                        </Box>
+
+                                        <Chip
+                                            label={summary.serverMode || "UNKNOWN"}
+                                            color={isServiceServer ? "primary" : "warning"}
+                                        />
+                                    </Stack>
+
+                                    {isTestServer && (
+                                        <Alert severity="info">
+                                            테스트 서버입니다. 운영 상태만 확인할 수 있고, 무중단 배포 버튼은 표시되지 않습니다.
+                                        </Alert>
+                                    )}
+
+                                    {isServiceServer && (
+                                        <Alert severity="success">
+                                            서비스 서버입니다. Blue/Green 상태 확인과 무중단 배포 요청이 가능합니다.
+                                        </Alert>
+                                    )}
+
+                                    {!isTestServer && !isServiceServer && (
+                                        <Alert severity="warning">
+                                            서버 모드를 확인할 수 없습니다. 백엔드의 OPS_SERVER_MODE 설정을 확인해주세요.
+                                        </Alert>
+                                    )}
+                                </Stack>
+                            </CardContent>
+                        </Card>
+
+                        {isTestServer && (
+                            <Box>
+                                <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+                                    테스트 서버 상태
+                                </Typography>
+
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <StatusCard
+                                            title="Backend"
+                                            status={summary.backend}
+                                            description="테스트 서버 백엔드"
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <StatusCard
+                                            title="Frontend"
+                                            status={summary.frontend}
+                                            description="테스트 서버 프론트엔드"
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <StatusCard
+                                            title="DB"
+                                            status={summary.db}
+                                            description="데이터베이스"
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <StatusCard
+                                            title="Nginx"
+                                            status={summary.nginx}
+                                            description="테스트 서버 Nginx"
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        )}
+
+                        {isServiceServer && (
+                            <Box>
+                                <Stack
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ mb: 2 }}
+                                >
+                                    <Box>
+                                        <Typography variant="h6" fontWeight="bold">
+                                            서비스 서버 상태
+                                        </Typography>
+
+                                        <Typography variant="body2" color="text.secondary">
+                                            Active Backend: {summary.activeBackend || "-"}
+                                        </Typography>
+                                    </Box>
+
+                                    {summary.deployEnabled && (
+                                        <Button
+                                            variant="contained"
+                                            onClick={handleDeploy}
+                                            disabled={deploying}
+                                        >
+                                            {deploying ? "배포 요청 중..." : "무중단 배포 실행"}
+                                        </Button>
+                                    )}
+                                </Stack>
+
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <StatusCard
+                                            title="Backend Blue"
+                                            status={summary.backendBlue}
+                                            description="Blue 백엔드"
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <StatusCard
+                                            title="Backend Green"
+                                            status={summary.backendGreen}
+                                            description="Green 백엔드"
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <StatusCard
+                                            title="Frontend Blue"
+                                            status={summary.frontendBlue}
+                                            description="Blue 프론트엔드"
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <StatusCard
+                                            title="Frontend Green"
+                                            status={summary.frontendGreen}
+                                            description="Green 프론트엔드"
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <StatusCard
+                                            title="DB"
+                                            status={summary.db}
+                                            description="데이터베이스"
+                                        />
+                                    </Grid>
+
+                                    <Grid item xs={12} sm={6} md={3}>
+                                        <StatusCard
+                                            title="Nginx"
+                                            status={summary.nginx}
+                                            description="서비스 서버 Nginx"
+                                        />
+                                    </Grid>
+                                </Grid>
+
+                                <Divider sx={{ my: 3 }} />
+
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <Stack spacing={1}>
+                                            <Typography fontWeight="bold">
+                                                마지막 배포 결과
+                                            </Typography>
+
+                                            <Typography color="text.secondary">
+                                                {summary.lastDeployResult || "-"}
+                                            </Typography>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+                            </Box>
+                        )}
+                    </>
+                )}
+            </Stack>
+        </Box>
     );
 };
 
