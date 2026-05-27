@@ -49,7 +49,7 @@ const PostDetailPage = () => {
                     <Typography>작성자: {postData.authorName}</Typography>
                     <Typography>작성일: {postData.createAt}</Typography>
                     <Typography color="text.secondary">조회 {postData.viewCount ?? 0}</Typography>
-                    <PostMenuActionContainer postID={id} />
+                    <PostMenuActionContainer postId={id} />
                 </Stack>
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="body1" sx={{ minHeight: '300px', whiteSpace: 'pre-wrap' }}>

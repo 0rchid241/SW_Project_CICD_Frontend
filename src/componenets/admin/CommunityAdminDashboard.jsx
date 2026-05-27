@@ -3,8 +3,7 @@ import {useLocation, useParams} from "react-router-dom";
 import {Box, Divider, ListItem, ListItemButton, ListItemText, Typography,Grid,Paper,List} from "@mui/material";
 
 import CategoryManager from "./CategoryManager.jsx";
-import {useBoardPosts} from "../../hooks/useBoardPosts.js";
-import {useAuth} from "../../context/AuthContext.jsx";
+
 import UserManager from "./UserManager.jsx";
 
 const CommunityAdminDashboard = () => {
