@@ -42,11 +42,45 @@ export const useCategories = (urlPath) => {
 
         alert("카테고리가 생성 되었습니다.");
     }
+
+
+    /* 카테고리 비활성화 api 호출 */
+    const deactivateCategory = async (categoryId) => {
+        await apiFetch(`/api/admin/community/board/${urlPath}/category/${categoryId}/deactivate`,{
+            method:'PATCH'
+        })
+
+        await fetchCategories(); // 성공 시 목록 새로고침
+        alert("카테고리가 비활성화 되었습니다.");
+    }
+
+
+
+    /* 카테고리 순서 변경 */
+    const reorderCategory = async (categoryIdList) => {
+        // categoryIdList: [3, 1, 5, 2] 형태의 ID 배열
+        await apiFetch(`/api/admin/community/board/${urlPath}/category/reorder`, {
+            method: 'PATCH',
+            body: JSON.stringify({ categoryIdList })
+        });
+        // DB 업데이트 후 최신 목록으로 동기화
+        await fetchCategories();
+    }
+
+
+
+
+
+
+
+
     return {
         categories,
         categoryMessage,
         categoryLoading,
         fetchCategories,
-        createCategory
+        createCategory,
+        deactivateCategory,
+        reorderCategory
     };
 };
