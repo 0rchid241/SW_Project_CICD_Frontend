@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-    Alert,
+    Alert, AlertTitle,
     Box,
     Button,
     Card,
@@ -22,6 +22,12 @@ const OpsPage = () => {
     const [deployMessage, setDeployMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
+    const deployInProgressRef = useRef(false);
+
+    useEffect(() => {
+        deployInProgressRef.current = Boolean(summary?.deployInProgress);
+    }, [summary?.deployInProgress]);
+
     const fetchSummary = async () => {
         try {
             setLoading(true);
@@ -31,9 +37,17 @@ const OpsPage = () => {
             const data = await response.json();
 
             setSummary(data);
+
+            if (!data.deployInProgress) {
+                setDeployMessage("");
+            }
         } catch (error) {
             console.error(error);
-            setErrorMessage(error.message || "운영 상태 조회 실패");
+            if (deployInProgressRef.current) {
+                setErrorMessage("무중단 배포 전환 중이라 일시적으로 운영 상태 조회가 실패했습니다. 잠시 후 자동으로 다시 확인합니다.");
+            } else {
+                setErrorMessage(error.message || "운영 상태 조회 실패");
+            }
         } finally {
             setLoading(false);
         }
@@ -42,6 +56,16 @@ const OpsPage = () => {
     useEffect(() => {
         fetchSummary();
     }, []);
+
+    useEffect(() => {
+        if (!summary?.deployInProgress) return;
+
+        const intervalId = setInterval(() => {
+            fetchSummary();
+        }, 3000);
+
+        return () => clearInterval(intervalId);
+    }, [summary?.deployInProgress]);
 
     // 배포 요청 함수
     const handleDeploy = async () => {
@@ -89,6 +113,28 @@ const OpsPage = () => {
         return <Chip label={value} color="default" size="small" />;
     };
 
+    const renderDeployStatusChip = (status) => {
+        const value = status || "-";
+
+        if (value.startsWith("PENDING")) {
+            return <Chip label="PENDING" color="warning" size="small" />;
+        }
+
+        if (value.startsWith("RUNNING")) {
+            return <Chip label="RUNNING" color="info" size="small" />;
+        }
+
+        if (value.startsWith("SUCCESS")) {
+            return <Chip label="SUCCESS" color="success" size="small" />;
+        }
+
+        if (value.startsWith("FAILED")) {
+            return <Chip label="FAILED" color="error" size="small" />;
+        }
+
+        return <Chip label={value} color="default" size="small" />;
+    };
+
     // 상태 카드
     const StatusCard = ({ title, status, description }) => {
         return (
@@ -121,6 +167,7 @@ const OpsPage = () => {
     const serverMode = summary?.serverMode;
     const isTestServer = serverMode === "TEST";
     const isServiceServer = serverMode === "SERVICE";
+    const deployInProgress = Boolean(summary?.deployInProgress);
 
 
     return (
@@ -150,7 +197,7 @@ const OpsPage = () => {
                     </Button>
                 </Stack>
 
-                {loading && (
+                {loading && !deployInProgress && (
                     <Stack direction="row" spacing={1} alignItems="center">
                         <CircularProgress size={20} />
                         <Typography color="text.secondary">
@@ -159,13 +206,29 @@ const OpsPage = () => {
                     </Stack>
                 )}
 
+                {deployInProgress && (
+                    <Alert
+                        severity="info"
+                        icon={<CircularProgress size={18} />}
+                    >
+                        <AlertTitle>무중단 배포 진행 중</AlertTitle>
+                        현재 Blue/Green 전환 작업이 진행 중입니다. 완료될 때까지 자동으로 상태를 다시 확인합니다.
+                        <Box sx={{ mt: 1 }}>
+                            {renderDeployStatusChip(summary?.deployStatus)}
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                {summary?.deployStatus || "배포 상태 확인 중..."}
+                            </Typography>
+                        </Box>
+                    </Alert>
+                )}
+
                 {errorMessage && (
-                    <Alert severity="error">
+                    <Alert severity={deployInProgress ? "warning" : "error"}>
                         {errorMessage}
                     </Alert>
                 )}
 
-                {deployMessage && (
+                {deployMessage && !deployInProgress && (
                     <Alert severity="success">
                         {deployMessage}
                     </Alert>
@@ -284,7 +347,11 @@ const OpsPage = () => {
                                             onClick={handleDeploy}
                                             disabled={deploying}
                                         >
-                                            {deploying ? "배포 요청 중..." : "무중단 배포 실행"}
+                                            {deployInProgress
+                                                ? "배포 진행 중..."
+                                                : deploying
+                                                    ? "배포 요청 중..."
+                                                    : "무중단 배포 실행"}
                                         </Button>
                                     )}
                                 </Stack>
@@ -344,12 +411,20 @@ const OpsPage = () => {
                                 <Card variant="outlined">
                                     <CardContent>
                                         <Stack spacing={1}>
-                                            <Typography fontWeight="bold">
-                                                마지막 배포 결과
-                                            </Typography>
+                                            <Stack
+                                                direction="row"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                            >
+                                                <Typography fontWeight="bold">
+                                                    배포 상태
+                                                </Typography>
+
+                                                {renderDeployStatusChip(summary.deployStatus)}
+                                            </Stack>
 
                                             <Typography color="text.secondary">
-                                                {summary.lastDeployResult || "-"}
+                                                {summary.deployStatus || summary.lastDeployResult || "-"}
                                             </Typography>
                                         </Stack>
                                     </CardContent>
