@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Box,
     Button,
@@ -26,13 +26,17 @@ const BoardPage = () => {
     const [sortMode, setSortMode] = useState("latest");
     const [currentPage, setCurrentPage] = useState(0);
     const pageSize = 10;
-    const {categories, categoryMessage} = useCategories(urlPath);
+    const {categories,fetchActiveCategories} = useCategories(urlPath);
     const {boardInfo,postDataList, pageInfo, loading,errorMessage} = useBoardPosts(urlPath, selectedCategoryId, sortMode, currentPage, pageSize);
     const {searchResultList, searchMessage, searchLoading, searchPosts, resetSearch} = usePostsSearch(urlPath);
-    const {pinnedPosts, fetchPinnedPosts, pinnedMessage} = usePinnedPosts(urlPath);
+    const {pinnedPosts, pinnedMessage} = usePinnedPosts(urlPath);
 
     /* 접근한 유저의 role 확인 */
     const {role} = useAuth();
+
+    useEffect(() => {
+        fetchActiveCategories()
+    }, [fetchActiveCategories]);
 
     /* 비동기 처리 중 null값 렌더링을 피하기 위해 로딩중 띄울 화면 */
     if (loading || !boardInfo) return <LoadingCircle/>

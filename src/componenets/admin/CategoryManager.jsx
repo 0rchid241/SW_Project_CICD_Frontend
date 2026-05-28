@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
     Box, Typography, TextField, Button, Stack, Divider,
-    List, ListItem, ListItemText, CircularProgress, Paper, IconButton
+    List, ListItem, ListItemText, CircularProgress, Paper, IconButton, Switch
 } from '@mui/material';
 import {useCategories} from "../../hooks/useCategories.js";
 import ErrorMessage from "../util/ErrorMessage.jsx";
@@ -11,8 +11,8 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 
 const CategoryManager = ({urlPath}) => {
 
-    const {categories,fetchCategories,createCategory,categoryLoading,
-    deactivateCategory,reorderCategory} = useCategories(urlPath);
+    const {categories,fetchAllCategories,createCategory,categoryLoading,
+        toggleCategoryStatus,reorderCategory} = useCategories(urlPath);
 
     const [errorMessage, setErrorMessage] = useState("")
     const [localCategories, setLocalCategories] = useState([]);
@@ -29,8 +29,13 @@ const CategoryManager = ({urlPath}) => {
     };
 
     useEffect(() => {
+        fetchAllCategories();
+    }, [fetchAllCategories]);
+
+    useEffect(() => {
         setLocalCategories(categories);
     }, [categories]);
+
 
 
     /* 생성 핸들러 */
@@ -50,15 +55,15 @@ const CategoryManager = ({urlPath}) => {
         }catch (e) {
             setErrorMessage(e.message)
         }finally {
-            fetchCategories();
+            await fetchAllCategories();
         }
 
     }
 
-    /* 비활성화 핸들러 */
-    const handleDeactiveCategory = async(categoryId)=> {
+    /* 카테고리 활성/비활성 상태 변환 */
+    const handleChangeCategoryStatus = async(categoryId,currentStatus)=> {
         try {
-            await deactivateCategory(categoryId);
+            await toggleCategoryStatus(categoryId,currentStatus);
         }catch (e) {
             setErrorMessage(e.message);
         }
@@ -153,17 +158,28 @@ const CategoryManager = ({urlPath}) => {
                                                             ref={provided.innerRef}
                                                             {...provided.draggableProps}
                                                             sx={{
+                                                                // 드래그 중일 때의 배경색과, 비활성화되었을 때의 투명도(opacity) 설정
                                                                 bgcolor: snapshot.isDragging ? 'action.hover' : 'inherit',
-                                                                transition: 'background-color 0.2s ease',
+                                                                opacity: cat.active ? 1 : 0.5,
+                                                                transition: 'all 0.2s ease',
                                                             }}
                                                             secondaryAction={
-                                                                <IconButton
-                                                                    edge="end"
-                                                                    color="error"
-                                                                    onClick={() => handleDeactiveCategory(cat.id)}
-                                                                >
-                                                                    <DeleteOutlineIcon />
-                                                                </IconButton>
+                                                                // 토글 스위치와 상태 텍스트를 가로로 나란히 배치
+                                                                <Stack direction="row" alignItems="center" spacing={1}>
+                                                                    <Typography
+                                                                        variant="body2"
+                                                                        fontWeight="bold"
+                                                                        color={cat.active ? 'success.main' : 'text.secondary'}
+                                                                    >
+                                                                        {cat.active ? '공개' : '숨김'}
+                                                                    </Typography>
+                                                                    <Switch
+                                                                        edge="end"
+                                                                        checked={cat.active}
+                                                                        onChange={() => handleChangeCategoryStatus(cat.id, cat.active)}
+                                                                        color="success" // 켜졌을 때 초록색 계열로 표시
+                                                                    />
+                                                                </Stack>
                                                             }
                                                         >
                                                             {/* 드래그 손잡이 (Drag Handle) */}
@@ -173,9 +189,18 @@ const CategoryManager = ({urlPath}) => {
 
                                                             <ListItemText
                                                                 primary={cat.name}
-                                                                secondary={`활성화: ${cat.active ? 'O' : 'X'}`}
+                                                                // 비활성화 상태면 취소선을 그어서 더 명확하게 표현
+                                                                primaryTypographyProps={{
+                                                                    sx: {
+                                                                        textDecoration: cat.active ? 'none' : 'line-through',
+                                                                        color: cat.active ? 'text.primary' : 'text.secondary',
+                                                                        fontWeight: cat.active ? 'normal' : 'lighter'
+                                                                    }
+                                                                }}
                                                             />
                                                         </ListItem>
+
+
                                                         {index !== localCategories.length - 1 && <Divider />}
                                                     </React.Fragment>
                                                 )}
