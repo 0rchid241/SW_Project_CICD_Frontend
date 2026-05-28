@@ -19,6 +19,10 @@ const PostMenuActionContainer = ({postId}) => {
     }
 
     const handlePinPost = async () => {
+        if (!postId){
+            console.log('postId누락')
+            return;
+        }
         try {
             await apiFetch(`/api/admin/community/board/${urlPath}/posts/${postId}/pin`,{
                 method:"PATCH",

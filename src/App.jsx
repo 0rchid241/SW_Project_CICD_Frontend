@@ -17,6 +17,7 @@ import {AuthContext, AuthProvider} from "./context/AuthContext.jsx";
 import SuperAdminPage from "./componenets/admin/SuperAdminPage.jsx";
 import NaverOAuthSignupPage from "./componenets/Sign/NaverOAuthSignupPage.jsx";
 import KakaoOAuthSignupPage from "./componenets/Sign/KakaoOAuthSignupPage.jsx";
+import CommunityAdminDashboard from "./componenets/admin/CommunityAdminDashboard.jsx";
 
 /* MUI의 기본 다크 테마*/
 const darkTheme = createTheme({
@@ -75,6 +76,9 @@ const App = () => {
 
                                 {/* 전체 관리자 페이지로 이동.*/}
                                 <Route path={"/admin/superAdminPage"} element={<SuperAdminPage/>}/>
+                                <Route path={`/board/:urlPath/admin`} element={<CommunityAdminDashboard/>}/>
+
+
 
                             </Route>
                         </Routes>
