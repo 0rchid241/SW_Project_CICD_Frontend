@@ -32,7 +32,9 @@ const CommunityAdminDashboard = () => {
                 return <Typography variant="h6"> 게시글 고정 관리 (준비 중)</Typography>;
             // return <PostManager urlPath={urlPath} />;
             default :
-                return <Typography variant="h6"> 카테고리 관리 (준비 중)</Typography>;
+                return <Typography variant="h6">
+                    <CategoryManager urlPath={urlPath} />
+                </Typography>;
         }
     }
 

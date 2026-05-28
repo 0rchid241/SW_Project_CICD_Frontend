@@ -39,10 +39,33 @@ export const useUserManager = (urlPath) => {
 
 
 
+
+    /* 유저 정지 해제 */
+    const liftSuspension = async (userId,currentPage=0) => {
+
+        try {
+            await apiFetch(`/api/admin/community/board/${urlPath}/user/${userId}/liftSuspension`,{
+                method:`PATCH`
+            });
+            await fetchSuspendedUsers(currentPage);
+            alert("정지가 해제되었습니다.");
+
+        }catch (e) {
+            console.log(e.message);
+            throw e;
+        }
+    }
+
+
+
+
+
+
     return {
         fetchSuspendedUsers,
         suspendedUsers,
         pageInfo,
-        loading
+        loading,
+        liftSuspension
     };
 }

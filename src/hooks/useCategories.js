@@ -70,10 +70,6 @@ export const useCategories = (urlPath) => {
 
 
 
-
-
-
-
     return {
         categories,
         categoryMessage,

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useUserManager} from "../../hooks/useUserManager.js";
 import {
-    Box, CircularProgress,
+    Box, Button, CircularProgress,
     Divider, Pagination, Paper,
     Stack,
     Table,
@@ -20,7 +20,8 @@ const UserManager = ({urlPath}) => {
         fetchSuspendedUsers,
         suspendedUsers,
         pageInfo,
-        loading
+        loading,
+        liftSuspension
     }= useUserManager(urlPath);
 
     //현재 페이지 상태 (Spring은 0부터 시작, MUI는 1부터 시작)
@@ -44,6 +45,19 @@ const UserManager = ({urlPath}) => {
         // MUI에서 클릭한 페이지 번호(value)는 1부터 시작하므로 -1 해줍니다.
         setCurrentPage(value - 1);
     };
+
+    /* 정지해제 */
+    const handleLiftSuspension = async (userId) => {
+        if (window.confirm("이 유저의 정지를 해제하시겠습니까?")) {
+            try {
+                setErrorMessage(''); // 기존 에러 메시지 초기화
+                await liftSuspension(userId, currentPage);
+            } catch (e) {
+                setErrorMessage(e.message);
+            }
+        }
+    }
+
 
     return (
         <Box>
@@ -88,8 +102,14 @@ const UserManager = ({urlPath}) => {
                                     <TableCell>{new Date(user.lastSuspendedAt).toLocaleDateString()}</TableCell>
                                     <TableCell>{new Date(user.suspendUntil).toLocaleDateString()}</TableCell>
                                     <TableCell align="center">
-                                        {/* 추후 액션 버튼이 들어갈 자리 */}
-                                        -
+                                        <Button
+                                            variant="outlined"
+                                            color="success"
+                                            size="small"
+                                            onClick={()=> handleLiftSuspension(user.userId)}
+                                        >
+                                            정지 해제
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))

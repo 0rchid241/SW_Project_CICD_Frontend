@@ -19,7 +19,6 @@ const CategoryManager = ({urlPath}) => {
 
     const [formData, setFormData] = useState({
         categoryName:'',
-        displayOrder: 0
     });
     const handleChange = (e) =>{
         const {name,value} = e.target;
@@ -105,7 +104,7 @@ const CategoryManager = ({urlPath}) => {
             {/* 카테고리 생성 폼 */}
             <Paper elevation={0} sx={{ p: 2, mb: 4, border: '1px solid #e0e0e0', borderRadius: 2 }}>
                 <Typography variant="subtitle2" sx={{ mb: 2 }}>새 카테고리 생성</Typography>
-                <Stack direction="row" spacing={2} alignItems="center">
+                <Stack direction="row" spacing={40} alignItems="center">
                     <TextField
                         label="카테고리 이름"
                         size="small"
@@ -114,16 +113,8 @@ const CategoryManager = ({urlPath}) => {
                         onChange={handleChange}
                         sx={{ flexGrow: 1 }}
                     />
-                    {/* DND를 사용하므로 '표시 순서' 입력란은 숨기거나 유지할 수 있지만, 여기서는 기존 코드대로 유지했습니다. */}
-                    <TextField
-                        label="표시 순서 (숫자)"
-                        type="number"
-                        size="small"
-                        name="displayOrder"
-                        value={formData.displayOrder}
-                        onChange={handleChange}
-                        sx={{ width: 120 }}
-                    />
+
+
                     <Button variant="contained" onClick={handleCreateCategory}>
                         생성
                     </Button>
