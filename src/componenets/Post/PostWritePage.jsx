@@ -10,10 +10,14 @@ const PostWritePage = () => {
 
     const navigate = useNavigate();
     const {urlPath} = useParams();
-    const { categories, categoryMessage } = useCategories(urlPath);
+    const { categories, categoryMessage,fetchActiveCategories } = useCategories(urlPath);
     const [errorMessage, setErrorMessage] = useState("")
     
     const {isLoggedIn,token} = useContext(AuthContext);
+
+    useEffect(() => {
+        fetchActiveCategories();
+    }, [urlPath]);
 
     const [formData, setFormData] = useState({
         authorName : '',
