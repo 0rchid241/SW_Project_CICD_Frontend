@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Box,
     Button,
@@ -15,6 +15,8 @@ import {usePostsSearch} from "../../hooks/usePostsSearch.js";
 import {usePinnedPosts} from "../../hooks/usePinnedPosts.js";
 import {useCategories} from "../../hooks/useCategories.js";
 import CategoryTabs from "./CategoryTabs.jsx";
+import {isAdmin} from "../util/roleUtils.js";
+import {useAuth} from "../../context/AuthContext.jsx";
 
 const BoardPage = () => {
 
@@ -24,10 +26,17 @@ const BoardPage = () => {
     const [sortMode, setSortMode] = useState("latest");
     const [currentPage, setCurrentPage] = useState(0);
     const pageSize = 10;
-    const {categories, categoryMessage} = useCategories(urlPath);
+    const {categories,fetchActiveCategories} = useCategories(urlPath);
     const {boardInfo,postDataList, pageInfo, loading,errorMessage} = useBoardPosts(urlPath, selectedCategoryId, sortMode, currentPage, pageSize);
     const {searchResultList, searchMessage, searchLoading, searchPosts, resetSearch} = usePostsSearch(urlPath);
-    const {pinnedPosts, fetchPinnedPosts, pinnedMessage} = usePinnedPosts(urlPath);
+    const {pinnedPosts, pinnedMessage} = usePinnedPosts(urlPath);
+
+    /* 접근한 유저의 role 확인 */
+    const {role} = useAuth();
+
+    useEffect(() => {
+        fetchActiveCategories()
+    }, [fetchActiveCategories]);
 
     /* 비동기 처리 중 null값 렌더링을 피하기 위해 로딩중 띄울 화면 */
     if (loading || !boardInfo) return <LoadingCircle/>
@@ -54,10 +63,24 @@ const BoardPage = () => {
                 <PinnedPost defaultUrlPath={urlPath} pinnedPosts={pinnedPosts} errorMessage={pinnedMessage} />
             )}
 
-            {/* 제목 */}
-            <Typography variant="h1">
-                {boardInfo?.name|| `내가 쓴 글`}
-            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, mt: 2 }}>
+                {/* 제목 */}
+                <Typography variant="h2">
+                    {boardInfo?.name|| `내가 쓴 글`}
+                </Typography>
+
+
+                {/* 관리자 권한이 있을 때만 버튼 노출 */}
+                {isAdmin(role) && (
+                    <Button variant="outlined" color="secondary" size="small"
+                            onClick={() => navigate(`/board/${urlPath}/admin`,{
+                                state: { boardName: boardInfo?.name } // state 속성으로 커뮤니티 제목 전달
+                            })}>
+                        ⚙️ 커뮤니티 관리
+                    </Button>
+                )}
+            </Box>
+
 
             {/* 카테고리 목록 띄우는 컴포넌트 */}
             <CategoryTabs categories={categories} selectedCategoryId={selectedCategoryId} onSelectCategory={handleSelectCategory}/>
@@ -94,7 +117,7 @@ const BoardPage = () => {
                 </Stack>
             )}
 
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, mb:3}}>
                 <Button
                     variant="contained"
                     size="small"
