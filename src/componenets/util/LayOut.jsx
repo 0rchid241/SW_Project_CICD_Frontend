@@ -35,7 +35,7 @@ const LayOut = () => {
                         sx={{ cursor: 'pointer', fontWeight: 'bold' }}
                         onClick={() => navigate('/')}
                     >
-                        😎커뮤니티 이름 뭐로할까요~~?!?😙
+                        😎커뮤니티 이름 뭐로할까요~~?!😙
                     </Typography>
 
                     <Box sx={{ flexGrow: 1 }} />
