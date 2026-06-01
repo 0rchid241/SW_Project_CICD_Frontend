@@ -14,19 +14,19 @@ import PostItem from "./PostItem.jsx";
 import {useNavigate} from "react-router-dom";
 import {apiFetch} from "../util/apiFetch.js";
 import LoadingCircle from "../util/LoadingCircle.jsx";
+import PopularPostItem from "./PopularPostItem.jsx";
 
 const PopularPostListPage = () => {
 
     const [loading, setLoading] = useState(true);
     const [postDataList, setPostDataList] = useState([])
-    const navigate = useNavigate();
 
 
     useEffect(() => {
 
         const fetchPopularPostData = async ()=>{
             try {
-                const response = await apiFetch('/api/community/board/popular/');
+                const response = await apiFetch('/api/community/board/popular/realtime-popular');
                 const data = await response.json();
                 setPostDataList(data);
                 setLoading(false)
@@ -36,6 +36,12 @@ const PopularPostListPage = () => {
             }
         }
         fetchPopularPostData();
+
+        // 2. 10초(10000ms)마다 백그라운드에서 주기적으로 데이터 갱신
+        const intervalId = setInterval(fetchPopularPostData, 10000);
+
+        // 3. 컴포넌트가 화면에서 사라질 때 타이머 정리 (메모리 누수 방지)
+        return () => clearInterval(intervalId);
 
     }, []);
 
@@ -64,7 +70,8 @@ const PopularPostListPage = () => {
 
                     <TableBody>
                         {postDataList.map((post) => (
-                            <PostItem key={post.id} data={post} urlPath={post.boardUrlPath}></PostItem>
+                            //<PostItem key={post.postId} data={post} urlPath={post.urlPath}></PostItem>
+                            <PopularPostItem key={post.postId} data={post}/>
                         ))}
                     </TableBody>
                 </Table>
