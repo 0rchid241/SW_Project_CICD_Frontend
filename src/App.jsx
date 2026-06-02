@@ -46,7 +46,7 @@ const App = () => {
                                 {/* /write 글쓰기 페이지로 이동합니다.*/}
                                 <Route path={"/board/:urlPath/write"} element={<PostWritePage />} />
                                 {/* 상세 글 페이지로 이동합니다. */}
-                                <Route path={"/board/:urlPath/post/:id"} element={<PostDetailPage/>}/>
+                                <Route path={"/board/:urlPath/post/:postId"} element={<PostDetailPage/>}/>
 
                                 {/*운영 대시보드로 이동합니다.*/}
                                 <Route path={"/ops"} element={<OpsPage/>}/>

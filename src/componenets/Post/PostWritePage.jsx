@@ -12,7 +12,11 @@ const PostWritePage = () => {
     const {urlPath} = useParams();
     const { categories, categoryMessage,fetchActiveCategories } = useCategories(urlPath);
     const [errorMessage, setErrorMessage] = useState("")
-    
+
+    useEffect(() => {
+        fetchActiveCategories();
+    }, [urlPath]);
+
     const {isLoggedIn,token} = useContext(AuthContext);
 
     useEffect(() => {

@@ -11,18 +11,18 @@ import {apiFetch} from "../util/apiFetch.js";
 
 const PostDetailPage = () => {
 
-    const {id} = useParams();
+    const {postId} = useParams();
     const {urlPath} = useParams();
     const [postData, setPostData] = useState(null)
 
     const {isLoggedIn, token} = useContext(AuthContext);
 
     useEffect(() => {
-        console.log("현재 상세페이지 게시글 ID:", id);
+        console.log("현재 상세페이지 게시글 ID:", postId);
 
         const getPost = async () => {
             try {
-                const response = await apiFetch(`/api/community/board/${urlPath}/post/${id}`)
+                const response = await apiFetch(`/api/community/board/${urlPath}/post/${postId}`)
                 const data = await response.json();
                 setPostData(data);
             } catch (error) {
@@ -31,7 +31,7 @@ const PostDetailPage = () => {
         };
         getPost();
 
-    }, [id]);
+    }, [postId]);
 
 
     
@@ -49,7 +49,7 @@ const PostDetailPage = () => {
                     <Typography>작성자: {postData.authorName}</Typography>
                     <Typography>작성일: {postData.createAt}</Typography>
                     <Typography color="text.secondary">조회 {postData.viewCount ?? 0}</Typography>
-                    <PostMenuActionContainer postId={id} />
+                    <PostMenuActionContainer postId={postId} />
                 </Stack>
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="body1" sx={{ minHeight: '300px', whiteSpace: 'pre-wrap' }}>
@@ -59,19 +59,19 @@ const PostDetailPage = () => {
                 {/* 추천수 버튼 */}
                 <PostLikeButton
                     urlPath={urlPath}
-                    postId={id}
+                    postId={postId}
                     initialLikeCount={postData.likeCount}
                 />
                 <Divider sx={{ my: 2 }} />
 
                 {/* 댓글 컴포넌트*/}
-                <CommentSection urlPath = {urlPath} postId={id}></CommentSection>
+                <CommentSection urlPath = {urlPath} postId={postId}></CommentSection>
 
 
                 {/* 삭제 컴포넌트 */}
                 <DeleteAction
                     urlPath={urlPath}
-                    postId={id}
+                    postId={postId}
                     isLoggedIn={isLoggedIn}
                     token={token}
                 />
