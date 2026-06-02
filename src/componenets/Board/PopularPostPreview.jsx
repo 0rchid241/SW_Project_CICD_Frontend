@@ -41,10 +41,9 @@ const PopularPostPreview = () => {
                 {previewPostData.map((post) => (
                     <ListItem disablePadding key={post.id}>
 
-                        <ListItemButton onClick={() => navigate(`/board/${post.boardUrlPath}/post/${post.id}`)}>
+                        <ListItemButton onClick={() => navigate(`/board/${post.boardUrlPath}/post/${post.postId}`)}>
                             <ListItemText
                                 primary={post.title}
-                                secondary={`추천 ${post.likeCount} | ${post.createdAt}`}
                             />
                         </ListItemButton>
                     </ListItem>
