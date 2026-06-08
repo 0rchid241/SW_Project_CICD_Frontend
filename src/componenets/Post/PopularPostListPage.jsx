@@ -10,8 +10,6 @@ import {
     TableHead,
     TableRow
 } from "@mui/material";
-import PostItem from "./PostItem.jsx";
-import {useNavigate} from "react-router-dom";
 import {apiFetch} from "../util/apiFetch.js";
 import LoadingCircle from "../util/LoadingCircle.jsx";
 import PopularPostItem from "./PopularPostItem.jsx";

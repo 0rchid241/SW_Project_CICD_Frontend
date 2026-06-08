@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import PostMenuActionPresenter from "./PostMenuActionPresenter.jsx";
 import {apiFetch} from "../util/apiFetch.js";
 import ErrorMessage from "../util/ErrorMessage.jsx";
@@ -9,7 +9,7 @@ const PostMenuActionContainer = ({postId}) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const {urlPath} = useParams();
     const [errorMessage, setErrorMessage] = useState("");
-
+    const navigate = useNavigate();
     const handleOpenMenu = (e)=>{
         setAnchorEl(e.currentTarget);
     }
@@ -36,6 +36,13 @@ const PostMenuActionContainer = ({postId}) => {
         }
     }
 
+
+    const handleEditPost =  () => {
+        if (!postId){
+            navigate(`/board/${urlPath}/edit/${postId}`)
+        }
+    }
+
     return (
         <>
             <ErrorMessage errorMessage={errorMessage} />
@@ -44,6 +51,9 @@ const PostMenuActionContainer = ({postId}) => {
                 onOpenMenu={handleOpenMenu}
                 onCloseMenu={handleCloseMenu}
                 onPinPost={handlePinPost}
+                urlPath={urlPath}
+                postId={postId}
+                onEditPost={handleEditPost}
             />
         </>
     );

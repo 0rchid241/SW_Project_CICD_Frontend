@@ -68,15 +68,6 @@ const PostDetailPage = () => {
                 <CommentSection urlPath = {urlPath} postId={postId}></CommentSection>
 
 
-                {/* 삭제 컴포넌트 */}
-                <DeleteAction
-                    urlPath={urlPath}
-                    postId={postId}
-                    isLoggedIn={isLoggedIn}
-                    token={token}
-                />
-
-
             </Paper>
         </Box>
     );

@@ -3,14 +3,18 @@ import { IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {useAuth} from "../../context/AuthContext.jsx";
 import {isAdmin, isSuperAdmin} from "../util/roleUtils.js";
+import DeleteAction from "./delete/DeleteAction.jsx";
 
 const PostMenuActionPresenter = ({anchorElement,
                                     onOpenMenu,
                                     onCloseMenu,
-                                    onPinPost}) => {
+                                    onPinPost,urlPath,postId,
+                                 onEditPost}) => {
 
     const isOpen = Boolean(anchorElement);
     const {role} = useAuth();
+
+    const {token,isLoggedIn} = useAuth()
 
     return (
         <>
@@ -27,7 +31,21 @@ const PostMenuActionPresenter = ({anchorElement,
                     <MenuItem onClick={() => {onPinPost(); onCloseMenu();}}>
                         글 상단 고정/해제
                     </MenuItem>
+
+
                 )}
+                {/* 삭제 컴포넌트 */}
+                <DeleteAction
+                    urlPath={urlPath}
+                    postId={postId}
+                    isLoggedIn={isLoggedIn}
+                    token={token}
+                />
+                <MenuItem onClick={() => { onEditPost(); onCloseMenu(); }}>
+                    글 수정
+                </MenuItem>
+
+
             </Menu>
         </>
     )
