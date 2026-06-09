@@ -12,7 +12,7 @@ import LoadingCircle from "../util/LoadingCircle.jsx";
 import PostSearch from "./PostSearch.jsx";
 import PinnedPost from "./PinnedPost.jsx";
 import {usePostsSearch} from "../../hooks/usePostsSearch.js";
-import {usePinnedPosts} from "../../hooks/usePinnedPosts.js";
+import {usePinPosts} from "../../hooks/usePinPosts.js";
 import {useCategories} from "../../hooks/useCategories.js";
 import CategoryTabs from "./CategoryTabs.jsx";
 import {isAdmin} from "../util/roleUtils.js";
@@ -29,7 +29,7 @@ const BoardPage = () => {
     const {categories,fetchActiveCategories} = useCategories(urlPath);
     const {boardInfo,postDataList, pageInfo, loading,errorMessage} = useBoardPosts(urlPath, selectedCategoryId, sortMode, currentPage, pageSize);
     const {searchResultList, searchMessage, searchLoading, searchPosts, resetSearch} = usePostsSearch(urlPath);
-    const {pinnedPosts, pinnedMessage} = usePinnedPosts(urlPath);
+    const {pinnedPosts, pinnedMessage} = usePinPosts(urlPath);
 
     /* 접근한 유저의 role 확인 */
     const {role} = useAuth();

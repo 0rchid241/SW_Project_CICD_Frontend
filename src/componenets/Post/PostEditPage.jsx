@@ -5,6 +5,7 @@ import {AuthContext} from "../../context/AuthContext.jsx";
 import ErrorMessage from "../util/ErrorMessage.jsx";
 import {apiFetch} from "../util/apiFetch.js";
 import {useCategories} from "../../hooks/useCategories.js";
+import {usePostAction} from "../../hooks/usePostAction.js";
 
 const PostEditPage = () => {
     const navigate = useNavigate();
@@ -43,7 +44,7 @@ const PostEditPage = () => {
         fetchPostData();
     }, [urlPath, postId]);
 
-
+    const {editPost} = usePostAction(urlPath,postId);
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -68,14 +69,8 @@ const PostEditPage = () => {
                 password: formData.password
             };
 
-            // 백엔드 PUT API 경로에 맞게 수정
-            await apiFetch(`/api/${urlPath}/posts/${postId}`, {
-                method: "PUT",
-                body: JSON.stringify(requestBody)
-            });
+            await editPost(requestBody);
 
-            alert("글이 성공적으로 수정되었습니다.");
-            navigate(`/board/${urlPath}/posts/${postId}`); // 수정 후 해당 글 상세로 이동
         } catch (error) {
             setErrorMessage(error.message);
         }
@@ -111,7 +106,6 @@ const PostEditPage = () => {
                         onChange={handleChange}
                     />
 
-                    {/* 카테고리는 보통 수정하지 못하게 하거나, 수정 가능하게 하려면 기존처럼 Select 유지 */}
                     <TextField
                         select
                         label="카테고리"
@@ -120,7 +114,6 @@ const PostEditPage = () => {
                         fullWidth
                         value={formData.categoryId}
                         onChange={handleChange}
-                        disabled // 카테고리 수정을 막으려면 추가
                     >
                         {categories.map((category) => (
                             <MenuItem key={category.id} value={category.id}>

@@ -34,13 +34,7 @@ const PostMenuActionPresenter = ({anchorElement,
 
 
                 )}
-                {/* 삭제 컴포넌트 */}
-                <DeleteAction
-                    urlPath={urlPath}
-                    postId={postId}
-                    isLoggedIn={isLoggedIn}
-                    token={token}
-                />
+
                 <MenuItem onClick={() => { onEditPost(); onCloseMenu(); }}>
                     글 수정
                 </MenuItem>

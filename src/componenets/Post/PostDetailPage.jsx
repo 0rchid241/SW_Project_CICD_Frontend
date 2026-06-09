@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {data, useNavigate, useParams} from "react-router-dom";
-import {Box, Button, Divider, Paper, Stack, TextField, Typography} from "@mui/material";
+import {Box, Button, Divider, MenuItem, Paper, Stack, TextField, Typography} from "@mui/material";
 import CommentList from "../Comment/CommentList.jsx";
 import CommentSection from "../Comment/CommentSection.jsx";
 import PostLikeButton from "./PostLikeButton.jsx";
@@ -8,6 +8,8 @@ import DeleteAction from "./delete/DeleteAction.jsx";
 import PostMenuActionContainer from "./PostMenuActionContainer.jsx";
 import {AuthContext} from "../../context/AuthContext.jsx";
 import {apiFetch} from "../util/apiFetch.js";
+import PostMenu from "./PostMenu.jsx";
+import PostActionButton from "./PostActionButton.jsx";
 
 const PostDetailPage = () => {
 
@@ -49,7 +51,7 @@ const PostDetailPage = () => {
                     <Typography>작성자: {postData.authorName}</Typography>
                     <Typography>작성일: {postData.createAt}</Typography>
                     <Typography color="text.secondary">조회 {postData.viewCount ?? 0}</Typography>
-                    <PostMenuActionContainer postId={postId} />
+                    <PostMenu postId={postId} />
                 </Stack>
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="body1" sx={{ minHeight: '300px', whiteSpace: 'pre-wrap' }}>
@@ -63,6 +65,9 @@ const PostDetailPage = () => {
                     initialLikeCount={postData.likeCount}
                 />
                 <Divider sx={{ my: 2 }} />
+
+                {/* 수정/삭제 버튼 */}
+                <PostActionButton postId={postId} urlPath={urlPath} isLoggedIn={isLoggedIn}></PostActionButton>
 
                 {/* 댓글 컴포넌트*/}
                 <CommentSection urlPath = {urlPath} postId={postId}></CommentSection>

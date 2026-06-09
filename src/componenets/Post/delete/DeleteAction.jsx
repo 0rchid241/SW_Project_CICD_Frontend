@@ -11,21 +11,7 @@ const DeleteAction = ({urlPath,postId,isLoggedIn}) => {
     const [password, setPassword] = useState()
     const [errorMessage, setErrorMessage] = useState("")
     
-    
-    /* delete api 갈기기 */
-    const handleDelete = async () =>{
-        try {
-            await apiFetch(`/api/community/board/${urlPath}/post/${postId}/delete`, {
-                method: "POST",
-                body: JSON.stringify({password: password})
-            });
-            alert("삭제완료")
-            navigate(`/board/${urlPath}`);
-        }
-        catch (e){
-            setErrorMessage(e.message);
-        }
-    }
+
 
     return (
         <Box sx={{ mt: 2 }}>
