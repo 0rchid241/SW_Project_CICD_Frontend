@@ -158,6 +158,7 @@ const SignupPage = () => {
                         onChange={handleChange}
                         placeholder="닉네임 입력"
                         fullWidth
+                        sx={textFieldSx}
                     />
 
                     <Button
