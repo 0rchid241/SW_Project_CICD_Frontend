@@ -52,6 +52,34 @@ const SignupPage = () => {
         }
     };
 
+    const textFieldSx = {
+        "& .MuiInputBase-input": {
+            color: "#111827",
+        },
+        "& .MuiInputLabel-root": {
+            color: "#374151",
+        },
+        "& .MuiInputLabel-root.Mui-focused": {
+            color: "#111827",
+        },
+        "& .MuiOutlinedInput-root": {
+            backgroundColor: "#fff",
+            "& fieldset": {
+                borderColor: "#ccc",
+            },
+            "&:hover fieldset": {
+                borderColor: "#999",
+            },
+            "&.Mui-focused fieldset": {
+                borderColor: "#111827",
+            },
+        },
+        "& .MuiInputBase-input::placeholder": {
+            color: "#6b7280",
+            opacity: 1,
+        },
+    };
+
     return (
         <Box
             sx={{
@@ -67,6 +95,7 @@ const SignupPage = () => {
                     borderRadius: "16px",
                     boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                     backgroundColor: "#fff",
+                    color: "#111827",
                 }}
             >
                 <Stack spacing={2}>
@@ -82,6 +111,7 @@ const SignupPage = () => {
                         sx={{
                             marginBottom: "8px",
                             fontWeight: "bold",
+                            color: "#111827",
                         }}
                     >
                         회원가입
@@ -95,6 +125,7 @@ const SignupPage = () => {
                         onChange={handleChange}
                         placeholder="로그인에 사용할 아이디"
                         fullWidth
+                        sx={textFieldSx}
                     />
 
                     <TextField
@@ -105,6 +136,7 @@ const SignupPage = () => {
                         onChange={handleChange}
                         placeholder="user@example.invalid"
                         fullWidth
+                        sx={textFieldSx}
                     />
 
                     <TextField
@@ -115,6 +147,7 @@ const SignupPage = () => {
                         onChange={handleChange}
                         placeholder="8자 이상 입력"
                         fullWidth
+                        sx={textFieldSx}
                     />
 
                     <TextField
@@ -137,9 +170,14 @@ const SignupPage = () => {
                             padding: "12px",
                             borderRadius: "10px",
                             backgroundColor: "#111827",
+                            color: "#ffffff",
                             fontWeight: "bold",
                             "&:hover": {
                                 backgroundColor: "#1f2937",
+                            },
+                            "&.Mui-disabled": {
+                                backgroundColor: "#9ca3af",
+                                color: "#ffffff",
                             },
                         }}
                     >
