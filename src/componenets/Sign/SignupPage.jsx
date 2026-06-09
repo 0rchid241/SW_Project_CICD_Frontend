@@ -1,134 +1,192 @@
-import React, { useState } from 'react';
-import ErrorMessage from "../util/ErrorMessage.jsx";
-import {apiFetch} from "../util/apiFetch.js";
-
-const pageStyle = {
-    maxWidth: "420px",
-    margin: "60px auto",
-    padding: "24px",
-    border: "1px solid #ddd",
-    borderRadius: "16px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-    backgroundColor: "#fff",
-};
-
-const inputStyle = {
-    width: "100%",
-    padding: "12px",
-    marginTop: "8px",
-    marginBottom: "16px",
-    border: "1px solid #ccc",
-    borderRadius: "10px",
-    boxSizing: "border-box",
-};
-
-const buttonStyle = {
-    width: "100%",
-    padding: "12px",
-    border: "none",
-    borderRadius: "10px",
-    backgroundColor: "#111827",
-    color: "#fff",
-    fontWeight: "bold",
-    cursor: "pointer",
-};
-
+import React, { useState } from "react";
+import {
+    Box,
+    Paper,
+    Typography,
+    TextField,
+    Button,
+    Alert,
+    Stack,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../util/apiFetch.js";
 
 const SignupPage = () => {
+    const navigate = useNavigate();
+
     const [loading, setLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("")
-    
+    const [errorMessage, setErrorMessage] = useState("");
+
     const [formData, setFormData] = useState({
-        username:'',
-        email:'',
-        password:'',
-        nickname:''
+        username: "",
+        email: "",
+        password: "",
+        nickname: "",
     });
 
-    const handleChange = (e) =>{
-        const {name,value} = e.target
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+
         setFormData({
             ...formData,
-            [name]: value
-        })
+            [name]: value,
+        });
     };
-
 
     const handleSignup = async () => {
         setLoading(true);
+        setErrorMessage("");
 
         try {
             await apiFetch("/api/auth/signup", {
                 method: "POST",
-                body:JSON.stringify(formData)
+                body: JSON.stringify(formData),
             });
+
             alert("회원가입 성공");
-        }catch (e){
+            navigate("/login");
+        } catch (e) {
             setErrorMessage(e.message);
-        }finally {
+        } finally {
             setLoading(false);
         }
+    };
 
+    const textFieldSx = {
+        "& .MuiInputBase-input": {
+            color: "#111827",
+        },
+        "& .MuiInputLabel-root": {
+            color: "#374151",
+        },
+        "& .MuiInputLabel-root.Mui-focused": {
+            color: "#111827",
+        },
+        "& .MuiOutlinedInput-root": {
+            backgroundColor: "#fff",
+            "& fieldset": {
+                borderColor: "#ccc",
+            },
+            "&:hover fieldset": {
+                borderColor: "#999",
+            },
+            "&.Mui-focused fieldset": {
+                borderColor: "#111827",
+            },
+        },
+        "& .MuiInputBase-input::placeholder": {
+            color: "#6b7280",
+            opacity: 1,
+        },
     };
 
     return (
-        <div style={pageStyle}>
-
-            <ErrorMessage errorMessage={errorMessage}/>
-
-            <h1 style={{ marginBottom: "24px" }}>회원가입</h1>
-
-            <label>아이디</label>
-            <input
-                type="text"
-                name={"username"}
-                value={formData.username}
-                onChange={handleChange}
-                style={inputStyle}
-                placeholder="로그인에 사용할 아이디"
-            />
-
-            <label>이메일</label>
-            <input
-                type="email"
-                name={"email"}
-                value={formData.email}
-                onChange={handleChange}
-                style={inputStyle}
-                placeholder="user@example.invalid"
-            />
-
-            <label>비밀번호</label>
-            <input
-                type="password"
-                name={"password"}
-                value={formData.password}
-                onChange={handleChange}
-                style={inputStyle}
-                placeholder="8자 이상 입력"
-            />
-
-            <label>닉네임</label>
-            <input
-                type="text"
-                name={"nickname"}
-                value={formData.nickname}
-                onChange={handleChange}
-                style={inputStyle}
-                placeholder="닉네임 입력"
-            />
-
-            <button
-                type="button"
-                style={buttonStyle}
-                onClick={handleSignup}
-                disabled={loading}
+        <Box
+            sx={{
+                maxWidth: "420px",
+                margin: "60px auto",
+            }}
+        >
+            <Paper
+                elevation={3}
+                sx={{
+                    padding: "24px",
+                    border: "1px solid #ddd",
+                    borderRadius: "16px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                    backgroundColor: "#fff",
+                    color: "#111827",
+                }}
             >
-                {loading ? "가입 중..." : "회원가입"}
-            </button>
+                <Stack spacing={2}>
+                    {errorMessage && (
+                        <Alert severity="error">
+                            {errorMessage}
+                        </Alert>
+                    )}
 
+                    <Typography
+                        variant="h4"
+                        component="h1"
+                        sx={{
+                            marginBottom: "8px",
+                            fontWeight: "bold",
+                            color: "#111827",
+                        }}
+                    >
+                        회원가입
+                    </Typography>
 
-        </div>
+                    <TextField
+                        label="아이디"
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleChange}
+                        placeholder="로그인에 사용할 아이디"
+                        fullWidth
+                        sx={textFieldSx}
+                    />
+
+                    <TextField
+                        label="이메일"
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="user@example.invalid"
+                        fullWidth
+                        sx={textFieldSx}
+                    />
+
+                    <TextField
+                        label="비밀번호"
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        placeholder="8자 이상 입력"
+                        fullWidth
+                        sx={textFieldSx}
+                    />
+
+                    <TextField
+                        label="닉네임"
+                        type="text"
+                        name="nickname"
+                        value={formData.nickname}
+                        onChange={handleChange}
+                        placeholder="닉네임 입력"
+                        fullWidth
+                        sx={textFieldSx}
+                    />
+
+                    <Button
+                        type="button"
+                        variant="contained"
+                        fullWidth
+                        onClick={handleSignup}
+                        disabled={loading}
+                        sx={{
+                            padding: "12px",
+                            borderRadius: "10px",
+                            backgroundColor: "#111827",
+                            color: "#ffffff",
+                            fontWeight: "bold",
+                            "&:hover": {
+                                backgroundColor: "#1f2937",
+                            },
+                            "&.Mui-disabled": {
+                                backgroundColor: "#9ca3af",
+                                color: "#ffffff",
+                            },
+                        }}
+                    >
+                        {loading ? "가입 중..." : "회원가입"}
+                    </Button>
+                </Stack>
+            </Paper>
+        </Box>
     );
 };
 
