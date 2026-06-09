@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {Box, Button, MenuItem, Paper, Stack, TextField, Typography} from "@mui/material";
 import {AuthContext} from "../../context/AuthContext.jsx";
 import ErrorMessage from "../util/ErrorMessage.jsx";
@@ -9,16 +9,16 @@ import {usePostAction} from "../../hooks/usePostAction.js";
 
 const PostEditPage = () => {
     const navigate = useNavigate();
+    const location = useLocation(); // 💡 location 훅 사용
     const { urlPath, postId } = useParams(); // URL에서 postId 추출
     const { categories, categoryMessage, fetchActiveCategories } = useCategories(urlPath);
     const [errorMessage, setErrorMessage] = useState("");
-    const { isLoggedIn } = useContext(AuthContext);
 
     const [formData, setFormData] = useState({
         title: '',
         content: '',
         categoryId: '',
-        password: '' // 비회원 수정 권한 확인용
+        password: location.state?.password || ''
     });
 
     useEffect(() => {
@@ -57,11 +57,6 @@ const PostEditPage = () => {
             return;
         }
 
-        if (!isLoggedIn && !formData.password) {
-            setErrorMessage("글을 수정하려면 비밀번호를 입력해주세요.");
-            return;
-        }
-
         try {
             const requestBody = {
                 title: formData.title,
@@ -83,19 +78,6 @@ const PostEditPage = () => {
             <Paper sx={{ p: 3 }}>
                 <ErrorMessage errorMessage={errorMessage || categoryMessage} />
                 <Stack spacing={2}>
-                    {/* 비로그인 상태일 때만 비밀번호 입력 (수정 권한 확인용) */}
-                    {!isLoggedIn && (
-                        <TextField
-                            label="비밀번호"
-                            name="password"
-                            type="password"
-                            size="small"
-                            fullWidth
-                            value={formData.password}
-                            onChange={handleChange}
-                            helperText="글 작성 시 입력한 비밀번호를 입력해주세요."
-                        />
-                    )}
 
                     <TextField
                         label="제목"

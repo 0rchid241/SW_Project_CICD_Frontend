@@ -11,6 +11,8 @@ export const AuthProvider = ({children}) => {
     const [username, setUsername] = useState(null);
     const [nickname, setNickname] = useState(null);
     const [role, setRole] = useState(null);
+    const [userId, setUserId] = useState(null);
+
 
     useEffect(() => {
         const savedToken = localStorage.getItem('accessToken');
@@ -30,10 +32,22 @@ export const AuthProvider = ({children}) => {
 
     }, []);
 
+    const getPayloadFromToken = (token) => {
+        if (!token) return {};
+        try {
+            // JWT의 두 번째 부분(Payload)을 Base64 디코딩
+            return JSON.parse(atob(token.split(".")[1]));
+        } catch (error) {
+            return {};
+        }
+    };
+
     /* 로그인 처리 함수
     * data는 tokenResponseDTO */
     const login = (data) => {
-        const parsedRole = getRoleFromToken(data.accessToken);
+        const payload = getPayloadFromToken(data.accessToken);
+        // 백엔드에서 setSubject로 넣은 값은 'sub' 키로 추출됨
+        const extractedUserId = payload.sub ? Number(payload.sub) : null;
 
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("username", data.username);
@@ -43,7 +57,8 @@ export const AuthProvider = ({children}) => {
         setToken(data.accessToken);
         setUsername(data.username);
         setNickname(data.nickname);
-        setRole(parsedRole);
+        setRole(payload.role);
+        setUserId(extractedUserId); // 전역 상태에 userId 저장
         setIsLoggedIn(true);
     };
 
@@ -76,6 +91,7 @@ export const AuthProvider = ({children}) => {
     return (
         <AuthContext.Provider value={{
             isLoggedIn,
+            userId,
             token,
             username,
             nickname,

@@ -4,8 +4,7 @@ import {Box, Button, Divider, MenuItem, Paper, Stack, TextField, Typography} fro
 import CommentList from "../Comment/CommentList.jsx";
 import CommentSection from "../Comment/CommentSection.jsx";
 import PostLikeButton from "./PostLikeButton.jsx";
-import DeleteAction from "./delete/DeleteAction.jsx";
-import PostMenuActionContainer from "./PostMenuActionContainer.jsx";
+
 import {AuthContext} from "../../context/AuthContext.jsx";
 import {apiFetch} from "../util/apiFetch.js";
 import PostMenu from "./PostMenu.jsx";
@@ -17,7 +16,7 @@ const PostDetailPage = () => {
     const {urlPath} = useParams();
     const [postData, setPostData] = useState(null)
 
-    const {isLoggedIn, token} = useContext(AuthContext);
+    const {isLoggedIn} = useContext(AuthContext);
 
     useEffect(() => {
         console.log("현재 상세페이지 게시글 ID:", postId);
@@ -67,7 +66,7 @@ const PostDetailPage = () => {
                 <Divider sx={{ my: 2 }} />
 
                 {/* 수정/삭제 버튼 */}
-                <PostActionButton postId={postId} urlPath={urlPath} isLoggedIn={isLoggedIn}></PostActionButton>
+                <PostActionButton postId={postId} urlPath={urlPath} isLoggedIn={isLoggedIn} authorUserId={postData.userId}></PostActionButton>
 
                 {/* 댓글 컴포넌트*/}
                 <CommentSection urlPath = {urlPath} postId={postId}></CommentSection>

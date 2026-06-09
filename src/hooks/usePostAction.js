@@ -6,9 +6,9 @@ export const usePostAction = (urlPath,postId) => {
     const navigate = useNavigate();
 
     /* 글 수정 페이지로 이동 */
-    const moveEditPost =  () => {
+    const moveEditPost =  (password="") => {
         if (postId){
-            navigate(`/board/${urlPath}/edit/${postId}`)
+            navigate(`/board/${urlPath}/edit/${postId}`,{ state: { password } })
         }
     }
 
