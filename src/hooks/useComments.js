@@ -133,6 +133,25 @@ export const useComments = (urlPath, postId, page, size=10) => {
         setRefreshTrigger(prev => prev + 1); // 목록 새로고침
     }
 
+
+    /* 댓글 비밀번호 사전 검증 API */
+    const verifyCommentPassword = async (commentId, password) => {
+        await apiFetch(`/api/community/board/${urlPath}/post/${postId}/comment/${commentId}/verify-password`, {
+            method: "POST",
+            body: JSON.stringify({ password })
+        });
+    };
+
+    /* 댓글 수정 API */
+    const updateComment = async (commentId, requestBody) => {
+        await apiFetch(`/api/community/board/${urlPath}/post/${postId}/comment/${commentId}`, {
+            method: "PUT",
+            body: JSON.stringify(requestBody)
+        });
+        alert("댓글이 성공적으로 수정되었습니다.");
+        setRefreshTrigger(prev => prev + 1);
+    };
+
     return {
         commentDataList,
         commentPageInfo,
@@ -140,6 +159,8 @@ export const useComments = (urlPath, postId, page, size=10) => {
         fetchComments,
         createComment,
         deleteComment,
+        verifyCommentPassword,
+        updateComment
     };
 };
 

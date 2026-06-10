@@ -17,6 +17,8 @@ const CommentSection = ({urlPath,postId}) => {
         commentLoading,
         createComment,
         deleteComment,
+        updateComment,
+        verifyCommentPassword
     } = useComments(urlPath, postId, commentPage, commentPageSize);
 
     const handleCreateRootComment = async (data) => {
@@ -60,6 +62,8 @@ const CommentSection = ({urlPath,postId}) => {
                 commentDataList={commentDataList}
                 onAddReply={createComment}
                 onDelete={deleteComment}
+                onUpdate={updateComment}
+                onVerifyPassword={verifyCommentPassword}
             />
 
             {/* 댓글 페이지네이션 */}
