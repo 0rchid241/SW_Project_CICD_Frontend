@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Dialog, Table, TableCell, TableRow} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import UserItem from "../user/UserItem.jsx";
+import {formatDate, formatDetailDate} from "../util/dateFormater.js";
 
 const PostItem = ({data,urlPath}) => {
 
@@ -16,7 +17,7 @@ const PostItem = ({data,urlPath}) => {
                 <UserItem authorId={data.userId} authorName={data.authorName}/>
             </TableCell>
             <TableCell align="center">{data.viewCount ?? 0}</TableCell>
-            <TableCell align="center">{data.createAt}</TableCell>
+            <TableCell align="center">{formatDate(data.createAt)}</TableCell>
             <TableCell align="center">
             </TableCell>
         </TableRow>

@@ -9,6 +9,7 @@ import {AuthContext} from "../../context/AuthContext.jsx";
 import {apiFetch} from "../util/apiFetch.js";
 import PostMenu from "./PostMenu.jsx";
 import PostActionButton from "./PostActionButton.jsx";
+import {formatDate, formatDetailDate} from "../util/dateFormater.js";
 
 const PostDetailPage = () => {
 
@@ -17,6 +18,8 @@ const PostDetailPage = () => {
     const [postData, setPostData] = useState(null)
 
     const {isLoggedIn} = useContext(AuthContext);
+
+
 
     useEffect(() => {
         console.log("현재 상세페이지 게시글 ID:", postId);
@@ -48,7 +51,7 @@ const PostDetailPage = () => {
                 <Typography variant="h4" gutterBottom>{postData.title}</Typography>
                 <Stack direction="row" spacing={2} sx={{ mb: 2, color: 'text.secondary' }}>
                     <Typography>작성자: {postData.authorName}</Typography>
-                    <Typography>작성일: {postData.createAt}</Typography>
+                    <Typography>작성일: {formatDetailDate(postData.createAt)}</Typography>
                     <Typography color="text.secondary">조회 {postData.viewCount ?? 0}</Typography>
                     <PostMenu postId={postId} />
                 </Stack>

@@ -2,6 +2,7 @@ import React from 'react';
 import {TableCell, TableRow} from "@mui/material";
 import UserItem from "../user/UserItem.jsx";
 import {useNavigate} from "react-router-dom";
+import {formatDate} from "../util/dateFormater.js";
 
 const PopularPostItem = ({data}) => {
 
@@ -16,7 +17,7 @@ const PopularPostItem = ({data}) => {
                 <UserItem authorId={data.userId} authorName={data.authorName}/>
             </TableCell>
             <TableCell align="center">{data.viewCount ?? 0}</TableCell>
-            <TableCell align="center">{data.createAt}</TableCell>
+            <TableCell align="center">{formatDate(data.createAt)}</TableCell>
             <TableCell align="center">{data.score}</TableCell>
         </TableRow>
     );
