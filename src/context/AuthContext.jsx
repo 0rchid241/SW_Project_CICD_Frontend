@@ -14,33 +14,42 @@ export const AuthProvider = ({children}) => {
     const [userId, setUserId] = useState(null);
 
 
+    const getPayloadFromToken = (token) => {
+        if (!token) return null;
+        try {
+            // JWT의 두 번째 부분(Payload)을 Base64 디코딩
+            return JSON.parse(atob(token.split(".")[1]));
+        } catch (error) {
+            console.error("JWT 페이로드 파싱 실패:", error);
+            return null;
+        }
+    };
+
+
+
     useEffect(() => {
         const savedToken = localStorage.getItem('accessToken');
         const savedNickname = localStorage.getItem('nickname');
         const savedUsername = localStorage.getItem('username');
 
         if(savedToken){
-            const savedRole = getRoleFromToken(savedToken);
-            setToken(savedToken);
-            setIsLoggedIn(true);
-            setNickname(savedNickname);
-            setUsername(savedUsername);
-            setRole(savedRole);
+            const payload = getPayloadFromToken(savedToken); // 💡 새로고침 시 토큰 다시 파싱
 
-            /* 여기에 공용 네트워크 API 호출 불러오면 된다네. */
+            if (payload) {
+                const extractedUserId = payload.sub ? Number(payload.sub) : null;
+
+                setToken(savedToken);
+                setIsLoggedIn(true);
+                setNickname(savedNickname);
+                setUsername(savedUsername);
+                setRole(payload.role || null); // 통일된 페이로드에서 바로 추출
+                setUserId(extractedUserId);    // 괄호 안 오타 수정 (userId -> extractedUserId)
+            }
         }
 
     }, []);
 
-    const getPayloadFromToken = (token) => {
-        if (!token) return {};
-        try {
-            // JWT의 두 번째 부분(Payload)을 Base64 디코딩
-            return JSON.parse(atob(token.split(".")[1]));
-        } catch (error) {
-            return {};
-        }
-    };
+
 
     /* 로그인 처리 함수
     * data는 tokenResponseDTO */
@@ -73,19 +82,9 @@ export const AuthProvider = ({children}) => {
         setNickname(null);
         setRole(null);
         setIsLoggedIn(false);
+        setUserId(null); // 로그아웃 시 ID도 초기화
     };
 
-    const getRoleFromToken = (token) => {
-        if (!token) return null;
-
-        try {
-            const payload = JSON.parse(atob(token.split(".")[1]));
-            return payload.role || null;
-        } catch (error) {
-            console.error("JWT role 파싱 실패:", error);
-            return null;
-        }
-    };
 
     //
     return (
