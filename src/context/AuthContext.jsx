@@ -6,6 +6,7 @@ export const AuthContext = createContext(null);
 
 
 export const AuthProvider = ({children}) => {
+    const [authReady, setAuthReady] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [token, setToken] = useState(null);
     const [username, setUsername] = useState(null);
@@ -44,9 +45,14 @@ export const AuthProvider = ({children}) => {
                 setUsername(savedUsername);
                 setRole(payload.role || null); // 통일된 페이로드에서 바로 추출
                 setUserId(extractedUserId);    // 괄호 안 오타 수정 (userId -> extractedUserId)
+            } else {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("username");
+                localStorage.removeItem("nickname");
             }
         }
 
+        setAuthReady(true);
     }, []);
 
 
@@ -66,9 +72,15 @@ export const AuthProvider = ({children}) => {
         setToken(data.accessToken);
         setUsername(data.username);
         setNickname(data.nickname);
-        setRole(payload.role);
+        setRole(payload?.role || null);
         setUserId(extractedUserId); // 전역 상태에 userId 저장
         setIsLoggedIn(true);
+    };
+
+    // 닉네임 변경 함수
+    const updateNickname = (newNickname) => {
+        localStorage.setItem("nickname", newNickname);
+        setNickname(newNickname);
     };
 
     // 로그아웃 처리 함수
@@ -88,15 +100,19 @@ export const AuthProvider = ({children}) => {
 
     //
     return (
-        <AuthContext.Provider value={{
-            isLoggedIn,
-            userId,
-            token,
-            username,
-            nickname,
-            role,
-            login,
-            logout}}
+        <AuthContext.Provider
+            value={{
+                authReady,
+                isLoggedIn,
+                userId,
+                token,
+                username,
+                nickname,
+                role,
+                login,
+                logout,
+                updateNickname,
+            }}
         >
             {children}
         </AuthContext.Provider>
