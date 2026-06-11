@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {data, useNavigate, useParams} from "react-router-dom";
+import {data, useLocation, useNavigate, useParams} from "react-router-dom";
 import {Box, Button, Divider, MenuItem, Paper, Stack, TextField, Typography} from "@mui/material";
 import CommentList from "../Comment/CommentList.jsx";
 import CommentSection from "../Comment/CommentSection.jsx";
@@ -18,8 +18,7 @@ const PostDetailPage = () => {
     const [postData, setPostData] = useState(null)
 
     const {isLoggedIn} = useContext(AuthContext);
-
-
+    const location = useLocation();
 
     useEffect(() => {
         console.log("현재 상세페이지 게시글 ID:", postId);
@@ -45,6 +44,7 @@ const PostDetailPage = () => {
 
     return (
         <Box sx={{ maxWidth: 800, margin: 'auto', mt: 5 }}>
+
             <Paper sx={{ p: 4 }}>
 
                 {/* 본 글 내용 */}

@@ -17,6 +17,8 @@ export const useBoardPosts = (urlPath, selectedCategoryId, sortMode, page, size 
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
 
+
+    /* 보드에 필요한 데이터 출력 */
     const fetchBoardData = useCallback(async () => {
         if (!urlPath) return;
 

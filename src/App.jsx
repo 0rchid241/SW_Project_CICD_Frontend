@@ -19,6 +19,7 @@ import NaverOAuthSignupPage from "./componenets/Sign/NaverOAuthSignupPage.jsx";
 import KakaoOAuthSignupPage from "./componenets/Sign/KakaoOAuthSignupPage.jsx";
 import CommunityAdminDashboard from "./componenets/admin/CommunityAdminDashboard.jsx";
 import PostEditPage from "./componenets/Post/PostEditPage.jsx";
+import BoardLayout from "./componenets/Board/BoardLayout.jsx"; // 💡 BoardLayout import 추가
 
 /* MUI의 기본 다크 테마*/
 const darkTheme = createTheme({
@@ -36,52 +37,43 @@ const App = () => {
                     <CssBaseline />
                     <Container maxWidth="lg" sx={{ mt: 5, mb: 5, minHeight: '80vh' }}>
                         <Routes>
-                            {/* 전체적으로 레이아웃 적용 */}
+                            {/* 1. 전체 공통 레이아웃 (글로벌 헤더/푸터 등) */}
                             <Route element={<LayOut/>}>
-                                {/* 기본 경로는 Board 들의 리스트 */}
+                                {/* 기본 경로들 */}
                                 <Route path={"/"} element={<BoardListPage />} />
-
-
-                                {/* 특정 커뮤니티의 게시글 리스트 출력 */}
-                                <Route path={"/board/:urlPath"} element={<BoardPage/>}/>
-                                {/* /write 글쓰기 페이지로 이동합니다.*/}
-                                <Route path={"/board/:urlPath/write"} element={<PostWritePage />} />
-                                <Route path={"/board/:urlPath/edit/:postId"} element={<PostEditPage/>}/>
-
-                                {/* 상세 글 페이지로 이동합니다. */}
-                                <Route path={"/board/:urlPath/post/:postId"} element={<PostDetailPage/>}/>
-
-                                {/*운영 대시보드로 이동합니다.*/}
                                 <Route path={"/ops"} element={<OpsPage/>}/>
-
-                                {/*회원가입 페이지로 이동합니다.*/}
-                                <Route path={"/signup"} element={<SignupPage/>}/>
-                                {/*로그인 페이지로 이동합니다.*/}
-                                <Route path={"/login"} element={<LoginPage/>}/>
-                                {/*회원가입 페이지로 이동합니다.*/}
-                                <Route path={"/signup"} element={<SignupPage/>}/>
-                                {/*로그인 페이지로 이동합니다.*/}
-                                <Route path={"/login"} element={<LoginPage/>}/>
-                                {/*구글 계정 회원가입 페이지로 이동합니다.*/}
-                                <Route path={"/oauth/google/signup"} element={<GoogleOAuthSignupPage/>}/>
-                                {/*네이버 계정 회원가입 페이지로 이동합니다.*/}
-                                <Route path={"/oauth/naver/signup"} element={<NaverOAuthSignupPage/>}/>
-                                {/*카카오 계정 회원가입 페이지로 이동합니다.*/}
-                                <Route path={"/oauth/kakao/signup"} element={<KakaoOAuthSignupPage/>}/>
-                                {/*소셜 계정 회원가입 성공 페이지로 이동합니다.*/}
-                                <Route path={"/oauth/success"} element={<OAuthSuccessPage/>}/>
-
-                                {/*개인 페이지로 이동합니다.*/}
                                 <Route path={"/me"} element={<MyPage/>}/>
+                                <Route path={"/admin/superAdminPage"} element={<SuperAdminPage/>}/>
 
-                                {/* 인기 게시글 목록으로 이동*/}
+                                {/* /board/popular는 특정 갤러리가 아니므로 밖으로 분리 */}
                                 <Route path={"/board/popular"} element={<PopularPostListPage/>}/>
 
-                                {/* 전체 관리자 페이지로 이동.*/}
-                                <Route path={"/admin/superAdminPage"} element={<SuperAdminPage/>}/>
-                                <Route path={`/board/:urlPath/admin`} element={<CommunityAdminDashboard/>}/>
+                                {/* 로그인 및 회원가입 관련 */}
+                                <Route path={"/signup"} element={<SignupPage/>}/>
+                                <Route path={"/login"} element={<LoginPage/>}/>
+                                <Route path={"/oauth/google/signup"} element={<GoogleOAuthSignupPage/>}/>
+                                <Route path={"/oauth/naver/signup"} element={<NaverOAuthSignupPage/>}/>
+                                <Route path={"/oauth/kakao/signup"} element={<KakaoOAuthSignupPage/>}/>
+                                <Route path={"/oauth/success"} element={<OAuthSuccessPage/>}/>
 
 
+                                {/*  특정 갤러리 도메인 레이아웃 (중첩 라우팅) */}
+                                <Route path={"/board/:urlPath"} element={<BoardLayout />}>
+                                    {/* url: /board/:urlPath (부모와 동일할 때는 index 사용) */}
+                                    <Route index element={<BoardPage />} />
+
+                                    {/* url: /board/:urlPath/write (앞의 경로는 생략하고 상대경로로 작성) */}
+                                    <Route path="w rite" element={<PostWritePage />} />
+
+                                    {/* url: /board/:urlPath/edit/:postId */}
+                                    <Route path="edit/:postId" element={<PostEditPage/>}/>
+
+                                    {/* url: /board/:urlPath/post/:postId */}
+                                    <Route path="post/:postId" element={<PostDetailPage/>}/>
+
+                                    {/* url: /board/:urlPath/admin */}
+                                    <Route path="admin" element={<CommunityAdminDashboard/>}/>
+                                </Route>
 
                             </Route>
                         </Routes>
@@ -89,7 +81,6 @@ const App = () => {
 
                 </ThemeProvider>
             </AuthProvider>
-
         </div>
     );
 };

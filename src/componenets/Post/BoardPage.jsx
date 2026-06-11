@@ -64,18 +64,11 @@ const BoardPage = () => {
             )}
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, mt: 2 }}>
-                {/* 제목 */}
-                <Typography variant="h2">
-                    {boardInfo?.name|| `내가 쓴 글`}
-                </Typography>
-
 
                 {/* 관리자 권한이 있을 때만 버튼 노출 */}
                 {isAdmin(role) && (
                     <Button variant="outlined" color="secondary" size="small"
-                            onClick={() => navigate(`/board/${urlPath}/admin`,{
-                                state: { boardName: boardInfo?.name } // state 속성으로 커뮤니티 제목 전달
-                            })}>
+                            onClick={() => navigate(`/board/${urlPath}/admin`)}>
                         ⚙️ 커뮤니티 관리
                     </Button>
                 )}
