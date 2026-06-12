@@ -63,7 +63,7 @@ const App = () => {
                                     <Route index element={<BoardPage />} />
 
                                     {/* url: /board/:urlPath/write (앞의 경로는 생략하고 상대경로로 작성) */}
-                                    <Route path="w rite" element={<PostWritePage />} />
+                                    <Route path="write" element={<PostWritePage />} />
 
                                     {/* url: /board/:urlPath/edit/:postId */}
                                     <Route path="edit/:postId" element={<PostEditPage/>}/>
