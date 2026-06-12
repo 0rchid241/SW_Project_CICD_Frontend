@@ -3,8 +3,8 @@ import {
     Box, Typography, TextField, Button, Stack, Divider,
     List, ListItem, ListItemText, CircularProgress, Paper, IconButton, Switch
 } from '@mui/material';
-import {useCategories} from "../../hooks/useCategories.js";
-import ErrorMessage from "../util/ErrorMessage.jsx";
+import {useCategories} from "../../../hooks/useCategories.js";
+import ErrorMessage from "../../util/ErrorMessage.jsx";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';

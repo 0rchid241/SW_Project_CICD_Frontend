@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useUserManager} from "../../hooks/useUserManager.js";
+import {useUserManager} from "../../../hooks/useUserManager.js";
 import {
     Box, Button, CircularProgress,
     Divider, Pagination, Paper,
@@ -12,7 +12,7 @@ import {
     TableRow,
     Typography
 } from "@mui/material";
-import ErrorMessage from "../util/ErrorMessage.jsx";
+import ErrorMessage from "../../util/ErrorMessage.jsx";
 
 const UserManager = ({urlPath}) => {
 
