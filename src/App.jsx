@@ -14,10 +14,10 @@ import MyPage from "./componenets/user/mypage/MyPage.jsx";
 import GoogleOAuthSignupPage from "./componenets/Sign/GoogleOAuthSignupPage.jsx";
 import OAuthSuccessPage from "./componenets/Sign/OAuthSuccessPage.jsx";
 import {AuthContext, AuthProvider} from "./context/AuthContext.jsx";
-import SuperAdminPage from "./componenets/admin/SuperAdminPage.jsx";
+import SuperAdminDashboard from "./componenets/admin/superAdmin/SuperAdminDashboard.jsx";
 import NaverOAuthSignupPage from "./componenets/Sign/NaverOAuthSignupPage.jsx";
 import KakaoOAuthSignupPage from "./componenets/Sign/KakaoOAuthSignupPage.jsx";
-import CommunityAdminDashboard from "./componenets/admin/CommunityAdminDashboard.jsx";
+import CommunityAdminDashboard from "./componenets/admin/communityAdmin/CommunityAdminDashboard.jsx";
 import PostEditPage from "./componenets/Post/PostEditPage.jsx";
 import BoardLayout from "./componenets/Board/BoardLayout.jsx"; // 💡 BoardLayout import 추가
 
@@ -43,7 +43,7 @@ const App = () => {
                                 <Route path={"/"} element={<BoardListPage />} />
                                 <Route path={"/ops"} element={<OpsPage/>}/>
                                 <Route path={"/me"} element={<MyPage/>}/>
-                                <Route path={"/admin/superAdminPage"} element={<SuperAdminPage/>}/>
+                                <Route path={"/admin/superAdminPage"} element={<SuperAdminDashboard/>}/>
 
                                 {/* /board/popular는 특정 갤러리가 아니므로 밖으로 분리 */}
                                 <Route path={"/board/popular"} element={<PopularPostListPage/>}/>
