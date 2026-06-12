@@ -3,7 +3,7 @@ import {Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, T
 import ErrorMessage from "../../util/ErrorMessage.jsx";
 import {useNavigate} from "react-router-dom";
 
-const MyCommentsTable = ({commentDataList,errorMessage}) => {
+const MyCommentsTable = ({commentDataList,errorMessage,title = "내가 쓴 댓글"}) => {
 
     const navigate = useNavigate();
 
@@ -11,8 +11,17 @@ const MyCommentsTable = ({commentDataList,errorMessage}) => {
         <Box>
             <ErrorMessage errorMessage={errorMessage} />
 
+            <Typography
+                variant="h4"
+                sx={{
+                    fontWeight: "bold",
+                    mb: 3,
+                }}
+            >
+                {title}
+            </Typography>
+
             <TableContainer>
-                <h1>내가 쓴 댓글</h1>
 
                 <Table sx={{ minWidth: 650 }} aria-label="my comments table">
                     <TableHead>

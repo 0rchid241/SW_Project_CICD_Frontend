@@ -3,19 +3,21 @@ import {useMyPage} from "../../../hooks/useMyPage.js";
 import PostTable from "../../Post/PostTable.jsx";
 import {Box, CircularProgress} from "@mui/material";
 
-const MyPosts = () => {
+const MyPosts = ({ userId = null }) => {
 
-    const {fetchMyPosts} = useMyPage();
+    const {fetchMyPosts, fetchUserPosts} = useMyPage();
     const [error, setError] = useState("")
     const [postData, setPostData] = useState([])
     const [loading, setLoading] = useState(true);
 
 
     useEffect(() => {
-        const loadMyPosts = async () => {
+        const loadPosts = async () => {
             try {
                 setLoading(true);
-                const data = await fetchMyPosts();
+                const data = userId
+                    ? await fetchUserPosts(userId)
+                    : await fetchMyPosts();
                 setPostData(data);
             }catch (e) {
                 setError(e.message);
@@ -24,8 +26,8 @@ const MyPosts = () => {
             }
         }
 
-        loadMyPosts();
-    }, [fetchMyPosts]);
+        loadPosts();
+    }, [userId, fetchMyPosts, fetchUserPosts]);
 
 
 

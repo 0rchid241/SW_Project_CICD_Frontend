@@ -19,6 +19,7 @@ import NaverOAuthSignupPage from "./componenets/Sign/NaverOAuthSignupPage.jsx";
 import KakaoOAuthSignupPage from "./componenets/Sign/KakaoOAuthSignupPage.jsx";
 import CommunityAdminDashboard from "./componenets/admin/CommunityAdminDashboard.jsx";
 import PostEditPage from "./componenets/Post/PostEditPage.jsx";
+import UserProfilePage from "./componenets/user/mypage/UserProfilePage.jsx";
 
 /* MUI의 기본 다크 테마*/
 const darkTheme = createTheme({
@@ -50,6 +51,9 @@ const App = () => {
 
                                 {/* 상세 글 페이지로 이동합니다. */}
                                 <Route path={"/board/:urlPath/post/:postId"} element={<PostDetailPage/>}/>
+
+                                {/* 유저 페이지로 이동합니다. */}
+                                <Route path="/board/:urlPath/users/:userId" element={<UserProfilePage />}/>
 
                                 {/*운영 대시보드로 이동합니다.*/}
                                 <Route path={"/ops"} element={<OpsPage/>}/>
