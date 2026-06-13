@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {data, useLocation, useNavigate, useParams} from "react-router-dom";
+import {data, useNavigate, useParams} from "react-router-dom";
 import {Box, Button, Divider, MenuItem, Paper, Stack, TextField, Typography} from "@mui/material";
 import CommentList from "../Comment/CommentList.jsx";
 import CommentSection from "../Comment/CommentSection.jsx";
@@ -18,6 +18,9 @@ const PostDetailPage = () => {
     const [postData, setPostData] = useState(null)
 
     const {isLoggedIn} = useContext(AuthContext);
+    const navigate = useNavigate();
+
+
     const location = useLocation();
 
     useEffect(() => {
@@ -50,7 +53,21 @@ const PostDetailPage = () => {
                 {/* 본 글 내용 */}
                 <Typography variant="h4" gutterBottom>{postData.title}</Typography>
                 <Stack direction="row" spacing={2} sx={{ mb: 2, color: 'text.secondary' }}>
-                    <Typography>작성자: {postData.authorName}</Typography>
+                    {/* 작성자가 회원인지 아닌지 확인 후 회원일 경우에만 클릭 가능하도록 함 */}
+                    <Typography component="span">작성자:{" "}</Typography>
+                    {postData.userId ? (
+                        <Button variant="text" size="small" onClick={() => navigate(`/board/${urlPath}/users/${postData.userId}`)}
+                            sx={{
+                                minWidth: 0,
+                                p: 0,
+                                textTransform: "none",
+                            }}
+                        >
+                            {postData.authorName}
+                        </Button>
+                    ) : (
+                        <Typography component="span">{postData.authorName}</Typography>
+                    )}
                     <Typography>작성일: {formatDetailDate(postData.createAt)}</Typography>
                     <Typography color="text.secondary">조회 {postData.viewCount ?? 0}</Typography>
                     <PostMenu postId={postId} />

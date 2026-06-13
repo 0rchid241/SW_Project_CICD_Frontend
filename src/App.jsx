@@ -20,6 +20,7 @@ import KakaoOAuthSignupPage from "./componenets/Sign/KakaoOAuthSignupPage.jsx";
 import CommunityAdminDashboard from "./componenets/admin/communityAdmin/CommunityAdminDashboard.jsx";
 import PostEditPage from "./componenets/Post/PostEditPage.jsx";
 import BoardLayout from "./componenets/Board/BoardLayout.jsx"; // 💡 BoardLayout import 추가
+import UserProfilePage from "./componenets/user/mypage/UserProfilePage.jsx";
 
 /* MUI의 기본 다크 테마*/
 const darkTheme = createTheme({
@@ -73,6 +74,8 @@ const App = () => {
 
                                     {/* url: /board/:urlPath/admin */}
                                     <Route path="admin" element={<CommunityAdminDashboard/>}/>
+
+                                    <Route path="users/:userId" element={<UserProfilePage />}/>
                                 </Route>
 
                             </Route>
@@ -81,6 +84,7 @@ const App = () => {
 
                 </ThemeProvider>
             </AuthProvider>
+
         </div>
     );
 };

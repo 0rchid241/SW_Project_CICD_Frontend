@@ -1,9 +1,10 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import {Box, Button, Divider, Stack, TextField, Typography} from "@mui/material";
 import CommentInputForm from "./CommentInputForm.jsx";
-import {AuthContext, useAuth} from "../../context/AuthContext.jsx";
+import {useAuth} from "../../context/AuthContext.jsx";
 import ErrorMessage from "../util/ErrorMessage.jsx";
 import {isAdmin} from "../util/roleUtils.js";
+import { useNavigate, useParams } from "react-router-dom";
 
 const CommentItem = ({comment,isChild,onAddReply,onDelete,onUpdate,onVerifyPassword}) => {
 
@@ -22,6 +23,19 @@ const CommentItem = ({comment,isChild,onAddReply,onDelete,onUpdate,onVerifyPassw
 
     const { isLoggedIn, userId, role } = useAuth();
 
+    const navigate = useNavigate();
+    const { urlPath } = useParams();
+
+    const handleAuthorClick = (event) => {
+        event.stopPropagation();
+
+        // 비회원 댓글은 userId가 없으므로 유저 페이지로 이동하지 않음
+        if (!comment.userId) {
+            return;
+        }
+
+        navigate(`/board/${urlPath}/users/${comment.userId}`);
+    };
 
 
     const handleAction = async (type) => {
@@ -93,7 +107,28 @@ const CommentItem = ({comment,isChild,onAddReply,onDelete,onUpdate,onVerifyPassw
     return (
         <Box sx={{ ml: isChild ? 4 : 0, mt: 2, mb: 2, p: 2, bgcolor: isChild ? 'background.paper' : 'transparent', borderRadius: 2 }}>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-                <Typography fontWeight="bold">{comment.authorName}</Typography>
+                {/* 회원인지 비회원인지 확인 후 회원일 경우에만 클릭 가능하도록 함 */}
+                {comment.userId ? (
+                    <Button variant="text" size="small" onClick={handleAuthorClick}
+                        sx={{
+                            minWidth: 0,
+                            p: 0,
+                            color: "text.primary",
+                            fontWeight: "bold",
+                            textTransform: "none",
+                            "&:hover": {
+                                backgroundColor: "transparent",
+                                textDecoration: "underline",
+                            },
+                        }}
+                    >
+                        {comment.authorName}
+                    </Button>
+                ) : (
+                    <Typography fontWeight="bold">
+                        {comment.authorName}
+                    </Typography>
+                )}
             </Stack>
 
             {/* 💡 수정 모드일 때와 아닐 때 렌더링 분기 */}
