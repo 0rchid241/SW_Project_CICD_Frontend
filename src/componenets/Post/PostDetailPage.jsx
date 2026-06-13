@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {data, useLocation, useNavigate, useParams} from "react-router-dom";
 import {Box, Button, Divider, MenuItem, Paper, Stack, TextField, Typography} from "@mui/material";
-import CommentList from "../Comment/CommentList.jsx";
 import CommentSection from "../Comment/CommentSection.jsx";
 import PostLikeButton from "./PostLikeButton.jsx";
 
@@ -13,15 +12,13 @@ import {formatDate, formatDetailDate} from "../util/dateFormater.js";
 
 const PostDetailPage = () => {
 
-    const {postId} = useParams();
-    const {urlPath} = useParams();
+    const {postId,urlPath} = useParams();
     const [postData, setPostData] = useState(null)
 
     const {isLoggedIn} = useContext(AuthContext);
-    const location = useLocation();
 
     useEffect(() => {
-        console.log("현재 상세페이지 게시글 ID:", postId);
+        // console.log("현재 상세페이지 게시글 ID:", postId);
 
         const getPost = async () => {
             try {
