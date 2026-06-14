@@ -19,8 +19,6 @@ const PostDetailPage = () => {
     const navigate = useNavigate();
 
 
-    const location = useLocation();
-
     useEffect(() => {
         // console.log("현재 상세페이지 게시글 ID:", postId);
 
