@@ -22,13 +22,13 @@ const BoardLayout = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, cursor: 'pointer' }}
                  onClick={() => navigate(`/board/${urlPath}`)}>
                 <Typography variant="h4" fontWeight="bold">
-                    {navInfo?.name || "로딩 중..."} 갤러리
+                    {navInfo?.name || "로딩 중..."}
                 </Typography>
             </Box>
 
             <Divider sx={{ mb: 3 }} />
 
-            {/* 🌟 알맹이가 렌더링 되는 곳 (BoardPage, PostDetailPage 등이 여기에 들어옴) */}
+            {/* 알맹이가 렌더링 되는 곳 (BoardPage, PostDetailPage 등이 여기에 들어옴) */}
             <Outlet />
 
         </Box>
