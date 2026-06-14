@@ -41,12 +41,6 @@ export const usePostAction = (urlPath,postId) => {
         alert("수정완료")
         navigate(`/board/${urlPath}/post/${postId}`); // 수정 후 해당 글 상세로 이동
     }
-
-
-
-
-
-
     return {
         moveEditPost,
         editPost,

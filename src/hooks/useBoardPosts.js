@@ -1,5 +1,5 @@
-import {useCallback, useEffect, useState} from "react";
-import {apiFetch} from "../componenets/util/apiFetch.js";
+import { useCallback, useEffect, useState } from "react";
+import { apiFetch } from "../componenets/util/apiFetch.js";
 
 /* 게시판의 게시글들을 불러오는 함수 */
 export const useBoardPosts = (urlPath, selectedCategoryId, sortMode, page, size = 10) => {
@@ -23,23 +23,31 @@ export const useBoardPosts = (urlPath, selectedCategoryId, sortMode, page, size 
         if (!urlPath) return;
 
         const params = new URLSearchParams();
-
-        if (selectedCategoryId) {
-            params.append("categoryId", selectedCategoryId);
-        }
-
-        params.append("sort", sortMode || "latest");
         params.append("page", page ?? 0);
         params.append("size", size);
 
-        const query = `?${params.toString()}`;
+        // 💡 1. API 요청 URL을 동적으로 설정하기 위한 변수
+        let postApiUrl = "";
+
+        // 💡 2. '개념글' 탭이 선택되었을 때와 일반 카테고리일 때를 분리
+        if (selectedCategoryId === 'POPULAR') {
+            // 개념글 API에는 categoryId나 일반 정렬(sort) 파라미터가 불필요할 수 있으므로 page, size만 보냅니다.
+            postApiUrl = `/api/community/board/${urlPath}/popular?${params.toString()}`;
+        } else {
+            if (selectedCategoryId) {
+                params.append("categoryId", selectedCategoryId);
+            }
+            params.append("sort", sortMode || "latest");
+            postApiUrl = `/api/community/board/${urlPath}/allPost?${params.toString()}`;
+        }
 
         try {
             setLoading(true);
             const [boardResponse, postResponse] = await Promise.all([
                 apiFetch(`/api/community/board/${urlPath}`),
-                apiFetch(`/api/community/board/${urlPath}/allPost${query}`)
-            ])
+                apiFetch(postApiUrl) // 💡 3. 분기 처리된 URL로 요청
+            ]);
+
             const boardData = await boardResponse.json();
             const postData = await postResponse.json();
 
@@ -53,9 +61,9 @@ export const useBoardPosts = (urlPath, selectedCategoryId, sortMode, page, size 
                 first: postData.first,
                 last: postData.last,
             });
-        }catch (e){
+        } catch (e) {
             setErrorMessage(e.message);
-        }finally {
+        } finally {
             setLoading(false);
         }
     }, [urlPath, selectedCategoryId, sortMode, page, size]);
@@ -65,5 +73,5 @@ export const useBoardPosts = (urlPath, selectedCategoryId, sortMode, page, size 
         fetchBoardData();
     }, [fetchBoardData]);
 
-    return {boardInfo,postDataList,pageInfo,loading,errorMessage}
-}
+    return { boardInfo, postDataList, pageInfo, loading, errorMessage };
+};
