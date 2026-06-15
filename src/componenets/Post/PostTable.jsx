@@ -5,7 +5,8 @@ import ErrorMessage from "../util/ErrorMessage.jsx";
 const PostTable = ({
                        defaultUrlPath,
                        postDataList,
-                       errorMessage
+                       errorMessage,
+                       title // title prop 추가
                    }) => {
 
     return (
@@ -13,6 +14,9 @@ const PostTable = ({
             <ErrorMessage errorMessage={errorMessage}/>
 
             <div className="mb-3">
+                {/* title이 전달된 경우에만 제목을 출력하도록 조건부 렌더링 */}
+                {title && <h2 className="dc-title-main mb-3">{title}</h2>}
+
                 <table className="dc-table">
                     <thead>
                     <tr>

@@ -1,15 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {useMyPage} from "../../../hooks/useMyPage.js";
 import PostTable from "../../Post/PostTable.jsx";
-import {Box, CircularProgress} from "@mui/material";
 
-const MyPosts = ({ userId = null }) => {
+const MyPosts = ({ userId = null, title = "내가 쓴 글" }) => {
 
     const {fetchMyPosts, fetchUserPosts} = useMyPage();
-    const [error, setError] = useState("")
-    const [postData, setPostData] = useState([])
+    const [error, setError] = useState("");
+    const [postData, setPostData] = useState([]);
     const [loading, setLoading] = useState(true);
-
 
     useEffect(() => {
         const loadPosts = async () => {
@@ -19,9 +17,9 @@ const MyPosts = ({ userId = null }) => {
                     ? await fetchUserPosts(userId)
                     : await fetchMyPosts();
                 setPostData(data);
-            }catch (e) {
+            } catch (e) {
                 setError(e.message);
-            }finally {
+            } finally {
                 setLoading(false);
             }
         }
@@ -30,18 +28,20 @@ const MyPosts = ({ userId = null }) => {
     }, [userId, fetchMyPosts, fetchUserPosts]);
 
 
-
-// 로딩 중일 때 보여줄 UI (UX 개선)
+    // MUI CircularProgress 대신 일반 텍스트/디자인으로 대체
     if (loading) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', p: 5 }}>
-                <CircularProgress />
-            </Box>
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '40px', color: '#888' }}>
+                로딩 중...
+            </div>
         );
     }
 
     return (
-        <PostTable errorMessage={error} postDataList={postData}/>
+        <div className="dc-write-container">
+            {/* PostTable로 title 값을 넘겨줌 */}
+            <PostTable title={title} errorMessage={error} postDataList={postData}/>
+        </div>
     );
 };
 

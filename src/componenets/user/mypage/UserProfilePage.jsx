@@ -40,15 +40,18 @@ const UserProfilePage = () => {
     const renderContent = () => {
         switch (activeMenu) {
             case "INFO": return (
-                <div className="dc-write-form-box">
-                    <h3 style={{ color: '#fff', marginBottom: '16px' }}>유저 정보</h3>
-                    <div style={{ color: '#ccc', fontSize: '14px', lineHeight: '2' }}>
-                        <p><strong>유저 번호:</strong> {profile?.id}</p>
-                        <p><strong>닉네임:</strong> {profile?.nickname}</p>
+                <>
+                    <h2 className="dc-title-main mb-3">{profile?.nickname}님의 페이지</h2>
+                    <div className="dc-write-form-box">
+                        <h3 style={{ color: '#fff', marginBottom: '16px' }}>유저 정보</h3>
+                        <div style={{ color: '#ccc', fontSize: '14px', lineHeight: '2' }}>
+                            <p><strong>유저 번호:</strong> {profile?.id}</p>
+                            <p><strong>닉네임:</strong> {profile?.nickname}</p>
+                        </div>
                     </div>
-                </div>
+                </>
             );
-            case "POSTS": return <MyPosts userId={profileUserId}/>;
+            case "POSTS": return <MyPosts userId={profileUserId} title={`${profile?.nickname}님이 작성한 글`}/>;
             case "COMMENTS": return <MyCommentsContainer userId={profileUserId} title={`${profile?.nickname}님의 댓글`} />;
             case "WARNING": return (
                 <div className="dc-write-form-box">
@@ -93,7 +96,6 @@ const UserProfilePage = () => {
             </aside>
 
             <main style={{ flexGrow: 1 }}>
-                <h2 className="dc-title-main mb-3">{profile?.nickname}님의 페이지</h2>
                 {errorMessage && <ErrorMessage errorMessage={errorMessage} />}
                 {successMessage && <div style={{ color: '#52c41a', marginBottom: '16px' }}>{successMessage}</div>}
                 {renderContent()}
