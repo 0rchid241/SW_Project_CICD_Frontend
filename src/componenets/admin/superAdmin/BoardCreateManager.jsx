@@ -1,104 +1,70 @@
 import React, {useState} from 'react';
 import {useSuperAdmin} from "../../../hooks/useSuperAdmin.js";
-import {Alert, Box, Button, Stack, TextField, Typography} from "@mui/material";
 
 const BoardCreateManager = () => {
-
     const {loading, createBoard, status, setStatus} = useSuperAdmin();
+    const [formData, setFormData] = useState({ name: '', urlPath: '', description: '' });
 
-    const [formData, setFormData] = useState({
-        name: '',
-        urlPath: '',
-        description: ''
-    });
-
-    const handleChange = (e)=>{
-        const {name,value} = e.target;
-        setFormData(prev => ({
-            ...prev,[name]:value}));
-
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
         if (status?.message) setStatus({});
     }
 
-    const handleSubmit = async (e) =>{
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const isSuccess = await createBoard(formData)
-
+        const isSuccess = await createBoard(formData);
         if (isSuccess) {
             setFormData({ name: '', urlPath: '', description: '' });
         }
     }
 
     return (
-        <Box sx={{width:'100%'}}>
-            {/* 타이틀 영역 */}
-            <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
-                커뮤니티 생성 관리
-            </Typography>
+        <div className="dc-write-form-box">
+            <h3 style={{ color: '#fff', marginBottom: '8px' }}>커뮤니티 생성</h3>
+            <p style={{ color: '#888', marginBottom: '20px', fontSize: '14px' }}>
+                시스템에 새로운 커뮤니티(게시판)를 추가합니다.
+            </p>
 
-            <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 2, p: 4, bgcolor: 'background.default' }}>
-                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    새로운 커뮤니티 생성
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-                    시스템에 새로운 커뮤니티(게시판)를 추가합니다.
-                </Typography>
+            {status?.message && (
+                <div style={{ color: status.type === 'error' ? '#ff4d4f' : '#52c41a', marginBottom: '16px' }}>
+                    {status.message}
+                </div>
+            )}
 
-                {status?.message && (
-                    <Alert severity={status.type} sx={{ mb: 3 }}>
-                        {status.message}
-                    </Alert>
-                )}
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <input
+                    className="dc-input-box"
+                    name="name"
+                    placeholder="커뮤니티 이름 (ex: 피파온라인)"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    className="dc-input-box"
+                    name="urlPath"
+                    placeholder="URL 경로 (ex: fifa)"
+                    value={formData.urlPath}
+                    onChange={handleChange}
+                    required
+                />
+                <textarea
+                    className="dc-input-box"
+                    name="description"
+                    placeholder="이 커뮤니티의 주제를 짧게 설명해주세요."
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows={3}
+                />
 
-                <form onSubmit={handleSubmit}>
-                    <Stack spacing={3} sx={{ maxWidth: 600 }}>
-                        <TextField
-                            label="커뮤니티 이름 (화면 표시용)"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            placeholder="ex) 피파 온라인 갤러리"
-                            required
-                            fullWidth
-                        />
-                        <TextField
-                            label="URL 경로 (영어 소문자/숫자만)"
-                            name="urlPath"
-                            value={formData.urlPath}
-                            onChange={handleChange}
-                            placeholder="ex) fifa"
-                            required
-                            fullWidth
-                            helperText="실제 접속 주소가 됩니다. ( /board/입력값 )"
-                        />
-                        <TextField
-                            label="커뮤니티 설명 (선택)"
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            placeholder="이 커뮤니티의 주제를 짧게 설명해주세요."
-                            multiline
-                            rows={3}
-                            fullWidth
-                        />
-                        <Box>
-                            {/* 버튼 크기도 적절히 조절 */}
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                size="large"
-                                disabled={loading}
-                                sx={{ mt: 1, minWidth: 200 }}
-                            >
-                                {loading ? '생성 중...' : '커뮤니티 생성하기'}
-                            </Button>
-                        </Box>
-                    </Stack>
-                </form>
-            </Box>
-        </Box>
+                <div className="dc-flex-end">
+                    <button type="submit" className="dc-btn dc-btn-md dc-btn-primary" disabled={loading}>
+                        {loading ? '생성 중...' : '커뮤니티 생성하기'}
+                    </button>
+                </div>
+            </form>
+        </div>
     );
 };
 

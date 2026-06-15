@@ -164,3 +164,47 @@
     margin-top: 16px;
     border-radius: 2px;
 }
+
+
+/* =========================================
+   7. 마이페이지 및 사이드바 전용
+========================================= */
+.dc-mypage-layout {
+    display: flex;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 16px;
+}
+
+.dc-sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    border: 1px solid #333333;
+    background-color: #1e1e1e;
+    height: fit-content;
+}
+
+.dc-sidebar-item {
+    display: block;
+    width: 100%;
+    padding: 14px 16px;
+    border-bottom: 1px solid #333333;
+    cursor: pointer;
+    color: #cccccc;
+    text-align: left;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+}
+
+.dc-sidebar-item:hover {
+    background-color: #2b2b2b;
+    color: #ffffff;
+}
+
+.dc-sidebar-item.active {
+    background-color: #3b4874;
+    color: #ffffff;
+    font-weight: bold;
+}

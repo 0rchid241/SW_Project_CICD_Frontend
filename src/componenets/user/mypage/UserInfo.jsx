@@ -1,18 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-    Alert,
-    Box,
-    Button,
-    CircularProgress,
-    Divider,
-    Paper,
-    Stack,
-    TextField,
-    Typography,
-} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { apiFetch } from "../../util/apiFetch.js";
+import ErrorMessage from "../../util/ErrorMessage.jsx";
 
 const UserInfo = () => {
     const navigate = useNavigate();
@@ -36,11 +26,7 @@ const UserInfo = () => {
         try {
             setLoading(true);
             setErrorMessage("");
-
-            const response = await apiFetch("/api/users/me", {
-                method: "GET",
-            });
-
+            const response = await apiFetch("/api/users/me", { method: "GET" });
             const data = await response.json();
             setMe(data);
             setNicknameInput(data.nickname || "");
@@ -53,267 +39,109 @@ const UserInfo = () => {
 
     useEffect(() => {
         if (!authReady) return;
-
         if (!isLoggedIn) {
             alert("로그인이 필요한 페이지입니다.");
             navigate("/login");
             return;
         }
-
         fetchMe();
     }, [authReady, isLoggedIn]);
 
     const handleOpenNicknameForm = () => {
-        setErrorMessage("");
-        setSuccessMessage("");
+        setErrorMessage(""); setSuccessMessage("");
         setNicknameInput(me?.nickname || "");
         setShowNicknameForm(true);
     };
 
     const handleChangeNickname = async () => {
         const trimmedNickname = nicknameInput.trim();
-
-        if (!trimmedNickname) {
-            setErrorMessage("닉네임을 입력하세요.");
-            return;
-        }
-
+        if (!trimmedNickname) { setErrorMessage("닉네임을 입력하세요."); return; }
         if (trimmedNickname.length < 2 || trimmedNickname.length > 30) {
-            setErrorMessage("닉네임은 2자 이상 30자 이하로 입력하세요.");
-            return;
+            setErrorMessage("닉네임은 2자 이상 30자 이하로 입력하세요."); return;
         }
-
         try {
-            setErrorMessage("");
-            setSuccessMessage("");
-
             await apiFetch("/api/users/me/nickname", {
                 method: "PATCH",
-                body: JSON.stringify({
-                    nickname: trimmedNickname,
-                }),
+                body: JSON.stringify({ nickname: trimmedNickname }),
             });
-
-            setMe((prev) => ({
-                ...prev,
-                nickname: trimmedNickname,
-            }));
-
+            setMe(prev => ({ ...prev, nickname: trimmedNickname }));
             updateNickname(trimmedNickname);
             setShowNicknameForm(false);
             setSuccessMessage("닉네임이 변경되었습니다.");
-        } catch (error) {
-            setErrorMessage(error.message);
-        }
+        } catch (error) { setErrorMessage(error.message); }
     };
 
     const handleOpenPasswordForm = () => {
-        setErrorMessage("");
-        setSuccessMessage("");
-        setCurrentPassword("");
-        setNewPassword("");
-        setNewPasswordConfirm("");
+        setErrorMessage(""); setSuccessMessage("");
+        setCurrentPassword(""); setNewPassword(""); setNewPasswordConfirm("");
         setShowPasswordForm(true);
     };
 
     const handleChangePassword = async () => {
-        if (!currentPassword) {
-            setErrorMessage("현재 비밀번호를 입력하세요.");
-            return;
-        }
-
-        if (!newPassword) {
-            setErrorMessage("새 비밀번호를 입력하세요.");
-            return;
-        }
-
-        if (newPassword.length < 8) {
-            setErrorMessage("새 비밀번호는 8자 이상 입력하세요.");
-            return;
-        }
-
-        if (newPassword !== newPasswordConfirm) {
-            setErrorMessage("새 비밀번호 확인이 일치하지 않습니다.");
-            return;
-        }
-
+        if (!currentPassword || !newPassword) { setErrorMessage("모든 항목을 입력하세요."); return; }
+        if (newPassword.length < 8) { setErrorMessage("새 비밀번호는 8자 이상 입력하세요."); return; }
+        if (newPassword !== newPasswordConfirm) { setErrorMessage("새 비밀번호 확인이 일치하지 않습니다."); return; }
         try {
-            setErrorMessage("");
-            setSuccessMessage("");
-
             await apiFetch("/api/users/me/password", {
                 method: "PATCH",
-                body: JSON.stringify({
-                    currentPassword,
-                    newPassword,
-                }),
+                body: JSON.stringify({ currentPassword, newPassword }),
             });
-
-            setCurrentPassword("");
-            setNewPassword("");
-            setNewPasswordConfirm("");
             setShowPasswordForm(false);
             setSuccessMessage("비밀번호가 변경되었습니다.");
-        } catch (error) {
-            setErrorMessage(error.message);
-        }
+        } catch (error) { setErrorMessage(error.message); }
     };
 
-    if (!authReady || loading) {
-        return (
-            <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
-                <CircularProgress />
-            </Box>
-        );
-    }
+    if (!authReady || loading) return <div style={{ padding: '40px', color: '#fff' }}>로딩 중...</div>;
 
     return (
-        <Box>
-            <Typography variant="h4" sx={{ fontWeight: "bold", mb: 3 }}>
-                마이페이지
-            </Typography>
+        <div className="dc-write-container">
+            <h2 className="dc-title-main mb-3">내 정보</h2>
+            <ErrorMessage errorMessage={errorMessage} />
+            {successMessage && <div style={{ color: '#52c41a', marginBottom: '16px' }}>{successMessage}</div>}
 
-            <Paper
-                elevation={0}
-                sx={{
-                    p: 3,
-                    border: 1,
-                    borderColor: "divider",
-                    borderRadius: 3,
-                }}
-            >
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                    내 정보
-                </Typography>
+            <div className="dc-write-form-box">
+                {/* 유저 기본 정보 */}
+                <div style={{ color: '#ccc', marginBottom: '24px', lineHeight: '2' }}>
+                    <p><strong>아이디:</strong> {me?.username || "정보 없음"}</p>
+                    <p><strong>이메일:</strong> {me?.email || "정보 없음"}</p>
+                    <p><strong>닉네임:</strong> {me?.nickname || "정보 없음"}</p>
+                </div>
 
-                {errorMessage && (
-                    <Alert severity="error" sx={{ mb: 2 }}>
-                        {errorMessage}
-                    </Alert>
-                )}
+                {/* 닉네임 변경 폼 */}
+                <div className="mb-3">
+                    {!showNicknameForm ? (
+                        <button className="dc-btn dc-btn-md dc-btn-dark" onClick={handleOpenNicknameForm}>닉네임 변경</button>
+                    ) : (
+                        <div className="dc-flex-row gap-1">
+                            <input className="dc-input-box" value={nicknameInput} onChange={e => setNicknameInput(e.target.value)} />
+                            <button className="dc-btn dc-btn-md dc-btn-primary" onClick={handleChangeNickname}>저장</button>
+                            <button className="dc-btn dc-btn-md dc-btn-outline" onClick={() => setShowNicknameForm(false)}>취소</button>
+                        </div>
+                    )}
+                </div>
 
-                {successMessage && (
-                    <Alert severity="success" sx={{ mb: 2 }}>
-                        {successMessage}
-                    </Alert>
-                )}
-
-                <Stack spacing={1.5}>
-                    <Typography>
-                        <strong>아이디:</strong> {me?.username || "정보 없음"}
-                    </Typography>
-
-                    <Typography>
-                        <strong>이메일:</strong> {me?.email || "정보 없음"}
-                    </Typography>
-
-                    <Typography>
-                        <strong>닉네임:</strong> {me?.nickname || "정보 없음"}
-                    </Typography>
-                </Stack>
-
-                <Divider sx={{ my: 3 }} />
-
-                <Stack spacing={2}>
-                    <Box>
-                        {!showNicknameForm ? (
-                            <Button
-                                variant="outlined"
-                                onClick={handleOpenNicknameForm}
-                            >
-                                닉네임 변경
-                            </Button>
-                        ) : (
-                            <Stack spacing={1.5}>
-                                <TextField
-                                    label="새 닉네임"
-                                    value={nicknameInput}
-                                    onChange={(event) => setNicknameInput(event.target.value)}
-                                    size="small"
-                                    fullWidth
-                                />
-
-                                <Stack direction="row" spacing={1}>
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleChangeNickname}
-                                    >
-                                        저장
-                                    </Button>
-
-                                    <Button
-                                        variant="outlined"
-                                        onClick={() => setShowNicknameForm(false)}
-                                    >
-                                        취소
-                                    </Button>
-                                </Stack>
-                            </Stack>
-                        )}
-                    </Box>
-
-                    <Box>
-                        {me?.socialUser ? (
-                            <Alert severity="info">
-                                소셜 로그인 계정은 비밀번호를 변경할 수 없습니다.
-                            </Alert>
-                        ) : !showPasswordForm ? (
-                            <Button
-                                variant="outlined"
-                                onClick={handleOpenPasswordForm}
-                            >
-                                비밀번호 변경
-                            </Button>
-                        ) : (
-                            <Stack spacing={1.5}>
-                                <TextField
-                                    label="현재 비밀번호"
-                                    type="password"
-                                    value={currentPassword}
-                                    onChange={(event) => setCurrentPassword(event.target.value)}
-                                    size="small"
-                                    fullWidth
-                                />
-
-                                <TextField
-                                    label="새 비밀번호"
-                                    type="password"
-                                    value={newPassword}
-                                    onChange={(event) => setNewPassword(event.target.value)}
-                                    size="small"
-                                    fullWidth
-                                />
-
-                                <TextField
-                                    label="새 비밀번호 확인"
-                                    type="password"
-                                    value={newPasswordConfirm}
-                                    onChange={(event) => setNewPasswordConfirm(event.target.value)}
-                                    size="small"
-                                    fullWidth
-                                />
-
-                                <Stack direction="row" spacing={1}>
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleChangePassword}
-                                    >
-                                        변경
-                                    </Button>
-
-                                    <Button
-                                        variant="outlined"
-                                        onClick={() => setShowPasswordForm(false)}
-                                    >
-                                        취소
-                                    </Button>
-                                </Stack>
-                            </Stack>
-                        )}
-                    </Box>
-                </Stack>
-            </Paper>
-        </Box>
+                {/* 비밀번호 변경 폼 */}
+                <div>
+                    {me?.socialUser ? (
+                        <div className="dc-btn-dark" style={{ padding: '10px' }}>소셜 로그인 계정은 비밀번호를 변경할 수 없습니다.</div>
+                    ) : !showPasswordForm ? (
+                        <button className="dc-btn dc-btn-md dc-btn-dark" onClick={handleOpenPasswordForm}>비밀번호 변경</button>
+                    ) : (
+                        <div className="dc-flex-row gap-1" style={{ alignItems: 'flex-start' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexGrow: 1 }}>
+                                <input className="dc-input-box" type="password" placeholder="현재 비밀번호" onChange={e => setCurrentPassword(e.target.value)} />
+                                <input className="dc-input-box" type="password" placeholder="새 비밀번호" onChange={e => setNewPassword(e.target.value)} />
+                                <input className="dc-input-box" type="password" placeholder="새 비밀번호 확인" onChange={e => setNewPasswordConfirm(e.target.value)} />
+                            </div>
+                            <div className="dc-flex-row gap-1">
+                                <button className="dc-btn dc-btn-md dc-btn-primary" onClick={handleChangePassword}>변경</button>
+                                <button className="dc-btn dc-btn-md dc-btn-outline" onClick={() => setShowPasswordForm(false)}>취소</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
     );
 };
 
