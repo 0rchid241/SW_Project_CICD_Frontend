@@ -31,7 +31,7 @@ const PostTable = ({defaultUrlPath,
                             <PostItem
                                 key={post.id}
                                 data={post}
-                                urlPath={defaultUrlPath || post.urlPath}>
+                                urlPath={defaultUrlPath ?? post.boardUrlPath}>
                             </PostItem>
                         ))}
                     </TableBody>
