@@ -2,6 +2,7 @@ import React from 'react';
 import {Box, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import ErrorMessage from "../util/ErrorMessage.jsx";
+import {formatDate} from "../util/dateFormater.js";
 
 const PinnedPost = ({defaultUrlPath,
                         pinnedPosts = [],
@@ -40,7 +41,7 @@ const PinnedPost = ({defaultUrlPath,
                     onClick={() => navigate(`/board/${defaultUrlPath}/post/${post.id}`)}
                 >
                     <Typography sx={{ fontWeight: "bold" }}>[공지] {post.title}</Typography>
-                    <Typography variant="body2" color="text.secondary">{post.authorName} • {post.createAt}</Typography>
+                    <Typography variant="body2" color="text.secondary">{post.authorName} • {formatDate(post.createAt)}</Typography>
                 </Box>
             ))}
         </Box>
