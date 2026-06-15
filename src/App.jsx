@@ -22,6 +22,9 @@ import PostEditPage from "./componenets/Post/PostEditPage.jsx";
 import BoardLayout from "./componenets/Board/BoardLayout.jsx"; // 💡 BoardLayout import 추가
 import UserProfilePage from "./componenets/user/mypage/UserProfilePage.jsx";
 
+import './style/BoardStyle.css';
+
+
 /* MUI의 기본 다크 테마*/
 const darkTheme = createTheme({
     palette:{

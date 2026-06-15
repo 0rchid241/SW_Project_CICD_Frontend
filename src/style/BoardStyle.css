@@ -1,66 +1,166 @@
-/* dc-style.css */
+/* =========================================
+   1. 공통 레이아웃 유틸리티
+========================================= */
+.dc-flex-row { display: flex; align-items: center; }
+.dc-flex-between { display: flex; align-items: center; justify-content: space-between; }
+.dc-flex-end { display: flex; align-items: center; justify-content: flex-end; }
+.gap-1 { gap: 8px; }
+.gap-2 { gap: 16px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.mt-2 { margin-top: 16px; }
 
-/* 카테고리 전체 컨테이너 */
-.dc-category-wrapper {
-    display: flex;
+/* =========================================
+   2. 공통 버튼 모듈 (Base + Modifier)
+========================================= */
+/* 베이스 버튼 */
+.dc-btn {
+    display: inline-flex;
     align-items: center;
-    border-bottom: 2px solid #3b4874; /* 디시인사이드 특유의 파란색 하단 선 */
-    margin-bottom: 24px;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+    background: transparent;
+
+    /* 👇 추가된 부분: 글자가 세로로 꺾이거나 버튼이 찌그러지는 현상 방지 */
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* 버튼 크기 */
+.dc-btn-sm { padding: 4px 12px; font-size: 13px; }
+.dc-btn-md { padding: 8px 16px; }
+.dc-btn-lg { padding: 10px 24px; font-weight: bold; }
+
+/* 버튼 테마(색상) */
+.dc-btn-primary { background-color: #3b4874; color: #ffffff; }
+.dc-btn-primary:hover { background-color: #2a3556; }
+
+.dc-btn-dark { background-color: #2b2b2b; color: #cccccc; border-color: #444444; }
+.dc-btn-dark:hover, .dc-btn-dark.active { background-color: #3b4874; color: #ffffff; border-color: #3b4874; }
+
+.dc-btn-outline { color: #cccccc; border-color: #444444; }
+.dc-btn-outline:hover { background-color: #2b2b2b; color: #ffffff; }
+
+.dc-btn-danger { color: #ff4d4f; border-color: #ff4d4f; }
+.dc-btn-danger:hover { background-color: rgba(255, 77, 79, 0.1); }
+
+.dc-btn-text { color: #cccccc; padding: 4px 8px; border: none; }
+.dc-btn-text:hover { color: #ffffff; text-decoration: underline; }
+
+
+/* 클릭 시 버튼이 살짝 작아지며 물리적으로 눌리는 느낌을 줌 */
+.dc-btn:active {
+    transform: scale(0.96);
+}
+
+/* Primary 버튼 클릭 시 배경색을 한 단계 더 어둡게 처리 (선택 사항) */
+.dc-btn-primary:active {
+    background-color: #1a2238;
+}
+
+
+/* =========================================
+   3. 도메인별 특화 레이아웃 (테이블, 헤더, 검색 등)
+========================================= */
+/* 글로벌 헤더 & 게시판 헤더 */
+.dc-global-header { background-color: #1a1a1a; border-bottom: 1px solid #333333; padding: 12px 24px; }
+.dc-board-header { padding-bottom: 16px; border-bottom: 3px solid #3b4874; }
+
+/* 텍스트 타이틀 */
+.dc-title-main { font-size: 28px; font-weight: bold; color: #ffffff; margin: 0; }
+.dc-title-sub { font-size: 22px; font-weight: bold; color: #ffffff; margin: 0; }
+
+/* 카테고리 탭 영역 */
+.dc-category-wrapper {
+    border-bottom: 2px solid #3b4874;
     background-color: #1e1e1e;
     padding: 8px;
+    margin-bottom: 16px; /* 하단 여백 추가 */
 }
 
-/* 좌측 메인 탭 (전체글, 개념글) 그룹 */
-.dc-main-tabs {
-    display: flex;
-    margin-right: 24px;
-}
 
-/* 메인 탭 버튼 공통 스타일 */
-.dc-tab-btn {
-    border: none;
-    border-radius: 0;
-    background-color: #2b2b2b;
-    color: #cccccc;
-    font-weight: bold;
+/* 검색 영역 */
+.dc-search-container { background-color: #1e1e1e; border: 1px solid #333333; padding: 12px; }
+.dc-search-input { flex-grow: 1; background-color: #121212; color: #ffffff; border: 1px solid #444444; padding: 8px 12px; font-size: 14px; outline: none; }
+.dc-search-select { background-color: #121212; color: #cccccc; border: 1px solid #444444; padding: 8px; font-size: 14px; outline: none; min-width: 100px; cursor: pointer; }
+
+/* 게시글 테이블 */
+.dc-table { width: 100%; border-collapse: collapse; text-align: center; }
+.dc-table th { padding: 14px 8px; font-size: 15px; font-weight: bold; color: #ffffff; background-color: #1e1e1e; border-top: 2px solid #3b4874; border-bottom: 1px solid #3b4874; }
+.dc-table td { padding: 12px 8px; font-size: 14px; color: #cccccc; border-bottom: 1px solid #333333; }
+
+/* 게시글 상세 헤더 정보란 */
+.dc-post-info-row { font-size: 13px; color: #cccccc; background-color: #1e1e1e; padding: 16px 12px; border-bottom: 1px solid #333333; }
+.dc-post-info-item::after { content: ""; display: inline-block; width: 1px; height: 10px; background-color: #444444; margin-left: 16px; margin-right: 16px; }
+.dc-post-info-item:last-child::after { display: none; }
+.dc-post-content { padding: 32px 12px; min-height: 300px; font-size: 15px; color: #dddddd; line-height: 1.6; border-bottom: 1px solid #333333; }
+
+
+
+
+/* =========================================
+   4. 폼(Form) 및 입력창 (댓글, 글쓰기 공용)
+========================================= */
+.dc-input-box {
+    width: 100%;
+    background-color: #121212;
+    color: #ffffff;
+    border: 1px solid #444444;
+    padding: 12px;
     font-size: 14px;
-    padding: 10px 24px;
-    margin-right: 2px;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
+    outline: none;
+    resize: vertical; /* 사용자가 세로 크기만 조절 가능하게 설정 */
+    border-radius: 2px;
 }
 
-.dc-tab-btn:hover {
-    background-color: #3a3a3a;
-    color: #ffffff;
+.dc-input-box:focus {
+    border-color: #3b4874; /* 포커스 시 파란색 테두리 */
 }
 
-/* 메인 탭 활성화 상태 */
-.dc-tab-btn.active {
-    background-color: #3b4874;
-    color: #ffffff;
-}
-
-/* 우측 서브 카테고리 (일반, 등등) 그룹 */
-.dc-sub-tabs {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-/* 서브 카테고리 버튼 */
-.dc-sub-tab-btn {
-    background: transparent;
-    border: none;
-    color: #888888;
-    padding: 0;
-    cursor: pointer;
+/* =========================================
+   5. 리스트 아이템 (댓글 등 한 줄 배치용)
+========================================= */
+/* 파란선이 들어가는 리스트 헤더 */
+.dc-list-header {
+    border-top: 2px solid #3b4874;
+    border-bottom: 1px solid #333333;
+    background-color: #1e1e1e;
+    padding: 12px;
     font-size: 14px;
+    font-weight: bold;
 }
 
-.dc-sub-tab-btn:hover,
-.dc-sub-tab-btn.active {
-    color: #ffffff;
-    font-weight: bold;
+/* 개별 리스트 요소 (하단 선과 패딩) */
+.dc-list-item {
+    border-bottom: 1px solid #333333;
+    padding: 10px 12px;
+    font-size: 13px;
+}
+
+/* 3단 분리 컬럼 너비 지정 */
+.dc-col-author { width: 130px; font-weight: bold; flex-shrink: 0; color: #cccccc; }
+.dc-col-content { flex-grow: 1; word-break: break-all; padding-right: 16px; color: #dddddd; }
+.dc-col-info { color: #888888; font-size: 12px; flex-shrink: 0; }
+
+
+
+
+/* =========================================
+   6. 글쓰기 페이지 전용
+========================================= */
+.dc-write-container {
+    max-width: 1000px;
+    margin: 40px auto;
+}
+
+.dc-write-form-box {
+    background-color: #1e1e1e;
+    border: 1px solid #333333;
+    padding: 20px;
+    margin-top: 16px;
+    border-radius: 2px;
 }

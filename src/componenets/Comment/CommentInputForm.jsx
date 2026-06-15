@@ -1,16 +1,14 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Box, Button, Divider, Stack, TextField, Typography} from "@mui/material";
-import {AuthContext} from "../../context/AuthContext.jsx";
+import React, { useState } from 'react';
 import ErrorMessage from "../util/ErrorMessage.jsx";
 
-const CommentInputForm = ({onSubmit,isLoggedIn}) => {
-
+const CommentInputForm = ({onSubmit, isLoggedIn}) => {
 
     const [commentData, setCommentData] = useState({
         authorName: "",
         password:"",
         content: ""
     })
+    const [errorMessage, setErrorMessage] = useState("")
 
     const handleChange = (e)=>{
         const {name,value} = e.target
@@ -20,11 +18,7 @@ const CommentInputForm = ({onSubmit,isLoggedIn}) => {
         });
     }
 
-    const [errorMessage, setErrorMessage] = useState("")
-    
-
     const handleCreateComment = async ()=>{
-
         if(!commentData.content){
             setErrorMessage("내용을 입력해주세요.");
             return;
@@ -34,10 +28,8 @@ const CommentInputForm = ({onSubmit,isLoggedIn}) => {
             return;
         }
 
-        /* 인자로 받은 댓글작성핸들러 실행 */
         try {
             await onSubmit(commentData);
-            /* 댓글 입력 초기화 */
             setCommentData({
                 authorName: "",
                 password: "",
@@ -47,50 +39,60 @@ const CommentInputForm = ({onSubmit,isLoggedIn}) => {
         }catch (e) {
             setErrorMessage(e.message);
         }
-
     }
 
-
     return (
-        <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
+        <div style={{ backgroundColor: '#1e1e1e', padding: '16px', border: '1px solid #333333', borderRadius: '2px' }}>
 
             <ErrorMessage errorMessage={errorMessage}/>
 
-            {!isLoggedIn && (
-                <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
-                    <TextField
-                        label="이름"
-                        size="small"
-                        name={"authorName"}
-                        value={commentData.authorName}
-                        onChange={handleChange}
-                    />
-                    <TextField
-                        label="비밀번호"
-                        type="password"
-                        size="small"
-                        name={"password"}
-                        value={commentData.password}
-                        onChange={handleChange}
-                    />
-                </Stack>
-            )}
+            <div className="dc-flex-row gap-1" style={{ alignItems: 'flex-start' }}>
 
-            <TextField
-                label="댓글을 남겨보세요"
-                multiline
-                rows={3}
-                fullWidth
-                name={"content"}
-                value={commentData.content}
-                onChange={handleChange}
-            />
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                <Button variant="contained" onClick={handleCreateComment}>
+                {/* 비회원 정보 입력란 */}
+                {!isLoggedIn && (
+                    <div style={{ width: '130px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <input
+                            type="text"
+                            className="dc-input-box"
+                            placeholder="닉네임"
+                            name="authorName"
+                            value={commentData.authorName}
+                            onChange={handleChange}
+                            style={{ padding: '8px' }}
+                        />
+                        <input
+                            type="password"
+                            className="dc-input-box"
+                            placeholder="비밀번호"
+                            name="password"
+                            value={commentData.password}
+                            onChange={handleChange}
+                            style={{ padding: '8px' }}
+                        />
+                    </div>
+                )}
+
+                {/* 댓글 본문 작성 영역 */}
+                <textarea
+                    className="dc-input-box"
+                    placeholder="타인에 대한 욕설 또는 비방 목적의 악플은 제재될 수 있습니다."
+                    rows={isLoggedIn ? "2" : "3"}
+                    name="content"
+                    value={commentData.content}
+                    onChange={handleChange}
+                    style={{ flexGrow: 1 }}
+                />
+
+                {/* 등록 버튼 */}
+                <button
+                    className="dc-btn dc-btn-md dc-btn-primary"
+                    onClick={handleCreateComment}
+                    style={{ height: isLoggedIn ? '55px' : '88px' }}
+                >
                     등록
-                </Button>
-            </Box>
-        </Box>
+                </button>
+            </div>
+        </div>
     );
 };
 

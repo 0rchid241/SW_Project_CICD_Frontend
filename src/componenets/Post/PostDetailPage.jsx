@@ -1,27 +1,22 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {data, useNavigate, useParams} from "react-router-dom";
-import {Box, Button, Divider, MenuItem, Paper, Stack, TextField, Typography} from "@mui/material";
+import {useNavigate, useParams} from "react-router-dom";
 import CommentSection from "../Comment/CommentSection.jsx";
 import PostLikeButton from "./PostLikeButton.jsx";
-
 import {AuthContext} from "../../context/AuthContext.jsx";
 import {apiFetch} from "../util/apiFetch.js";
 import PostMenu from "./PostMenu.jsx";
 import PostActionButton from "./PostActionButton.jsx";
-import {formatDate, formatDetailDate} from "../util/dateFormater.js";
+import {formatDetailDate} from "../util/dateFormater.js";
 
 const PostDetailPage = () => {
 
-    const {postId,urlPath} = useParams();
+    const {postId, urlPath} = useParams();
     const [postData, setPostData] = useState(null)
 
     const {isLoggedIn} = useContext(AuthContext);
     const navigate = useNavigate();
 
-
     useEffect(() => {
-        // console.log("현재 상세페이지 게시글 ID:", postId);
-
         const getPost = async () => {
             try {
                 const response = await apiFetch(`/api/community/board/${urlPath}/post/${postId}`)
@@ -33,63 +28,89 @@ const PostDetailPage = () => {
         };
         getPost();
 
-    }, [postId]);
+    }, [postId, urlPath]);
 
 
-    
     if (!postData) {
-        return <div style={{ color: 'white' }}>데이터 로딩 중...</div>;
+        return <div style={{ color: 'white', padding: '20px' }}>데이터 로딩 중...</div>;
     }
 
     return (
-        <Box sx={{ maxWidth: 800, margin: 'auto', mt: 5 }}>
+        <div className="mt-2">
 
-            <Paper sx={{ p: 4 }}>
+            {/* 헤더 전체 컨테이너 (세로 배치) */}
+            <div style={{ backgroundColor: '#1e1e1e', borderBottom: '1px solid #333333', padding: '16px 12px' }}>
 
-                {/* 본 글 내용 */}
-                <Typography variant="h4" gutterBottom>{postData.title}</Typography>
-                <Stack direction="row" spacing={2} sx={{ mb: 2, color: 'text.secondary' }}>
-                    {/* 작성자가 회원인지 아닌지 확인 후 회원일 경우에만 클릭 가능하도록 함 */}
-                    <Typography component="span">작성자:{" "}</Typography>
-                    {postData.userId ? (
-                        <Button variant="text" size="small" onClick={() => navigate(`/board/${urlPath}/users/${postData.userId}`)}
-                            sx={{
-                                minWidth: 0,
-                                p: 0,
-                                textTransform: "none",
-                            }}
-                        >
-                            {postData.authorName}
-                        </Button>
-                    ) : (
-                        <Typography component="span">{postData.authorName}</Typography>
-                    )}
-                    <Typography>작성일: {formatDetailDate(postData.createAt)}</Typography>
-                    <Typography color="text.secondary">조회 {postData.viewCount ?? 0}</Typography>
-                    <PostMenu postId={postId} />
-                </Stack>
-                <Divider sx={{ my: 2 }} />
-                <Typography variant="body1" sx={{ minHeight: '300px', whiteSpace: 'pre-wrap' }}>
-                    {postData.content}
-                </Typography>
+                {/* 1. 제목 영역 (굵고 크게, 아래 여백) */}
+                <h2 style={{ fontSize: '24px', fontWeight: '900', color: '#ffffff', margin: '0 0 12px 0' }}>
+                    {postData.title}
+                </h2>
 
-                {/* 추천수 버튼 */}
+                {/* 2. 작성자 및 조회수 정보 행 (가로 배치) */}
+                <div className="dc-flex-between" style={{ fontSize: '13px', color: '#cccccc' }}>
+
+                    {/* 좌측 정보 (작성자, 작성일) */}
+                    <div className="dc-flex-row">
+                        <span className="dc-post-info-item">
+                            {postData.userId ? (
+                                <button
+                                    className="dc-btn dc-btn-text"
+                                    style={{ padding: 0, fontWeight: 'bold' }} // 작성자 이름 살짝 강조
+                                    onClick={() => navigate(`/board/${urlPath}/users/${postData.userId}`)}
+                                >
+                                    {postData.authorName}
+                                </button>
+                            ) : (
+                                <span style={{ fontWeight: 'bold' }}>{postData.authorName}</span>
+                            )}
+                        </span>
+                        <span className="dc-post-info-item">
+                            {formatDetailDate(postData.createAt)}
+                        </span>
+                    </div>
+
+                    {/* 우측 정보 (조회수, 추천, 댓글) */}
+                    <div className="dc-flex-row">
+                        <span className="dc-post-info-item">조회 {postData.viewCount ?? 0}</span>
+                        <span className="dc-post-info-item">
+                            추천 {postData.likeCount ?? 0}
+                        </span>
+                        <span className="dc-post-info-item">
+                            댓글 {postData.commentCount ??0}
+                        </span>
+                        <PostMenu postId={postId} />
+                    </div>
+                </div>
+            </div>
+
+            {/* 본 글 내용 */}
+            <div className="dc-post-content mb-3">
+                {postData.content}
+            </div>
+
+            {/* 추천수 버튼 (가운데 정렬) */}
+            <div className="dc-flex-row mb-3" style={{ justifyContent: 'center' }}>
                 <PostLikeButton
                     urlPath={urlPath}
                     postId={postId}
                     initialLikeCount={postData.likeCount}
                 />
-                <Divider sx={{ my: 2 }} />
+            </div>
 
-                {/* 수정/삭제 버튼 */}
-                <PostActionButton postId={postId} urlPath={urlPath} isLoggedIn={isLoggedIn} authorUserId={postData.userId}></PostActionButton>
+            {/* 수정/삭제 버튼 (우측 정렬) */}
+            <div className="dc-flex-end mb-3">
+                <PostActionButton
+                    postId={postId}
+                    urlPath={urlPath}
+                    isLoggedIn={isLoggedIn}
+                    authorUserId={postData.userId}
+                />
+            </div>
 
-                {/* 댓글 컴포넌트*/}
-                <CommentSection urlPath = {urlPath} postId={postId}></CommentSection>
+            {/* 댓글 컴포넌트 */}
+            <CommentSection urlPath={urlPath} postId={postId} />
 
-
-            </Paper>
-        </Box>
+        </div>
     );
 };
 

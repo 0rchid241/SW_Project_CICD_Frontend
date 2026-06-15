@@ -1,78 +1,42 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
 
 const CategoryTabs = ({
                           categories = [],
-                          selectedCategoryId, // null(전체글), 'POPULAR'(개념글), 또는 category.id(숫자)
+                          selectedCategoryId,
                           onSelectCategory,
                       }) => {
     return (
-        <Box
-            sx={{
-                display: "flex",
-                alignItems: "center",
-                borderBottom: "2px solid #29365c", // 하단 파란색 줄
-                mb: 3,
-                bgcolor: "#1e1e1e", // 전체 배경색 (필요시 부모 요소로 이동)
-                p: 1
-            }}
-        >
-            {/* 1. 좌측 고정 탭 (전체글, 개념글) */}
-            <Box sx={{ display: "flex", mr: 3 }}>
-                <Button
-                    disableElevation
+        <div className="dc-category-wrapper dc-flex-row gap-2">
+            <div className="dc-flex-row" style={{ marginRight: '16px' }}>
+                <button
+                    className={`dc-btn dc-btn-lg dc-btn-dark ${selectedCategoryId === null ? "active" : ""}`}
                     onClick={() => onSelectCategory(null)}
-                    sx={{
-                        borderRadius: "0",
-                        bgcolor: selectedCategoryId === null ? "#3b4874" : "#555555",
-                        color: "#fff",
-                        fontWeight: "bold",
-                        px: 3,
-                        py: 1,
-                        mr: "2px", // 버튼 사이 틈
-                        "&:hover": { bgcolor: selectedCategoryId === null ? "#2a3556" : "#444444" }
-                    }}
+                    style={{ borderRadius: 0, marginRight: '2px' }}
                 >
                     전체글
-                </Button>
-                <Button
-                    disableElevation
+                </button>
+                <button
+                    className={`dc-btn dc-btn-lg dc-btn-dark ${selectedCategoryId === 'POPULAR' ? "active" : ""}`}
                     onClick={() => onSelectCategory('POPULAR')}
-                    sx={{
-                        borderRadius: "0",
-                        bgcolor: selectedCategoryId === 'POPULAR' ? "#3b4874" : "#555555",
-                        color: "#fff",
-                        fontWeight: "bold",
-                        px: 3,
-                        py: 1,
-                        "&:hover": { bgcolor: selectedCategoryId === 'POPULAR' ? "#2a3556" : "#444444" }
-                    }}
+                    style={{ borderRadius: 0 }}
                 >
                     개념글
-                </Button>
-            </Box>
+                </button>
+            </div>
 
-            {/* 2. 우측 동적 카테고리 탭 */}
-            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "center" }}>
+            <div className="dc-flex-row gap-2" style={{ flexWrap: 'wrap' }}>
                 {categories.map((category) => (
-                    <Button
+                    <button
                         key={category.id}
-                        variant="text"
+                        className={`dc-btn dc-btn-text ${selectedCategoryId === category.id ? "active" : ""}`}
                         onClick={() => onSelectCategory(category.id)}
-                        sx={{
-                            minWidth: "auto",
-                            p: 0,
-                            color: selectedCategoryId === category.id ? "#fff" : "#999999",
-                            fontWeight: selectedCategoryId === category.id ? "bold" : "normal",
-                            "&:hover": { bgcolor: "transparent", color: "#fff" }
-                        }}
+                        style={{ color: selectedCategoryId === category.id ? '#ffffff' : '#888888', fontWeight: selectedCategoryId === category.id ? 'bold' : 'normal' }}
                     >
-                        {/* 백엔드 데이터에 아이콘이 없다면 임의로 매핑하거나 이름만 출력 */}
                         {category.name}
-                    </Button>
+                    </button>
                 ))}
-            </Box>
-        </Box>
+            </div>
+        </div>
     );
 };
 

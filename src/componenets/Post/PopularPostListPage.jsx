@@ -1,15 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {
-    Box,
-    Button,
-    CircularProgress,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow
-} from "@mui/material";
 import {apiFetch} from "../util/apiFetch.js";
 import LoadingCircle from "../util/LoadingCircle.jsx";
 import PopularPostItem from "./PopularPostItem.jsx";
@@ -19,66 +8,58 @@ const PopularPostListPage = () => {
     const [loading, setLoading] = useState(true);
     const [postDataList, setPostDataList] = useState([])
 
-
     useEffect(() => {
-
-        const fetchPopularPostData = async ()=>{
+        const fetchPopularPostData = async () => {
             try {
                 const response = await apiFetch('/api/community/board/popular/realtime-popular');
                 const data = await response.json();
                 setPostDataList(data);
                 setLoading(false)
-
-            }catch (e) {
+            } catch (e) {
                 console.log(`인기글 불러오다가 오류 발생. ${e} `);
             }
         }
         fetchPopularPostData();
 
-        // 2. 10초(10000ms)마다 백그라운드에서 주기적으로 데이터 갱신
         const intervalId = setInterval(fetchPopularPostData, 10000);
-
-        // 3. 컴포넌트가 화면에서 사라질 때 타이머 정리 (메모리 누수 방지)
         return () => clearInterval(intervalId);
-
     }, []);
 
-
-    /* 비동기 처리 중 null값 렌더링을 피하기 위해 로딩중 띄울 화면 */
-    if (loading || postDataList.length===0) {
-        return (
-            <LoadingCircle/>
-        );
+    if (loading) {
+        return <LoadingCircle />;
     }
 
     return (
+        <div className="dc-write-container">
+            <h2 className="dc-title-sub mb-3">실시간 인기 게시글 </h2>
 
-        <Box>
-            <TableContainer>
-                <h1>인기 게시글</h1>
-                <Table sx={{minWidth: 650}} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align={"center"}>제목</TableCell>
-                            <TableCell align={"center"}>글쓴이</TableCell>
-                            <TableCell align={"center"}>조회수</TableCell>
-                            <TableCell align={"center"}>작성일</TableCell>
-                            <TableCell align={"center"}>/점수/</TableCell>
-                        </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                        {postDataList.map((post) => (
-                            //<PostItem key={post.postId} data={post} urlPath={post.urlPath}></PostItem>
+            <div className="dc-table-container">
+                <table className="dc-table">
+                    <thead>
+                    <tr>
+                        <th>제목</th>
+                        <th>글쓴이</th>
+                        <th>조회수</th>
+                        <th>작성일</th>
+                        <th>점수</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {postDataList && postDataList.length > 0 ? (
+                        postDataList.map((post) => (
                             <PopularPostItem key={post.postId} data={post}/>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-
-        </Box>
-
-
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="5" style={{ padding: '40px', color: '#888888' }}>
+                                등록된 인기 게시글이 없습니다.
+                            </td>
+                        </tr>
+                    )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     );
 };
 

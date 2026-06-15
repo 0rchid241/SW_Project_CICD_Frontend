@@ -105,113 +105,105 @@ const CommentItem = ({comment,isChild,onAddReply,onDelete,onUpdate,onVerifyPassw
     };
 
     return (
-        <Box sx={{ ml: isChild ? 4 : 0, mt: 2, mb: 2, p: 2, bgcolor: isChild ? 'background.paper' : 'transparent', borderRadius: 2 }}>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-                {/* 회원인지 비회원인지 확인 후 회원일 경우에만 클릭 가능하도록 함 */}
-                {comment.userId ? (
-                    <Button variant="text" size="small" onClick={handleAuthorClick}
-                        sx={{
-                            minWidth: 0,
-                            p: 0,
-                            color: "text.primary",
-                            fontWeight: "bold",
-                            textTransform: "none",
-                            "&:hover": {
-                                backgroundColor: "transparent",
-                                textDecoration: "underline",
-                            },
-                        }}
-                    >
-                        {comment.authorName}
-                    </Button>
-                ) : (
-                    <Typography fontWeight="bold">
-                        {comment.authorName}
-                    </Typography>
-                )}
-            </Stack>
+        <>
+            <div className="dc-flex-row dc-list-item" style={{ backgroundColor: isChild ? '#1a1a1a' : 'transparent', paddingLeft: isChild ? '32px' : '12px' }}>
 
-            {/* 💡 수정 모드일 때와 아닐 때 렌더링 분기 */}
-            {isEditing ? (
-                <Box sx={{ mb: 2 }}>
-                    <TextField
-                        multiline
-                        fullWidth
-                        size="small"
-                        value={editContent}
-                        onChange={(e) => setEditContent(e.target.value)}
-                    />
-                    <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 1 }}>
-                        <Button size="small" onClick={() => setIsEditing(false)}>취소</Button>
-                        <Button size="small" variant="contained" onClick={handleUpdateSubmit}>저장</Button>
-                    </Stack>
-                </Box>
-            ) : (
-                <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 1 }}>
-                    {comment.mentionedName && (
-                        <Typography variant="body2" component="span" sx={{ color: '#1976d2', fontWeight: 'bold', mr: 0.5 }}>
-                            @{comment.mentionedName}
-                        </Typography>
+                {/* 1. 작성자 */}
+                <div className="dc-col-author">
+                    {isChild && <span style={{ color: '#555555', marginRight: '6px' }}>ㄴ</span>}
+                    {comment.userId ? (
+                        <button className="dc-btn dc-btn-text" style={{ fontSize: '15px', padding: 0, fontWeight: 'bold' }} onClick={handleAuthorClick}>
+                            {comment.authorName}
+                        </button>
+                    ) : (
+                        <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{comment.authorName}</span>
                     )}
-                    {comment.content}
-                </Typography>
+                </div>
+
+                {/* 2. 내용 */}
+                <div className="dc-col-content" style={{ fontSize: '15px' }}>
+                    {isEditing ? (
+                        <div className="dc-flex-row gap-1" style={{ width: '100%' }}>
+                            <input
+                                type="text"
+                                className="dc-input-box"
+                                style={{ padding: '6px 8px', fontSize: '15px', flexGrow: 1 }}
+                                value={editContent}
+                                onChange={(e) => setEditContent(e.target.value)}
+                            />
+                            <button className="dc-btn dc-btn-sm dc-btn-dark" onClick={() => setIsEditing(false)}>취소</button>
+                            <button className="dc-btn dc-btn-sm dc-btn-primary" onClick={handleUpdateSubmit}>저장</button>
+                        </div>
+                    ) : (
+                        <>
+                            {comment.mentionedName && (
+                                <span style={{ color: '#92b4ec', fontWeight: 'bold', marginRight: '6px' }}>
+                    @{comment.mentionedName}
+                </span>
+                            )}
+                            {comment.content}
+                        </>
+                    )}
+                </div>
+
+
+                {/* 3. 날짜 및 버튼 */}
+                <div className="dc-col-info dc-flex-row gap-1">
+                    <span>{comment.createAt ? comment.createAt.substring(5, 16).replace('T', ' ') : ''}</span>
+
+                    {!isEditing && (
+                        <>
+                            <button className="dc-btn dc-btn-text" style={{ fontSize: '13px', padding: '2px 4px' }} onClick={() => { setIsReplying(!isReplying); setShowInput(false); }}>
+                                답글
+                            </button>
+                            <button className="dc-btn dc-btn-text" style={{ fontSize: '13px', padding: '2px 4px' }} onClick={() => handleAction('edit')}>
+                                수정
+                            </button>
+                            <button className="dc-btn dc-btn-text" style={{ fontSize: '13px', padding: '2px 4px', color: '#ff4d4f' }} onClick={() => handleAction('delete')}>
+                                삭제
+                            </button>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {/* 비밀번호 폼 및 답글 폼 */}
+            {(errorMessage || showInput || isReplying) && (
+                <div style={{ padding: '8px 12px 12px 32px', borderBottom: '1px solid #333333' }}>
+                    <ErrorMessage errorMessage={errorMessage} />
+
+                    {showInput && !isEditing && (
+                        <div className="dc-flex-row gap-1 mt-2">
+                            <input
+                                type="password"
+                                className="dc-input-box"
+                                style={{ width: '150px', padding: '6px 8px' }}
+                                placeholder={`${actionType === 'edit' ? '수정' : '삭제'} 비밀번호`}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleAction(actionType)}
+                                autoFocus
+                            />
+                            <button className={`dc-btn dc-btn-sm ${actionType === 'edit' ? 'dc-btn-primary' : 'dc-btn-danger'}`} onClick={() => handleAction(actionType)}>
+                                확인
+                            </button>
+                        </div>
+                    )}
+
+                    {isReplying && !isEditing && (
+                        <div className="mt-2">
+                            <CommentInputForm
+                                onSubmit={async (data) => {
+                                    await onAddReply({ ...data, parentId: comment.id });
+                                    setIsReplying(false);
+                                }}
+                                isLoggedIn={isLoggedIn}
+                            />
+                        </div>
+                    )}
+                </div>
             )}
-
-            {/* 버튼 그룹 (수정 중일 때는 숨김) */}
-            {!isEditing && (
-                <Stack direction="row" spacing={2}>
-                    <Button size="small" color="inherit" sx={{ opacity: 0.7 }} onClick={() => {
-                        setIsReplying(!isReplying);
-                        setShowInput(false);
-                    }}>
-                        {isReplying ? '취소' : '답글 달기'}
-                    </Button>
-                    <Button size="small" color="primary" sx={{ opacity: 0.7 }} onClick={() => handleAction('edit')}>
-                        수정
-                    </Button>
-                    <Button size="small" color="error" sx={{ opacity: 0.7 }} onClick={() => handleAction('delete')}>
-                        삭제
-                    </Button>
-                </Stack>
-            )}
-
-            <ErrorMessage errorMessage={errorMessage} />
-
-            {/* 비밀번호 입력 UI 통합 */}
-            {showInput && !isEditing && (
-                <Box sx={{ mt: 2 }}>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                        <TextField
-                            label={`${actionType === 'edit' ? '수정' : '삭제'} 비밀번호`}
-                            type="password"
-                            size="small"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            autoFocus
-                        />
-                        <Button
-                            variant="contained"
-                            color={actionType === 'edit' ? "primary" : "error"}
-                            onClick={() => handleAction(actionType)}
-                        >
-                            확인
-                        </Button>
-                    </Stack>
-                </Box>
-            )}
-
-            {/* 답글 창 */}
-            {isReplying && !isEditing && (
-                <Box sx={{ mt: 2 }}>
-                    <CommentInputForm onSubmit={async (data) => {
-                        await onAddReply({ ...data, parentId: comment.id });
-                        setIsReplying(false);
-                    }} isLoggedIn={isLoggedIn} />
-                </Box>
-            )}
-
-            <Divider sx={{ mt: 2 }} />
-        </Box>
+        </>
     );
 };
 

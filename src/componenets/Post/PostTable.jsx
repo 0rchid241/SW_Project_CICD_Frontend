@@ -1,45 +1,50 @@
 import React from 'react';
 import PostItem from "./PostItem.jsx";
-import {Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import ErrorMessage from "../util/ErrorMessage.jsx";
 
-const PostTable = ({defaultUrlPath,
+const PostTable = ({
+                       defaultUrlPath,
                        postDataList,
-                       errorMessage}) => {
+                       errorMessage
+                   }) => {
 
     return (
-        <Box>
+        <div>
             <ErrorMessage errorMessage={errorMessage}/>
 
-            <TableContainer>
-                <Table sx={{minWidth: 650}} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align={"center"}>번호</TableCell>
-                            <TableCell align={"center"}>카테고리</TableCell>
-                            <TableCell align={"center"}>제목</TableCell>
-                            <TableCell align={"center"}>글쓴이</TableCell>
-                            <TableCell align={"center"}>작성일</TableCell>
-                            <TableCell align={"center"}>조회수</TableCell>
-                            <TableCell align={"center"}>추천수</TableCell>
-                        </TableRow>
-                    </TableHead>
-
-
-                    <TableBody>
-                        {postDataList.map((post) => (
+            <div className="mb-3">
+                <table className="dc-table">
+                    <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>카테고리</th>
+                        <th>제목</th>
+                        <th>글쓴이</th>
+                        <th>작성일</th>
+                        <th>조회수</th>
+                        <th>추천수</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {postDataList && postDataList.length > 0 ? (
+                        postDataList.map((post) => (
                             <PostItem
                                 key={post.id}
                                 data={post}
-                                urlPath={defaultUrlPath || post.urlPath}>
-                            </PostItem>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-
-
-        </Box>
+                                urlPath={defaultUrlPath || post.urlPath}
+                            />
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="7" style={{ padding: '40px', color: '#888888' }}>
+                                등록된 게시글이 없습니다.
+                            </td>
+                        </tr>
+                    )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     );
 };
 

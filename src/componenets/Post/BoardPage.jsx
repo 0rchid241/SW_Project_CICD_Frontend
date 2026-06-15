@@ -1,135 +1,114 @@
-import React, {useEffect, useState} from 'react';
-import {
-    Box,
-    Button,
-    CircularProgress, Pagination, Stack,
-    Typography
-} from "@mui/material";
-import { useNavigate, useParams} from "react-router-dom";
-import {useBoardPosts} from "../../hooks/useBoardPosts.js";
+import React, { useEffect, useState } from 'react';
+import { Pagination, Typography } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import { useBoardPosts } from "../../hooks/useBoardPosts.js";
 import PostTable from "./PostTable.jsx";
 import LoadingCircle from "../util/LoadingCircle.jsx";
 import PostSearch from "./PostSearch.jsx";
 import PinnedPost from "./PinnedPost.jsx";
-import {usePostsSearch} from "../../hooks/usePostsSearch.js";
-import {usePinPosts} from "../../hooks/usePinPosts.js";
-import {useCategories} from "../../hooks/useCategories.js";
+import { usePostsSearch } from "../../hooks/usePostsSearch.js";
+import { usePinPosts } from "../../hooks/usePinPosts.js";
+import { useCategories } from "../../hooks/useCategories.js";
 import CategoryTabs from "./CategoryTabs.jsx";
-import {isAdmin} from "../util/roleUtils.js";
-import {useAuth} from "../../context/AuthContext.jsx";
+import { isAdmin } from "../util/roleUtils.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const BoardPage = () => {
-
-    const {urlPath} = useParams()
+    const { urlPath } = useParams()
     const navigate = useNavigate();
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const [sortMode, setSortMode] = useState("latest");
     const [currentPage, setCurrentPage] = useState(0);
     const pageSize = 10;
-    const {categories,fetchActiveCategories} = useCategories(urlPath);
-    const {boardInfo,postDataList, pageInfo, loading,errorMessage} = useBoardPosts(urlPath, selectedCategoryId, sortMode, currentPage, pageSize);
-    const {searchResultList, searchMessage, searchLoading, searchPosts, resetSearch} = usePostsSearch(urlPath);
-    const {pinnedPosts, pinnedMessage} = usePinPosts(urlPath);
 
-    /* 접근한 유저의 role 확인 */
-    const {role} = useAuth();
+    const { categories, fetchActiveCategories } = useCategories(urlPath);
+    const { boardInfo, postDataList, pageInfo, loading, errorMessage } = useBoardPosts(urlPath, selectedCategoryId, sortMode, currentPage, pageSize);
+    const { searchResultList, searchMessage, searchLoading, searchPosts, resetSearch } = usePostsSearch(urlPath);
+    const { pinnedPosts, pinnedMessage } = usePinPosts(urlPath);
+
+    const { role } = useAuth();
 
     useEffect(() => {
         fetchActiveCategories()
     }, [fetchActiveCategories]);
 
-    /* 비동기 처리 중 null값 렌더링을 피하기 위해 로딩중 띄울 화면 */
     if (loading || !boardInfo) return <LoadingCircle/>
 
     const displayPostList = searchResultList === null ? postDataList : searchResultList;
 
-    /* 카테고리 변경 시 1페이지로 돌아가기 */
     const handleSelectCategory = (categoryId) => {
         setSelectedCategoryId(categoryId);
         setCurrentPage(0);
     };
 
-    /* 정렬 변경 시 1페이지로 돌아가기 */
     const handleChangeSort = (sort) => {
         setSortMode(sort);
         setCurrentPage(0);
     };
 
-
     return (
         <>
-            {/* 고정 글 목록을 띄우는 컴포넌트 */}
             {pinnedPosts.length > 0 && (
                 <PinnedPost defaultUrlPath={urlPath} pinnedPosts={pinnedPosts} errorMessage={pinnedMessage} />
             )}
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, mt: 2 }}>
-
-                {/* 관리자 권한이 있을 때만 버튼 노출 */}
+            <div className="dc-flex-between mt-2 mb-2">
+                <div /> {/* flex-between 공간 맞춤용 */}
                 {isAdmin(role) && (
-                    <Button variant="outlined" color="secondary" size="small"
-                            onClick={() => navigate(`/board/${urlPath}/admin`)}>
+                    <button className="dc-btn dc-btn-sm dc-btn-danger" onClick={() => navigate(`/board/${urlPath}/admin`)}>
                         ⚙️ 커뮤니티 관리
-                    </Button>
+                    </button>
                 )}
-            </Box>
+            </div>
 
-
-            {/* 카테고리 목록 띄우는 컴포넌트 */}
             <CategoryTabs categories={categories} selectedCategoryId={selectedCategoryId} onSelectCategory={handleSelectCategory}/>
 
-            <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mb: 2 }}>
-                <Button
-                    size="small"
-                    variant={sortMode === "latest" ? "contained" : "outlined"}
+            {/* mt-3을 추가하여 위 간격을 벌리고, 카테고리 탭과 줄을 맞추기 위해 paddingLeft를 8px 줌 */}
+            <div className="dc-flex-row gap-1 mt-3 mb-2" style={{ marginLeft: '8px' }}>
+                <button
+                    className={`dc-btn dc-btn-sm dc-btn-dark ${sortMode === "latest" ? "active" : ""}`}
                     onClick={() => handleChangeSort("latest")}
                 >
                     최신순
-                </Button>
-                <Button
-                    size="small"
-                    variant={sortMode === "view" ? "contained" : "outlined"}
+                </button>
+                <button
+                    className={`dc-btn dc-btn-sm dc-btn-dark ${sortMode === "view" ? "active" : ""}`}
                     onClick={() => handleChangeSort("view")}
                 >
                     조회수순
-                </Button>
-            </Stack>
+                </button>
+            </div>
 
-            {/* 글 목록 띄우는 컴포넌트 */}
             <PostTable defaultUrlPath={urlPath} postDataList={displayPostList} errorMessage={errorMessage}/>
 
-            {/* 게시글 페이지 선택 */}
             {pageInfo.totalPages > 1 && (
-                <Stack alignItems="center" sx={{ mt: 3 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
                     <Pagination
                         count={pageInfo.totalPages}
                         page={currentPage + 1}
                         onChange={(event, value) => setCurrentPage(value - 1)}
                         color="primary"
                     />
-                </Stack>
+                </div>
             )}
 
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, mb:3}}>
-                <Button
-                    variant="contained"
-                    size="small"
-                    color="primary"
-                    onClick={() => navigate(`/board/${urlPath}/write`)} // 클릭 시 /write URL로 이동
-                >글쓰기
-                </Button>
-            </Box>
+            <div className="dc-flex-end mb-3">
+                <button
+                    className="dc-btn dc-btn-md dc-btn-primary"
+                    onClick={() => navigate(`/board/${urlPath}/write`)}
+                >
+                    글쓰기
+                </button>
+            </div>
 
             <PostSearch onSearch={searchPosts} onReset={resetSearch} loading={searchLoading}/>
 
             {searchMessage && (
-                <Typography sx={{ mb: 2 }}
-                            color="text.secondary">
+                <Typography sx={{ mb: 2 }} color="text.secondary">
                     {searchMessage}
                 </Typography>
             )}
         </>
-
     );
 };
 

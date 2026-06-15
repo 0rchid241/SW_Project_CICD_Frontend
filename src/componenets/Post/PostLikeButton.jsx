@@ -39,15 +39,12 @@ const PostLikeButton = ({urlPath,postId,initialLikeCount}) => {
     }
 
     return (
-        <Button
-            variant={isLiked ? "contained" : "outlined"}
-            color="primary"
+        <button
+            className={'dc-btn dc-btn-md dc-btn-primary'}
             onClick={handleLikeClick}
-            // startIcon={}
-            sx={{ mt: 2, mb: 2 }}
         >
             추천 {likeCount}
-        </Button>
+        </button>
     );
 };
 

@@ -1,10 +1,4 @@
 import React, { useState } from 'react';
-import {
-    Box,
-    Button,
-    TextField,
-    MenuItem
-} from "@mui/material";
 
 const PostSearch = ({ onSearch, onReset, loading }) => {
 
@@ -13,7 +7,6 @@ const PostSearch = ({ onSearch, onReset, loading }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         onSearch({
             type: searchType,
             keyword: keyword,
@@ -27,29 +20,34 @@ const PostSearch = ({ onSearch, onReset, loading }) => {
     };
 
     return (
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", gap: 1, mb: 2 }}>
-            <TextField
-                select
-                size="small"
+        <form className="dc-search-container dc-flex-row gap-1" onSubmit={handleSubmit}>
+            <select
+                className="dc-search-select"
                 value={searchType}
                 onChange={(e) => setSearchType(e.target.value)}
-                sx={{ width: 130 }}>
-                <MenuItem value="all">전체</MenuItem>
-                <MenuItem value="title">제목</MenuItem>
-                <MenuItem value="content">내용</MenuItem>
-                <MenuItem value="author">작성자</MenuItem>
-            </TextField>
+            >
+                <option value="all">전체</option>
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+                <option value="author">작성자</option>
+            </select>
 
-            <TextField
-                size="small"
+            <input
+                type="text"
+                className="dc-search-input"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 placeholder="검색어를 입력하세요"
-                fullWidth/>
+            />
 
-            <Button type="submit" variant="contained" disabled={loading}>{loading ? "검색 중" : "검색"}</Button>
-            <Button type="button" variant="outlined" onClick={handleReset}>초기화</Button>
-        </Box>
+            <button type="submit" className="dc-btn dc-btn-md dc-btn-primary" disabled={loading}>
+                {loading ? "검색 중" : "검색"}
+            </button>
+
+            <button type="button" className="dc-btn dc-btn-md dc-btn-outline" onClick={handleReset}>
+                초기화
+            </button>
+        </form>
     );
 };
 

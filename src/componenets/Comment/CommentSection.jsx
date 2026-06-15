@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {Box, Divider, Pagination, Stack, Typography} from "@mui/material";
+import { Pagination } from "@mui/material"; // Pagination은 복잡도 문제로 임시 유지
 import CommentList from "./CommentList.jsx";
 import CommentInputForm from "./CommentInputForm.jsx";
 import {AuthContext} from "../../context/AuthContext.jsx";
@@ -30,34 +30,25 @@ const CommentSection = ({urlPath,postId}) => {
     };
 
     return (
-        <Box sx={{ mt: 5 }}>
-            <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-            >
-                <Typography variant="h6" fontWeight="bold">
-                    댓글 {commentPageInfo.totalElements ?? 0}
-                </Typography>
-
+        <div className="mt-3">
+            <div className="dc-list-header dc-flex-between mt-2">
+                <div>
+                    전체 댓글 <span style={{ color: '#ff4d4f' }}>{commentPageInfo.totalElements ?? 0}</span>개
+                </div>
                 {commentLoading && (
-                    <Typography variant="body2" color="text.secondary">
+                    <span style={{ fontSize: '12px', color: '#888888', fontWeight: 'normal' }}>
                         불러오는 중...
-                    </Typography>
+                    </span>
                 )}
-            </Stack>
+            </div>
 
-            <Divider sx={{ mb: 3, mt: 1 }} />
-
-            {/* 메인 루트 댓글 작성 폼 */}
-            <Box sx={{ mb: 4 }}>
+            <div className="mt-2 mb-3">
                 <CommentInputForm
                     onSubmit={handleCreateRootComment}
                     isLoggedIn={isLoggedIn}
                 />
-            </Box>
+            </div>
 
-            {/* 댓글 리스트 출력 */}
             <CommentList
                 commentDataList={commentDataList}
                 onAddReply={createComment}
@@ -66,9 +57,8 @@ const CommentSection = ({urlPath,postId}) => {
                 onVerifyPassword={verifyCommentPassword}
             />
 
-            {/* 댓글 페이지네이션 */}
             {commentPageInfo.totalPages > 1 && (
-                <Stack alignItems="center" sx={{ mt: 3 }}>
+                <div className="dc-flex-row mt-2" style={{ justifyContent: 'center' }}>
                     <Pagination
                         count={commentPageInfo.totalPages}
                         page={commentPage + 1}
@@ -76,9 +66,9 @@ const CommentSection = ({urlPath,postId}) => {
                         color="primary"
                         size="small"
                     />
-                </Stack>
+                </div>
             )}
-        </Box>
+        </div>
     );
 };
 

@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
-import {Box, Button, MenuItem, Paper, Stack, TextField, Typography} from "@mui/material";
 import {AuthContext} from "../../context/AuthContext.jsx";
 import ErrorMessage from "../util/ErrorMessage.jsx";
 import {apiFetch} from "../util/apiFetch.js";
@@ -10,50 +9,41 @@ const PostWritePage = () => {
 
     const navigate = useNavigate();
     const {urlPath} = useParams();
-    const { categories, categoryMessage,fetchActiveCategories } = useCategories(urlPath);
-    const [errorMessage, setErrorMessage] = useState("")
-
-    useEffect(() => {
-        fetchActiveCategories();
-    }, [urlPath]);
-
-    const {isLoggedIn,token} = useContext(AuthContext);
+    const { categories, categoryMessage, fetchActiveCategories } = useCategories(urlPath);
+    const [errorMessage, setErrorMessage] = useState("");
+    const {isLoggedIn} = useContext(AuthContext);
 
     useEffect(() => {
         fetchActiveCategories();
     }, [urlPath]);
 
     const [formData, setFormData] = useState({
-        authorName : '',
-        password : '',
-        title : '',
+        authorName: '',
+        password: '',
+        title: '',
         categoryId: '',
-        content : ''
-    })
+        content: ''
+    });
 
-    const handleChange = (e) =>{
-        const {name,value} = e.target;
+    const handleChange = (e) => {
+        const {name, value} = e.target;
         setFormData({
             ...formData,
             [name]: value
         });
     };
 
-    const handleSubmit = async () =>{
-
-        /* 공통 입력값 먼저 검증*/
-        if(!formData.title || !formData.content){
-            setErrorMessage("제목과 내용을 입력해주세요 ")
+    const handleSubmit = async () => {
+        if (!formData.title || !formData.content) {
+            setErrorMessage("제목과 내용을 입력해주세요.");
             return;
         }
-        /* 카테고리 선택 검증 */
         if (!formData.categoryId) {
             setErrorMessage("카테고리를 선택해주세요.");
             return;
         }
-        /* 비로그인 상태에만 이름, 비밀번호 추가로 인증*/
-        if(!isLoggedIn && ( !formData.authorName || !formData.password)){
-            setErrorMessage("이름과 비밀번호를 입력해주세요.")
+        if (!isLoggedIn && (!formData.authorName || !formData.password)) {
+            setErrorMessage("닉네임과 비밀번호를 입력해주세요.");
             return;
         }
 
@@ -68,92 +58,93 @@ const PostWritePage = () => {
                 body: JSON.stringify(requestBody)
             });
 
-            /* 아무이상없으면 여기도달 */
             alert("글이 성공적으로 등록되었습니다.");
-            navigate(`/board/${urlPath}`); // 작성 완료 후 리스트로 이동
+            navigate(`/board/${urlPath}`);
+        } catch (error) {
+            setErrorMessage(error.message);
         }
-        /* 커스텀 fetch요청에서 던지는 error 메세지 출력
-        *  ErrorResponse의 message필드 */
-        catch (error){
-            setErrorMessage(error.message)
-        }
-    }
-
+    };
 
     return (
-        <Box sx={{ maxWidth: 800, margin: 'auto', mt: 5 }}>
-            <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>새 글 작성</Typography>
+        <div className="dc-write-container">
+            <h2 className="dc-title-sub">새 글 작성</h2>
+            <ErrorMessage errorMessage={errorMessage || categoryMessage} />
 
-            <Paper sx={{ p: 3 }}>
-                <ErrorMessage errorMessage={errorMessage || categoryMessage} />
-                <Stack spacing={2}>
+            <div className="dc-write-form-box">
+                {/* 닉네임/비밀번호 영역 */}
+                {!isLoggedIn && (
+                    <div className="dc-flex-row gap-1 mb-2">
+                        <input
+                            type="text"
+                            className="dc-input-box"
+                            name="authorName"
+                            placeholder="닉네임"
+                            value={formData.authorName}
+                            onChange={handleChange}
+                        />
+                        <input
+                            type="password"
+                            className="dc-input-box"
+                            name="password"
+                            placeholder="비밀번호"
+                            value={formData.password}
+                            onChange={handleChange}
+                        />
+                    </div>
+                )}
 
-                    {/* 로그인 상태가 아닐 때에만 닉네임, 비밀번호 입력. */}
-                    {!isLoggedIn && (
-                        <Stack direction="row" spacing={2}>
-                            <TextField
-                                label="닉네임"
-                                name="authorName"
-                                size="small"
-                                fullWidth
-                                value={formData.authorName}
-                                onChange={handleChange}
-                            />
-                            <TextField
-                                label="비밀번호"
-                                name="password"
-                                type="password"
-                                size="small"
-                                fullWidth
-                                value={formData.password}
-                                onChange={handleChange}
-                            />
-                        </Stack>
-                    )}
+                {/* 제목 */}
+                <input
+                    type="text"
+                    className="dc-input-box mb-2"
+                    name="title"
+                    placeholder="제목을 입력하세요"
+                    value={formData.title}
+                    onChange={handleChange}
+                />
 
+                {/* 카테고리 선택 */}
+                <select
+                    className="dc-input-box mb-2"
+                    name="categoryId"
+                    value={formData.categoryId}
+                    onChange={handleChange}
+                >
+                    <option value="">카테고리를 선택하세요</option>
+                    {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                            {category.name}
+                        </option>
+                    ))}
+                </select>
 
-                    <TextField
-                        label="제목"
-                        name="title"
-                        size="small"
-                        fullWidth
-                        value={formData.title}
-                        onChange={handleChange}
-                    />
+                {/* 본문 */}
+                <textarea
+                    className="dc-input-box"
+                    name="content"
+                    rows={15}
+                    placeholder="본문 내용을 입력하세요"
+                    value={formData.content}
+                    onChange={handleChange}
+                />
+            </div>
 
-                    <TextField
-                        select
-                        label="카테고리"
-                        name="categoryId"
-                        size="small"
-                        fullWidth
-                        value={formData.categoryId}
-                        onChange={handleChange}
-                    >
-                        {categories.map((category) => (
-                            <MenuItem key={category.id} value={category.id}>
-                                {category.name}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-
-                    <TextField
-                        label="본문 내용"
-                        name="content"
-                        multiline
-                        rows={12}
-                        fullWidth
-                        value={formData.content}
-                        onChange={handleChange}
-                    />
-
-                    <Stack direction="row" spacing={1} justifyContent="flex-end">
-                        <Button variant="outlined" onClick={() => navigate(`/board/${urlPath}`)}>취소</Button>
-                        <Button variant="contained" onClick={handleSubmit}>등록</Button>
-                    </Stack>
-                </Stack>
-            </Paper>
-        </Box>
+            {/* 하단 버튼 영역 */}
+            <div className="dc-flex-end gap-1 mt-3">
+                <button
+                    className="dc-btn dc-btn-md dc-btn-outline"
+                    onClick={() => navigate(`/board/${urlPath}`)}
+                >
+                    취소
+                </button>
+                <button
+                    className="dc-btn dc-btn-md dc-btn-primary"
+                    onClick={handleSubmit}
+                >
+                    등록
+                </button>
+            </div>
+        </div>
     );
 };
 

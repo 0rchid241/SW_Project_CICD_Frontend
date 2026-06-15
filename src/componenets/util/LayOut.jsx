@@ -1,17 +1,12 @@
-import React, {useContext} from 'react';
-import {Outlet,useNavigate} from "react-router-dom";
-import { AppBar, Toolbar, Typography, Box, Container, Button, Stack } from '@mui/material';
+import React, { useContext } from 'react';
+import { Outlet, useNavigate } from "react-router-dom";
 import NotificationBadge from "../NotificationBadge.jsx";
-import {AuthContext, useAuth} from "../../context/AuthContext.jsx";
-import {isSuperAdmin} from "./roleUtils.js";
+import { AuthContext, useAuth } from "../../context/AuthContext.jsx";
+import { isSuperAdmin } from "./roleUtils.js";
 
 const LayOut = () => {
-
     const navigate = useNavigate();
-
     const { role } = useAuth();
-
-    /* 일일이 컴포넌트에서 상태를 뽑아내지 말고 전역 Context에서 뽑아오기 */
     const { isLoggedIn, nickname, logout } = useContext(AuthContext);
 
     const handleLogout = () => {
@@ -19,62 +14,43 @@ const LayOut = () => {
         navigate('/');
     };
 
-
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <AppBar
-                position="static"
-                color="transparent"
-                elevation={0}
-                sx={{ borderBottom: 1, borderColor: 'divider' }}
-            >
-                <Toolbar>
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{ cursor: 'pointer', fontWeight: 'bold' }}
-                        onClick={() => navigate('/')}
-                    >
-                        서경인사이드
-                    </Typography>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#121212' }}>
+            {/* dc-flex-between을 추가하여 네비게이션을 우측 끝으로 보냄 */}
+            <header className="dc-global-header dc-flex-between">
 
-                    <Box sx={{ flexGrow: 1 }} />
+                {/* 텍스트 크기를 dc-title-main(28px)으로 변경 */}
+                <div className="dc-title-main" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+                    서경인사이드
+                </div>
 
-                    <Stack direction="row" spacing={1} alignItems="center">
-                        {!isLoggedIn ? (
-                            <>
-                                <Button color="inherit" onClick={() => navigate('/signup')}>
-                                    회원가입
-                                </Button>
-                                <Button variant="contained" onClick={() => navigate('/login')}>
-                                    로그인
-                                </Button>
-                            </>
-                        ) : (
-                            <>
-                                <Button color="inherit" onClick={() => navigate('/me')}>
-                                    {nickname || "내 정보"}
-                                </Button>
-                                {isSuperAdmin(role) && (
-                                    <Button onClick={()=>navigate('/admin/superAdminPage')}>
-                                        관리자 페이지
-                                    </Button>
-                                )}
-                                <Button variant="outlined" color="error" onClick={handleLogout}>
-                                    로그아웃
-                                </Button>
+                <nav className="dc-flex-row gap-2">
+                    {!isLoggedIn ? (
+                        <>
+                            <button className="dc-btn dc-btn-text" onClick={() => navigate('/signup')}>회원가입</button>
+                            <button className="dc-btn dc-btn-md dc-btn-primary" onClick={() => navigate('/login')}>로그인</button>
+                        </>
+                    ) : (
+                        <>
+                            <button className="dc-btn dc-btn-text" onClick={() => navigate('/me')}>
+                                {nickname || "내 정보"}
+                            </button>
+                            {isSuperAdmin(role) && (
+                                <button className="dc-btn dc-btn-text" onClick={() => navigate('/admin/superAdminPage')}>
+                                    관리자 페이지
+                                </button>
+                            )}
+                            <button className="dc-btn dc-btn-sm dc-btn-danger" onClick={handleLogout}>로그아웃</button>
+                            <NotificationBadge />
+                        </>
+                    )}
+                </nav>
+            </header>
 
-                                <NotificationBadge/>
-                            </>
-                        )}
-                    </Stack>
-                </Toolbar>
-            </AppBar>
-
-            <Container maxWidth="lg" sx={{ mt: 5, mb: 5, flexGrow: 1 }}>
+            <main style={{ maxWidth: '1200px', margin: '40px auto', width: '100%', padding: '0 16px', flexGrow: 1 }}>
                 <Outlet />
-            </Container>
-        </Box>
+            </main>
+        </div>
     );
 };
 
