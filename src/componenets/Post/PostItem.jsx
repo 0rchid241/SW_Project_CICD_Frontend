@@ -2,7 +2,7 @@ import React from 'react';
 import {Box, Button, Dialog, Table, TableCell, TableRow, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import UserItem from "../user/UserItem.jsx";
-import {formatDate, formatDetailDate} from "../util/dateFormater.js";
+import {formatDate} from "../util/dateFormater.js";
 
 const PostItem = ({data,urlPath}) => {
 

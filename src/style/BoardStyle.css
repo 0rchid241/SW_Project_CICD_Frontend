@@ -1,0 +1,66 @@
+/* dc-style.css */
+
+/* 카테고리 전체 컨테이너 */
+.dc-category-wrapper {
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid #3b4874; /* 디시인사이드 특유의 파란색 하단 선 */
+    margin-bottom: 24px;
+    background-color: #1e1e1e;
+    padding: 8px;
+}
+
+/* 좌측 메인 탭 (전체글, 개념글) 그룹 */
+.dc-main-tabs {
+    display: flex;
+    margin-right: 24px;
+}
+
+/* 메인 탭 버튼 공통 스타일 */
+.dc-tab-btn {
+    border: none;
+    border-radius: 0;
+    background-color: #2b2b2b;
+    color: #cccccc;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 10px 24px;
+    margin-right: 2px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.dc-tab-btn:hover {
+    background-color: #3a3a3a;
+    color: #ffffff;
+}
+
+/* 메인 탭 활성화 상태 */
+.dc-tab-btn.active {
+    background-color: #3b4874;
+    color: #ffffff;
+}
+
+/* 우측 서브 카테고리 (일반, 등등) 그룹 */
+.dc-sub-tabs {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* 서브 카테고리 버튼 */
+.dc-sub-tab-btn {
+    background: transparent;
+    border: none;
+    color: #888888;
+    padding: 0;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dc-sub-tab-btn:hover,
+.dc-sub-tab-btn.active {
+    color: #ffffff;
+    font-weight: bold;
+}
