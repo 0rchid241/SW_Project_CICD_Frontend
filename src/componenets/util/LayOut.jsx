@@ -21,7 +21,7 @@ const LayOut = () => {
 
                 {/* 텍스트 크기를 dc-title-main(28px)으로 변경 */}
                 <div className="dc-title-main" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-                    서경인사이드-뉴버전
+                    서경인사이드-뉴버전2
                 </div>
 
                 <nav className="dc-flex-row gap-2">
