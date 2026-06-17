@@ -33,10 +33,10 @@ const useNotifications = () =>{
         fetchNotifications();
 
 
-        /* 이벤트 발생 시 */
+        /* 파이프 연결 */
         const eventSource = new EventSource(`/api/notifications/subscribe?token=${token}`);
 
-        /* 댓글 이벤트 발생시에 */
+        /* 댓글 이벤트 발생시에 실행될 함수들 세팅 */
         eventSource.addEventListener(`COMMENT`,(event) => {
             const newNotification = JSON.parse(event.data)
             setNotifications((prev)=>[newNotification,...prev])
